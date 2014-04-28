@@ -9,6 +9,23 @@ public class GameTest
 {
     //todo need more tests
     @Test
+    public void testBankruptBlind()
+    {
+        Game game = new Game(10);
+        Player player = new ComputerPlayer(5, 0.0, 0.0);
+        Player otherPlayer = new ComputerPlayer(500, 0.0, 0.0);
+        Player otherOtherPlayer = new ComputerPlayer(500, 0.0, 0.0);
+        game.addPlayer(otherOtherPlayer);
+        game.addPlayer(otherPlayer);
+        game.addPlayer(player);
+        game.deal();
+        game.betBlinds();
+        Assert.assertEquals(2, game.getActivePlayersCount());
+        Assert.assertEquals(490, otherPlayer.getCash());
+        Assert.assertEquals(480, otherOtherPlayer.getCash());
+    }
+
+    @Test
     public void testCalculateAllInAmount()
     {
         Game game = new Game(1);
@@ -33,7 +50,7 @@ public class GameTest
         game.addPlayers(players);
         game.deal();
         int second = game.calculateAllInWinAmount(player2, players);
-        Assert.assertEquals(second, 27);
+        Assert.assertEquals(27, second);
     }
 
     @Test

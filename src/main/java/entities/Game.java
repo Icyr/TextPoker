@@ -1,11 +1,11 @@
 package entities;
 
+import gui.SimpleInterface;
 import logic.GameManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-//todo if player has 10 money he will bid 20 blind. This causes little money losses.
 public class Game
 {
     private Dealer dealer;
@@ -18,9 +18,20 @@ public class Game
     private int bank;
     private int maxBet;
     private int blindSize;
+    private SimpleInterface gui;
 
     public Game(int blindSize)
     {
+        this.gui = null;
+        players = new ArrayList<Player>();
+        dealer = new Dealer();
+        this.blindSize = blindSize;
+        button = 0;
+    }
+
+    public Game(int blindSize, SimpleInterface gameGUI)
+    {
+        this.gui = gameGUI;
         players = new ArrayList<Player>();
         dealer = new Dealer();
         this.blindSize = blindSize;
@@ -37,12 +48,6 @@ public class Game
         players.addAll(newPlayers);
     }
 
-    //test method
-    public void setTable(Table talbe)
-    {
-        this.table = talbe;
-    }
-
     public void play()
     {
         while (players.size() > 1)
@@ -52,37 +57,36 @@ public class Game
             int underTheGun = calculateUnderTheGun(players.size(), button);
             doTurns(players, table, underTheGun);
             table.flop();
-            System.out.println("Flop:");
-            System.out.println(table.tableCardsToString());
+            gui.printText("Flop:");
+            gui.printText(table.tableCardsToString());
             //second circle
             doTurns(players, table, underTheGun);
             table.turn();
-            System.out.println("Turn:");
-            System.out.println(table.tableCardsToString());
+            gui.printText("Turn:");
+            gui.printText(table.tableCardsToString());
             //third circle
             doTurns(players, table, underTheGun);
             table.river();
-            System.out.println("River:");
-            System.out.println(table.tableCardsToString());
+            gui.printText("River:");
+            gui.printText(table.tableCardsToString());
             //forth circle
             doTurns(players, table, underTheGun);
             //get winners
             distributeWonMoney(GameManager.getWinners(players, table));
             endRound();
         }
-        System.out.println("We have got a winner! " + players.get(0).getId() + " player won!");
+        gui.printText("We have got a winner! " + players.get(0).getId() + " player won!");
     }
 
     private void endRound()
     {
         removeBankruptPlayers();
         discardHands();
-        System.out.println("Players' money:");
+        gui.printText("Players' money:");
         for (Player player : players)
         {
-            System.out.print(player.getCash() + " ");
+            gui.printText(player.getCash() + " ");
         }
-        System.out.println();
     }
 
     private void prepareForRound()
@@ -101,19 +105,19 @@ public class Game
             if (!winner.isAllIn())
             {
                 winner.addToCash(bank / winners.size());
-                System.out.println("Player " + players.indexOf(winner) + " won " + bank / winners.size());
+                gui.printText("Player " + players.indexOf(winner) + " won " + bank / winners.size());
             } else
             {
                 int wonAmount = calculateAllInWinAmount(winner, players) / winners.size();
                 if (bank > wonAmount)
                 {
                     winner.addToCash(wonAmount);
-                    System.out.println("Player " + players.indexOf(winner) + " won " + wonAmount);
+                    gui.printText("Player " + players.indexOf(winner) + " won " + wonAmount);
                     bank -= wonAmount;
                 } else
                 {
                     winner.addToCash(bank);
-                    System.out.println("Player " + players.indexOf(winner) + " won " + bank);
+                    gui.printText("Player " + players.indexOf(winner) + " won " + bank);
                     bank = 0;
                 }
                 if (bank > 0)
@@ -132,6 +136,10 @@ public class Game
                     }
                 }
             }
+            if (!didOtherPlayersFold(winner))
+            {
+                gui.printText("Combination: " + winner.getCurrentCombination(table).toString().toLowerCase());
+            }
         }
         zeroBets();
     }
@@ -147,7 +155,7 @@ public class Game
 
             } else
             {
-                System.out.println("Player " + players.indexOf(player) + " has lost all of his money!");
+                gui.printText("Player " + players.indexOf(player) + " has lost all of his money!");
                 if (button == players.size() - 1) button--;
             }
         }
@@ -173,11 +181,11 @@ public class Game
 
     public void deal()
     {
-        System.out.println("Dealing cards..");
+        gui.printText("Dealing cards..");
         for (Player player : players)
         {
             player.setHand(new Hand(dealer.getCards(2)));
-            //System.out.println(player.playersCardsToString());
+            //gui.printText(player.playersCardsToString());
         }
     }
 
@@ -188,7 +196,19 @@ public class Game
         {
             button = 0;
         }
-        System.out.println("Moved button to " + button);
+        gui.printText("Moved button to " + button);
+    }
+
+    private void revertBlinds()
+    {
+        for (Player player : players)
+        {
+            if (player.getCurrentBet() > 0)
+            {
+                player.addToCash(player.getCurrentBet());
+                player.setCurrentBet(0);
+            }
+        }
     }
 
     public void betBlinds()
@@ -198,24 +218,47 @@ public class Game
         int playerCount = players.size();
         if (button < playerCount - 2)
         {
-            players.get(button + 1).setCurrentBet(blindSize);
-            System.out.println((button + 1) + " player bet small blind: " + blindSize);
-            players.get(button + 2).setCurrentBet(blindSize * 2);
-            System.out.println((button + 2) + " player bet big blind: " + blindSize * 2);
+            try
+            {
+                players.get(button + 1).addToCurrentBet(blindSize);
+                players.get(button + 2).addToCurrentBet(blindSize * 2);
+                gui.printText((button + 1) + " player bet small blind: " + blindSize);
+                gui.printText((button + 2) + " player bet big blind: " + blindSize * 2);
+            } catch (BankruptException e)
+            {
+
+                removeBankruptPlayers();
+                revertBlinds();
+                betBlinds();
+            }
         }
         if (button == playerCount - 2)
         {
-            players.get(button + 1).setCurrentBet(blindSize);
-            System.out.println((button + 1) + " player bet small blind: " + blindSize);
-            players.get(0).setCurrentBet(blindSize * 2);
-            System.out.println("0 player bet big blind: " + blindSize * 2);
+            try
+            {
+                players.get(button + 1).addToCurrentBet(blindSize);
+                players.get(0).addToCurrentBet(blindSize * 2);
+                gui.printText((button + 1) + " player bet small blind: " + blindSize);
+                gui.printText("0 player bet big blind: " + blindSize * 2);
+            } catch (BankruptException e)
+            {
+                removeBankruptPlayers();
+                betBlinds();
+            }
         }
         if (button == playerCount - 1)
         {
-            players.get(0).setCurrentBet(blindSize);
-            System.out.println("0 player bet small blind: " + blindSize);
-            players.get(1).setCurrentBet(blindSize * 2);
-            System.out.println("1 player bet big blind: " + blindSize * 2);
+            try
+            {
+                players.get(0).addToCurrentBet(blindSize);
+                players.get(1).addToCurrentBet(blindSize * 2);
+                gui.printText("0 player bet small blind: " + blindSize);
+                gui.printText("1 player bet big blind: " + blindSize * 2);
+            } catch (BankruptException e)
+            {
+                removeBankruptPlayers();
+                betBlinds();
+            }
         }
 
     }
@@ -349,7 +392,6 @@ public class Game
         return activeCount;
     }
 
-    //todo all in is not fully implemented and sometimes works incorrectly
     public boolean playersTurn(Player player, Table table)
     {
         boolean wasRaised = false;
@@ -359,11 +401,11 @@ public class Game
         {
             if (callValue == 0)
             {
-                System.out.println(players.indexOf(player) + " player checked");
+                gui.printText(players.indexOf(player) + " player checked");
             } else
             {
                 player.setFolded(true);
-                System.out.println(players.indexOf(player) + " player folded");
+                gui.printText(players.indexOf(player) + " player folded");
             }
         }
         if (decision.equals("call"))
@@ -372,19 +414,19 @@ public class Game
             {
                 if (callValue < player.getCash())
                 {
-                    player.addToCurrentBet(callValue);
+                    player.unsafeAddToCurrentBet(callValue);
                     bank += callValue;
-                    System.out.println(players.indexOf(player) + " player called " + callValue);
+                    gui.printText(players.indexOf(player) + " player called " + callValue);
                 } else
                 {
                     bank = bank + player.getCash();
-                    System.out.println(players.indexOf(player) + " player called " + player.getCash() + ". ALL IN!");
-                    player.addToCurrentBet(player.getCash());
+                    gui.printText(players.indexOf(player) + " player called " + player.getCash() + ". ALL IN!");
+                    player.unsafeAddToCurrentBet(player.getCash());
                     player.setAllIn(true);
                 }
             } else
             {
-                System.out.println(players.indexOf(player) + " player checked");
+                gui.printText(players.indexOf(player) + " player checked");
             }
         }
         if (decision.contains("raise"))
@@ -392,17 +434,17 @@ public class Game
             int raiseAmount = Integer.parseInt(decision.substring(decision.indexOf(" ") + 1, decision.length()));
             if (raiseAmount + callValue < player.getCash())
             {
-                player.addToCurrentBet(callValue);
-                player.addToCurrentBet(raiseAmount);
+                player.unsafeAddToCurrentBet(callValue);
+                player.unsafeAddToCurrentBet(raiseAmount);
                 maxBet = player.getCurrentBet();
                 bank = bank + raiseAmount + callValue;
-                System.out.println(players.indexOf(player) + " player raised for " + (raiseAmount + callValue));
+                gui.printText(players.indexOf(player) + " player raised for " + (raiseAmount + callValue));
                 wasRaised = true;
             } else
             {
                 bank = bank + player.getCash();
-                System.out.println(players.indexOf(player) + " player raised for " + player.getCash() + ". ALL IN!");
-                player.addToCurrentBet(player.getCash());
+                gui.printText(players.indexOf(player) + " player raised for " + player.getCash() + ". ALL IN!");
+                player.unsafeAddToCurrentBet(player.getCash());
                 maxBet = player.getCurrentBet();
                 player.setAllIn(true);
                 wasRaised = true;

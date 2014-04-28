@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ComputerPlayer extends AbstractPlayer
 {
-    private int probabilityPrecision = 100000;
+    private int probabilityPrecision = 10000;
     private DecisionMaker brain;
 
     public ComputerPlayer(int cash, double risk, double bluff)

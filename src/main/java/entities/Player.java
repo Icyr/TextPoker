@@ -1,7 +1,5 @@
 package entities;
 
-import java.util.List;
-
 public interface Player
 {
     public String makeDecision(Hand hand, Table table, int bank, int currentRaise, int blindSize, int playersCount);
@@ -20,7 +18,9 @@ public interface Player
 
     public void setCurrentBet(int currentBet);
 
-    public void addToCurrentBet(int value);
+    public void addToCurrentBet(int value) throws BankruptException;
+
+    public void unsafeAddToCurrentBet(int value);
 
     public boolean isFolded();
 
@@ -32,6 +32,5 @@ public interface Player
 
     public Hand getHand();
 
-    public String playersCardsToString();
-
+    public Combination getCurrentCombination(Table table);
 }

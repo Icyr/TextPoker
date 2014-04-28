@@ -17,22 +17,15 @@ public class HumanGameRunner
         String blindString = scan.nextLine();
         int blind = Integer.parseInt(blindString);
         Game game = new Game(blind);
-        System.out.println("Your money:");
-        String humanGameMoneyString = scan.nextLine();
-        int humanGameMoney = Integer.parseInt(humanGameMoneyString);
-        Player human = new HumanPlayer(humanGameMoney);
+        System.out.println("Players' money:");
+        String gameMoneyString = scan.nextLine();
+        int gameMoney = Integer.parseInt(gameMoneyString);
+        Player human = new HumanPlayer(gameMoney);
         game.addPlayer(human);
         for (int i = 0; i < playerCount; i++)
         {
-            System.out.println("Money of player number " + (i + 1) + ":");
-            String gameMoneyString = scan.nextLine();
-            int gameMoney = Integer.parseInt(gameMoneyString);
-            System.out.println("Risk index of player number " + (i + 1) + ":");
-            String riskIndexString = scan.nextLine();
-            double riskIndex = Double.parseDouble(riskIndexString);
-            System.out.println("Bluff index of player number " + (i + 1) + ":");
-            String bluffIndexString = scan.nextLine();
-            double bluffIndex = Double.parseDouble(bluffIndexString);
+            double riskIndex = Math.random() / 2;
+            double bluffIndex = Math.random() / 10;
             Player newPlayer = new ComputerPlayer(gameMoney, riskIndex, bluffIndex);
             game.addPlayer(newPlayer);
         }

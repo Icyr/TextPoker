@@ -1,5 +1,10 @@
 package entities;
 
+import logic.CombinationAnalyzer;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class AbstractPlayer implements Player
 {
     protected String id;
@@ -48,13 +53,23 @@ public abstract class AbstractPlayer implements Player
         }
     }
 
-    public void addToCurrentBet(int value)
+    public void addToCurrentBet(int value) throws BankruptException
     {
         if (value <= cash)
         {
             cash = cash - value;
             currentBet = currentBet + value;
+        } else
+        {
+            cash = 0;
+            throw new BankruptException();
         }
+    }
+
+    public void unsafeAddToCurrentBet(int value)
+    {
+        cash = cash - value;
+        currentBet = currentBet + value;
     }
 
     public boolean isFolded()
@@ -82,12 +97,12 @@ public abstract class AbstractPlayer implements Player
         return hand;
     }
 
-    public String playersCardsToString()
+    public Combination getCurrentCombination(Table table)
     {
-        String res = "";
-        res += hand.getCards().get(0).getNominal() + " " + hand.getCards().get(0).getColor() + " ";
-        res += hand.getCards().get(1).getNominal() + " " + hand.getCards().get(1).getColor() + " ";
-        return res;
+        List<Card> playersCards = new ArrayList<Card>();
+        playersCards.addAll(hand.getCards());
+        playersCards.addAll(table.getCardsOnTable());
+        return Combination.getCombinationByPower(CombinationAnalyzer.analyzePower(playersCards));
     }
 
     public boolean equals(Object other)

@@ -1,5 +1,6 @@
 package logic;
 
+import entities.Combination;
 import entities.Player;
 import entities.Card;
 import entities.Table;
@@ -51,50 +52,39 @@ public class GameManager
         List<Player> winners = new ArrayList<Player>();
         List<List<Card>> winnersCards = Utils.unitePlayersAndTableCards(challengers, cardsOnTable);
         int conflictPower = CombinationAnalyzer.analyzePower(winnersCards.get(0));
-        //straight flush
-        if (conflictPower > 106)
+        Combination conflictCombination = Combination.getCombinationByPower(CombinationAnalyzer.analyzePower(winnersCards.get(0)));
+        switch (conflictCombination)
         {
-            winners = challengers;
-        }
-        //quads
-        if (conflictPower < 107 && conflictPower > 93)
-        {
-            winners = resolveQuadsConflict(challengers, winnersCards, conflictPower);
-        }
-        //full house
-        if (conflictPower > 80 && conflictPower < 94)
-        {
-            winners = resolveFullHouseConflict(challengers, winnersCards, conflictPower);
-        }
-        //flush
-        if (conflictPower > 67 && conflictPower < 81)
-        {
-            winners = resolveFlushConflict(challengers, winnersCards);
-        }
-        //straight
-        if (conflictPower > 53 && conflictPower < 68)
-        {
-            winners = challengers;
-        }
-        //set
-        if (conflictPower > 40 && conflictPower < 54)
-        {
-            winners = resolveSetConflict(challengers, winnersCards, conflictPower);
-        }
-        //pairs
-        if (conflictPower < 41 && conflictPower > 28)
-        {
-            winners = resolvePairsConflict(challengers, winnersCards, conflictPower);
-        }
-        //pair /
-        if (conflictPower > 14 && conflictPower < 28)
-        {
-            winners = resolvePairConflict(challengers, winnersCards, conflictPower);
-        }
-        //kicker
-        if (conflictPower > 0 && conflictPower < 15)
-        {
-            winners = resolveKickerConflict(challengers, winnersCards, conflictPower);
+            case ROYAL_FLUSH:
+                winners = challengers;
+                break;
+            case STRAIGHT_FLUSH:
+                winners = challengers;
+                break;
+            case QUADS:
+                winners = resolveQuadsConflict(challengers, winnersCards, conflictPower);
+                break;
+            case FULL_HOUSE:
+                winners = resolveFullHouseConflict(challengers, winnersCards, conflictPower);
+                break;
+            case FLUSH:
+                winners = resolveFlushConflict(challengers, winnersCards);
+                break;
+            case STRAIGHT:
+                winners = challengers;
+                break;
+            case SET:
+                winners = resolveSetConflict(challengers, winnersCards, conflictPower);
+                break;
+            case TWO_PAIRS:
+                winners = resolvePairsConflict(challengers, winnersCards, conflictPower);
+                break;
+            case PAIR:
+                winners = resolvePairConflict(challengers, winnersCards, conflictPower);
+                break;
+            case KICKER:
+                winners = resolveKickerConflict(challengers, winnersCards, conflictPower);
+                break;
         }
         return winners;
     }
