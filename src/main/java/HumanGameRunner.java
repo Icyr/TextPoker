@@ -2,6 +2,7 @@ import entities.ComputerPlayer;
 import entities.Game;
 import entities.HumanPlayer;
 import entities.Player;
+import gui.SimpleInterface;
 
 import java.util.Scanner;
 
@@ -9,26 +10,23 @@ public class HumanGameRunner
 {
     public static void main(String[] args)
     {
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Number of computer players:");
-        String playerCountString = scan.nextLine();
-        int playerCount = Integer.parseInt(playerCountString);
-        System.out.println("Blind:");
-        String blindString = scan.nextLine();
-        int blind = Integer.parseInt(blindString);
-        Game game = new Game(blind);
-        System.out.println("Players' money:");
-        String gameMoneyString = scan.nextLine();
-        int gameMoney = Integer.parseInt(gameMoneyString);
-        Player human = new HumanPlayer(gameMoney);
-        game.addPlayer(human);
-        for (int i = 0; i < playerCount; i++)
-        {
-            double riskIndex = Math.random() / 2;
-            double bluffIndex = Math.random() / 10;
-            Player newPlayer = new ComputerPlayer(gameMoney, riskIndex, bluffIndex);
-            game.addPlayer(newPlayer);
-        }
+        SimpleInterface gui = new SimpleInterface();
+        Player player1 = new HumanPlayer(1000, gui);
+        Player player2 = new ComputerPlayer(1000, 0.05, 0.04);
+        Player player3 = new ComputerPlayer(1000, 0.1, 0.03);
+        Player player4 = new ComputerPlayer(1000, 0.2, 0.02);
+        Player player5 = new ComputerPlayer(1000, 0.01, 0.01);
+        player1.setId("first");
+        player2.setId("second");
+        player3.setId("third");
+        player4.setId("forth");
+        player5.setId("fifth");
+        Game game = new Game(10, gui);
+        game.addPlayer(player1);
+        game.addPlayer(player2);
+        game.addPlayer(player3);
+        game.addPlayer(player4);
+        game.addPlayer(player5);
         game.play();
     }
 }
