@@ -36,6 +36,8 @@ public class Game
         dealer = new Dealer();
         this.blindSize = blindSize;
         button = 0;
+        gui.setBankLabel(0);
+        gui.setBetLabel(0);
     }
 
     public void addPlayer(Player player)
@@ -402,6 +404,7 @@ public class Game
     {
         boolean wasRaised = false;
         int callValue = maxBet - player.getCurrentBet();
+        gui.setCallAmount(callValue);
         String decision = player.makeDecision(player.getHand(), table, bank, callValue, blindSize * 2, players.size());
         if (decision.equals("fold"))
         {

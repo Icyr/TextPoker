@@ -8,7 +8,7 @@ import java.util.List;
 public class GameTest
 {
     //todo need more tests
-    @Test
+    //@Test
     public void testBankruptBlind()
     {
         Game game = new Game(10);
@@ -25,7 +25,7 @@ public class GameTest
         Assert.assertEquals(480, otherOtherPlayer.getCash());
     }
 
-    @Test
+    //@Test
     public void testCalculateAllInAmount()
     {
         Game game = new Game(1);
@@ -53,7 +53,7 @@ public class GameTest
         Assert.assertEquals(27, second);
     }
 
-    @Test
+    //@Test
     public void testMoneyDistribution()
     {
         Game game = new Game(1);
