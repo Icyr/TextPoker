@@ -13,4 +13,10 @@ public class Pair implements Combination
     {
         return "Pair of " + nominal;
     }
+
+    @Override
+    public int getPower()
+    {
+        return 13 + nominal;
+    }
 }

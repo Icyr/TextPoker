@@ -1,6 +1,6 @@
-import entities.ComputerPlayer;
+import entities.players.ComputerPlayer;
 import entities.Game;
-import entities.Player;
+import entities.players.Player;
 import gui.SimpleInterface;
 
 public class GameRunner

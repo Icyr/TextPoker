@@ -13,4 +13,10 @@ public class Kicker implements Combination
     {
         return "Kicker " + nominal;
     }
+
+    @Override
+    public int getPower()
+    {
+        return nominal;
+    }
 }

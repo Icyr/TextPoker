@@ -1,6 +1,7 @@
 import entities.*;
+import entities.players.ComputerPlayer;
+import entities.players.Player;
 import junit.framework.Assert;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ public class GameTest
     //@Test
     public void testBankruptBlind()
     {
-        Game game = new Game(10);
+        Game game = new Game(10, null);
         Player player = new ComputerPlayer(5, 0.0, 0.0);
         Player otherPlayer = new ComputerPlayer(500, 0.0, 0.0);
         Player otherOtherPlayer = new ComputerPlayer(500, 0.0, 0.0);
@@ -28,7 +29,7 @@ public class GameTest
     //@Test
     public void testCalculateAllInAmount()
     {
-        Game game = new Game(1);
+        Game game = new Game(1, null);
         Player player1 = new ComputerPlayer(100, 0.0, 0.0);
         player1.setAllIn(true);
         player1.setCurrentBet(5);
@@ -56,7 +57,7 @@ public class GameTest
     //@Test
     public void testMoneyDistribution()
     {
-        Game game = new Game(1);
+        Game game = new Game(1, null);
         Player player1 = new ComputerPlayer(100, 0.0, 0.0);
         player1.setAllIn(true);
         player1.setCurrentBet(5);

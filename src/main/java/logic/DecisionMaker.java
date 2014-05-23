@@ -21,6 +21,7 @@ public class DecisionMaker
         if (bankPercent >= riskIndex)
         {
             int raiseAmount = calculateRaiseAmount(probability, pot, currentBet, bigBlindSize, cash);
+            if (raiseAmount == 0) return "call";
             return "raise " + raiseAmount;
         }
         return "fold";

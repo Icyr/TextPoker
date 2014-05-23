@@ -1,10 +1,8 @@
-import entities.ComputerPlayer;
+import entities.players.ComputerPlayer;
 import entities.Game;
-import entities.HumanPlayer;
-import entities.Player;
+import entities.players.HumanPlayer;
+import entities.players.Player;
 import gui.SimpleInterface;
-
-import java.util.Scanner;
 
 public class HumanGameRunner
 {

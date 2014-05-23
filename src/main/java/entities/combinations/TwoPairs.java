@@ -15,4 +15,10 @@ public class TwoPairs implements Combination
     {
         return "Two pairs: " + higherNominal + " and " + lowerNominal;
     }
+
+    @Override
+    public int getPower()
+    {
+        return 26 + higherNominal;
+    }
 }

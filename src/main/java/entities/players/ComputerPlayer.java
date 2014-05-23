@@ -1,5 +1,8 @@
-package entities;
+package entities.players;
 
+import entities.Card;
+import entities.Hand;
+import entities.Table;
 import logic.DecisionMaker;
 import logic.ProbabilityCalculator;
 

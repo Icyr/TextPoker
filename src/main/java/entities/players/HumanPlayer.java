@@ -1,5 +1,6 @@
-package entities;
+package entities.players;
 
+import entities.*;
 import gui.SimpleInterface;
 import logic.CombinationAnalyzer;
 
@@ -50,7 +51,7 @@ public class HumanPlayer extends AbstractPlayer
         List<Card> playersCards = new ArrayList<Card>();
         playersCards.addAll(hand.getCards());
         playersCards.addAll(table.getCardsOnTable());
-        gui.setCombinationLabel(Combination.getCombinationByPower(CombinationAnalyzer.analyzePower(playersCards)));
+        gui.setCombinationLabel(CombinationAnalyzer.analyzeCombination(playersCards).toString());
         return gui.getDecision();
     }
 

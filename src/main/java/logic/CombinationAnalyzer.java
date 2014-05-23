@@ -1,6 +1,7 @@
 package logic;
 
 import entities.Card;
+import entities.combinations.*;
 import util.Utils;
 
 import java.util.ArrayList;
@@ -8,55 +9,65 @@ import java.util.List;
 
 public class CombinationAnalyzer
 {
-    public static int analyzePower(List<Card> cards)
+    public static List<Combination> analyzePlayersCombinations(List<List<Card>> playersCards)
+    {
+        List<Combination> res = new ArrayList<Combination>();
+        for (List<Card> cards : playersCards)
+        {
+            res.add(analyzeCombination(cards));
+        }
+        return res;
+    }
+
+    public static Combination analyzeCombination(List<Card> cards)
     {
         //todo maybe move this logic into GameManager
         cards = Utils.sortCards(cards);
         if (isRoyalFlush(cards) != -1)
         {
-            return 118;
+            return new StraightFlush(13);
         }
         int result = isStraightFlush(cards);
         if (result != -1)
         {
-            return 105 + result;
+            return new StraightFlush(result);
         }
         result = isQuads(cards);
         if (result != -1)
         {
-            return 92 + result;
+            return new Quads(result);
         }
         int[] fullHouse = isFullHouse(cards);
         if (fullHouse[0] != -1)
         {
-            return 79 + fullHouse[0];
+            return new FullHouse(fullHouse[0], fullHouse[1]);
         }
         result = isFlush(cards);
         if (result != -1)
         {
-            return 66 + result;
+            return new Flush(result);
         }
         result = isStraight(cards);
         if (result != -1)
         {
-            return 53 + result;
+            return new Straight(result);
         }
         int[] sets = getAllSets(cards);
         if (sets.length > 0)
         {
             result = sets[0];
-            return 39 + result;
+            return new Set(result);
         }
         int pairs[] = getAllPairs(cards);
         if (pairs.length > 1)
         {
-            return 26 + pairs[0];
+            return new TwoPairs(pairs[0], pairs[1]);
         }
         if (pairs.length == 1)
         {
-            return 13 + pairs[0];
+            return new Pair(pairs[0]);
         }
-        return getKicker(cards);
+        return new Kicker(getKicker(cards));
     }
 
     private static int getKicker(List<Card> cards)

@@ -1,7 +1,7 @@
 package logic;
 
-import entities.Combination;
-import entities.Player;
+import entities.combinations.*;
+import entities.players.Player;
 import entities.Card;
 import entities.Table;
 import util.Utils;
@@ -13,27 +13,24 @@ public class GameManager
 {
     public static List<Player> getWinners(List<Player> players, Table table)
     {
-        List<List<Card>> playersCards = Utils.unitePlayersAndTableCards(players, table.getCardsOnTable());
-        int[] playersPowers = new int[players.size()];
-        int maxPower = 0;
-        for (int i = 0; i < players.size(); i++)
+        List<Player> notFoldedPlayers = new ArrayList<Player>();
+        for (Player player : players)
         {
-            if (!players.get(i).isFolded())
-            {
-                playersPowers[i] = CombinationAnalyzer.analyzePower(playersCards.get(i));
-                if (playersPowers[i] > maxPower) maxPower = playersPowers[i];
-            } else
-            {
-                playersPowers[i] = 0;
-            }
+            if (!player.isFolded()) notFoldedPlayers.add(player);
         }
-
-        List<Player> challengers = new ArrayList<Player>();
-        for (int i = 0; i < players.size(); i++)
+        List<List<Card>> playersCards = Utils.unitePlayersAndTableCards(notFoldedPlayers, table.getCardsOnTable());
+        List<Combination> playersCombinations = CombinationAnalyzer.analyzePlayersCombinations(playersCards);
+        int maxPower = 0;
+        for (Combination combination : playersCombinations)
         {
-            if (maxPower == playersPowers[i])
+            if (combination.getPower() > maxPower) maxPower = combination.getPower();
+        }
+        List<Player> challengers = new ArrayList<Player>();
+        for (int i = 0; i < notFoldedPlayers.size(); i++)
+        {
+            if (maxPower == playersCombinations.get(i).getPower())
             {
-                challengers.add(players.get(i));
+                challengers.add(notFoldedPlayers.get(i));
             }
         }
         List<Player> winners = new ArrayList<Player>();
@@ -50,41 +47,35 @@ public class GameManager
     public static List<Player> resolveConflict(List<Player> challengers, List<Card> cardsOnTable)
     {
         List<Player> winners = new ArrayList<Player>();
-        List<List<Card>> winnersCards = Utils.unitePlayersAndTableCards(challengers, cardsOnTable);
-        int conflictPower = CombinationAnalyzer.analyzePower(winnersCards.get(0));
-        Combination conflictCombination = Combination.getCombinationByPower(CombinationAnalyzer.analyzePower(winnersCards.get(0)));
-        switch (conflictCombination)
+        List<List<Card>> challengersCards = Utils.unitePlayersAndTableCards(challengers, cardsOnTable);
+        Combination conflictCombination = CombinationAnalyzer.analyzeCombination(challengersCards.get(0));
+        if (conflictCombination instanceof StraightFlush)
         {
-            case ROYAL_FLUSH:
-                winners = challengers;
-                break;
-            case STRAIGHT_FLUSH:
-                winners = challengers;
-                break;
-            case QUADS:
-                winners = resolveQuadsConflict(challengers, winnersCards, conflictPower);
-                break;
-            case FULL_HOUSE:
-                winners = resolveFullHouseConflict(challengers, winnersCards, conflictPower);
-                break;
-            case FLUSH:
-                winners = resolveFlushConflict(challengers, winnersCards);
-                break;
-            case STRAIGHT:
-                winners = challengers;
-                break;
-            case SET:
-                winners = resolveSetConflict(challengers, winnersCards, conflictPower);
-                break;
-            case TWO_PAIRS:
-                winners = resolvePairsConflict(challengers, winnersCards, conflictPower);
-                break;
-            case PAIR:
-                winners = resolvePairConflict(challengers, winnersCards, conflictPower);
-                break;
-            case KICKER:
-                winners = resolveKickerConflict(challengers, winnersCards, conflictPower);
-                break;
+            winners = challengers;
+        } else if (conflictCombination instanceof Quads)
+        {
+            winners = resolveQuadsConflict(challengers, challengersCards, conflictCombination);
+        } else if (conflictCombination instanceof FullHouse)
+        {
+            winners = resolveFullHouseConflict(challengers, challengersCards, conflictCombination);
+        } else if (conflictCombination instanceof Flush)
+        {
+            winners = resolveFlushConflict(challengers, challengersCards);
+        } else if (conflictCombination instanceof Straight)
+        {
+            winners = challengers;
+        } else if (conflictCombination instanceof Set)
+        {
+            winners = resolveSetConflict(challengers, challengersCards, conflictCombination.getPower());
+        } else if (conflictCombination instanceof TwoPairs)
+        {
+            winners = resolvePairsConflict(challengers, challengersCards, conflictCombination.getPower());
+        } else if (conflictCombination instanceof Pair)
+        {
+            winners = resolvePairConflict(challengers, challengersCards, conflictCombination.getPower());
+        } else if (conflictCombination instanceof Kicker)
+        {
+            winners = resolveKickerConflict(challengers, challengersCards, conflictCombination.getPower());
         }
         return winners;
     }
@@ -239,15 +230,15 @@ public class GameManager
         return winners;
     }
 
-    private static List<Player> resolveFullHouseConflict(List<Player> challengers, List<List<Card>> winnersCards, int conflictPower)
+    private static List<Player> resolveFullHouseConflict(List<Player> challengers, List<List<Card>> challengersCards, Combination conflictCombination)
     {
         List<Player> winners = new ArrayList<Player>();
-        int[] pairNominals = new int[winnersCards.size()];
+        int[] pairNominals = new int[challengersCards.size()];
         List<Card> withoutSet;
-        for (List<Card> cards : winnersCards)
+        for (List<Card> cards : challengersCards)
         {
-            withoutSet = Utils.removeCardsWithPreferredNominal(conflictPower - 79, cards);
-            pairNominals[winnersCards.indexOf(cards)] = CombinationAnalyzer.getAllPairs(withoutSet)[0];
+            withoutSet = Utils.removeCardsWithPreferredNominal(((FullHouse) conflictCombination).getSetNominal(), cards);
+            pairNominals[challengersCards.indexOf(cards)] = CombinationAnalyzer.getAllPairs(withoutSet)[0];
         }
         int maxPair = 0;
         for (int pair : pairNominals)
@@ -261,27 +252,31 @@ public class GameManager
         return winners;
     }
 
-    private static List<Player> resolveQuadsConflict(List<Player> challengers, List<List<Card>> winnersCards, int conflictPower)
+    private static List<Player> resolveQuadsConflict(List<Player> challengers, List<List<Card>> challengersCards, Combination conflictCombination)
     {
         List<Player> winners = new ArrayList<Player>();
+        List<Card> withoutQuads = new ArrayList<Card>();
         int maxKicker = 0;
-        List<Card> withoutQuads;
-        List<List<Card>> winnersCardsWithoutQuads = new ArrayList<List<Card>>();
-        for (List<Card> cards : winnersCards)
+        //removing quads
+        for (List<Card> cards : challengersCards)
         {
-            withoutQuads = Utils.removeCardsWithPreferredNominal(conflictPower - 92, cards);
-            if (withoutQuads.get(0).getNominal() > maxKicker) maxKicker = withoutQuads.get(0).getNominal();
-            winnersCardsWithoutQuads.add(withoutQuads);
+            withoutQuads.add(Utils.removeCardsWithPreferredNominal(((Quads) conflictCombination).getNominal(), cards).get(0));
         }
-        for (List<Card> cards : winnersCardsWithoutQuads)
+        //searching for max kicker
+        for (Card card : withoutQuads)
         {
-            if (cards.get(0).getNominal() == maxKicker)
+            if (card.getNominal() > maxKicker) maxKicker = card.getNominal();
+        }
+        //searching for winners
+        for (Card card : withoutQuads)
+        {
+            if (card.getNominal() == maxKicker)
             {
-                List<List<Card>> temp = new ArrayList<List<Card>>();
-                temp.add(cards);
-                winners.add(Utils.getPlayersByCards(temp, challengers).get(0));
+                if (Utils.getPlayerByCard(card, challengers) != null)
+                    winners.add(Utils.getPlayerByCard(card, challengers));
             }
         }
+        if (winners.size() == 0) return challengers;
         return winners;
     }
 

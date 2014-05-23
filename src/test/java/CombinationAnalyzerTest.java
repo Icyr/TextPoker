@@ -19,7 +19,7 @@ public class CombinationAnalyzerTest
         cards.add(new Card("H", 7));
         cards.add(new Card("S", 9));
         cards.add(new Card("D", 5));
-        Assert.assertEquals(27, CombinationAnalyzer.analyzePower(cards));
+        Assert.assertEquals(27, CombinationAnalyzer.analyzeCombination(cards).getPower());
     }
 
     @Test
@@ -32,7 +32,7 @@ public class CombinationAnalyzerTest
         cards.add(new Card("H", 13));
         cards.add(new Card("H", 14));
         cards.add(new Card("S", 14));
-        Assert.assertEquals(118, CombinationAnalyzer.analyzePower(cards));
+        Assert.assertEquals(118, CombinationAnalyzer.analyzeCombination(cards).getPower());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class CombinationAnalyzerTest
         cards.add(new Card("D", 5));
         cards.add(new Card("H", 6));
         cards.add(new Card("H", 7));
-        Assert.assertEquals(108, CombinationAnalyzer.analyzePower(cards));
+        Assert.assertEquals(108, CombinationAnalyzer.analyzeCombination(cards).getPower());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class CombinationAnalyzerTest
         cards.add(new Card("C", 3));
         cards.add(new Card("H", 3));
         cards.add(new Card("S", 4));
-        Assert.assertEquals(95, CombinationAnalyzer.analyzePower(cards));
+        Assert.assertEquals(95, CombinationAnalyzer.analyzeCombination(cards).getPower());
     }
 
     @Test
@@ -73,7 +73,7 @@ public class CombinationAnalyzerTest
         cards.add(new Card("H", 4));
         cards.add(new Card("S", 5));
         cards.add(new Card("S", 5));
-        Assert.assertEquals(82, CombinationAnalyzer.analyzePower(cards));
+        Assert.assertEquals(82, CombinationAnalyzer.analyzeCombination(cards).getPower());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class CombinationAnalyzerTest
         cards.add(new Card("H", 11));
         cards.add(new Card("H", 13));
         cards.add(new Card("S", 14));
-        Assert.assertEquals(79, CombinationAnalyzer.analyzePower(cards));
+        Assert.assertEquals(79, CombinationAnalyzer.analyzeCombination(cards).getPower());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class CombinationAnalyzerTest
         cards.add(new Card("H", 5));
         cards.add(new Card("H", 6));
         cards.add(new Card("S", 7));
-        Assert.assertEquals(56, CombinationAnalyzer.analyzePower(cards));
+        Assert.assertEquals(56, CombinationAnalyzer.analyzeCombination(cards).getPower());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class CombinationAnalyzerTest
         cards.add(new Card("C", 5));
         cards.add(new Card("S", 7));
         cards.add(new Card("H", 14));
-        Assert.assertEquals(54, CombinationAnalyzer.analyzePower(cards));
+        Assert.assertEquals(54, CombinationAnalyzer.analyzeCombination(cards).getPower());
     }
 
     @Test
@@ -123,7 +123,7 @@ public class CombinationAnalyzerTest
         cards.add(new Card("C", 4));
         cards.add(new Card("H", 4));
         cards.add(new Card("S", 4));
-        Assert.assertEquals(43, CombinationAnalyzer.analyzePower(cards));
+        Assert.assertEquals(43, CombinationAnalyzer.analyzeCombination(cards).getPower());
     }
 
     @Test
@@ -149,6 +149,6 @@ public class CombinationAnalyzerTest
         cards.add(new Card("D", 5));
         cards.add(new Card("C", 7));
         cards.add(new Card("H", 13));
-        Assert.assertEquals(13, CombinationAnalyzer.analyzePower(cards));
+        Assert.assertEquals(13, CombinationAnalyzer.analyzeCombination(cards).getPower());
     }
 }

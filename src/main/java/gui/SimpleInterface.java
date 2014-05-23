@@ -1,6 +1,5 @@
 package gui;
 
-import entities.Combination;
 import entities.Hand;
 import entities.Table;
 
@@ -44,9 +43,15 @@ public class SimpleInterface
 
     public void createGUI()
     {
-        JFrame.setDefaultLookAndFeelDecorated(true);
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e)
+        {
+           System.out.println(e.toString());
+        }
         frame = new JFrame("Poker GUI");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         panel = new JPanel();
         panel.setPreferredSize(new Dimension(380, 360));
@@ -105,15 +110,15 @@ public class SimpleInterface
         raiseTField.setEnabled(false);
         handText.setBounds(210, 150, 100, 30);
         handLabel.setBounds(210, 170, 100, 30);
-        tableText.setBounds(70, 300, 100, 30);
-        tableLabel.setBounds(70, 320, 140, 30);
-        betText.setBounds(210, 190, 100, 30);
-        betLabel.setBounds(210, 210, 100, 30);
+        tableText.setBounds(210, 190, 100, 30);
+        tableLabel.setBounds(210, 210, 160, 30);
+        betText.setBounds(210, 230, 100, 30);
+        betLabel.setBounds(210, 250, 100, 30);
         bankText.setBounds(10, 300, 100, 30);
         bankLabel.setBounds(10, 320, 100, 30);
-        cashText.setBounds(280, 190, 100, 30);
-        cashLabel.setBounds(280, 210, 100, 30);
-        combinationLabel.setBounds(210,230,100,30);
+        cashText.setBounds(280, 230, 100, 30);
+        cashLabel.setBounds(280, 250, 100, 30);
+        combinationLabel.setBounds(210, 270, 100, 30);
 
         panel.add(jsp);
         panel.add(foldButton);
@@ -137,7 +142,7 @@ public class SimpleInterface
         frame.setVisible(true);
     }
 
-    public void printText(String newText)
+    public void printlnText(String newText)
     {
         Document doc = textPane.getDocument();
         try
@@ -161,7 +166,7 @@ public class SimpleInterface
     public void prepareForPlayersTurn()
     {
         enableDecisionButtons();
-        printText("Your turn...");
+        printlnText("Your turn...");
         raiseTField.setText("");
     }
 
@@ -227,8 +232,8 @@ public class SimpleInterface
         cashLabel.setText(value + "");
     }
 
-    public void setCombinationLabel(Combination combination)
+    public void setCombinationLabel(String combination)
     {
-        combinationLabel.setText(combination.toString());
+        combinationLabel.setText(combination);
     }
 }

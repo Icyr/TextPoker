@@ -1,6 +1,6 @@
 package util;
 
-import entities.Player;
+import entities.players.Player;
 import entities.Card;
 
 import java.util.ArrayList;
@@ -100,5 +100,17 @@ public class Utils
         //these cards were on table, so we return all players
         if (res.size() == 0) return players;
         return res;
+    }
+
+    public static Player getPlayerByCard(Card card, List<Player> players)
+    {
+        for (Player player : players)
+        {
+            if (player.getHand().getCards().contains(card))
+            {
+                return player;
+            }
+        }
+        return null;
     }
 }
