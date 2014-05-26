@@ -1,7 +1,7 @@
 package entities.players;
 
 import entities.*;
-import gui.SimpleInterface;
+import gui.TextualInterface;
 import logic.CombinationAnalyzer;
 
 import java.util.ArrayList;
@@ -9,14 +9,14 @@ import java.util.List;
 
 public class HumanPlayer extends AbstractPlayer
 {
-    private SimpleInterface gui;
+    private TextualInterface gui;
 
     public HumanPlayer(int cash)
     {
         this.cash = cash;
     }
 
-    public HumanPlayer(int cash, SimpleInterface gui)
+    public HumanPlayer(int cash, TextualInterface gui)
     {
         this.cash = cash;
         this.gui = gui;

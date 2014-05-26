@@ -5,6 +5,7 @@ import entities.combinations.*;
 import util.Utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class CombinationAnalyzer
@@ -322,5 +323,10 @@ public class CombinationAnalyzer
         }
 
         return -1;
+    }
+
+    public static Combination getHighestCombination(Collection<Combination> values)
+    {
+        return null;  //To change body of created methods use File | Settings | File Templates.
     }
 }

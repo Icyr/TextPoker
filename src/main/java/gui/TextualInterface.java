@@ -11,46 +11,45 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 
-public class SimpleInterface
+public class TextualInterface implements Interface
 {
-    JTextPane textPane;
-    JFrame frame;
-    JPanel panel;
-    JScrollPane jsp;
-    JButton foldButton;
-    JButton callButton;
-    JButton raiseButton;
-    JTextField raiseTField;
-    JLabel handText;
-    JLabel handLabel;
-    JLabel tableText;
-    JLabel tableLabel;
-    JLabel betText;
-    JLabel betLabel;
-    JLabel bankText;
-    JLabel bankLabel;
-    JLabel cashText;
-    JLabel cashLabel;
-    JLabel combinationLabel;
+    protected JTextPane textPane;
+    protected JFrame frame;
+    protected JPanel panel;
+    protected JScrollPane jsp;
+    protected JButton foldButton;
+    protected JButton callButton;
+    protected JButton raiseButton;
+    protected JTextField raiseTField;
+    protected JLabel handText;
+    protected JLabel handLabel;
+    protected JLabel tableText;
+    protected JLabel tableLabel;
+    protected JLabel betText;
+    protected JLabel betLabel;
+    protected JLabel bankText;
+    protected JLabel bankLabel;
+    protected JLabel cashText;
+    protected JLabel cashLabel;
+    protected JLabel combinationLabel;
 
+    private String decision = "";
 
-    String decision = "";
-
-    public SimpleInterface()
+    public TextualInterface()
     {
         createGUI();
     }
 
-    public void createGUI()
+    private void createGUI()
     {
         try
         {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e)
         {
-           System.out.println(e.toString());
+            System.out.println(e.toString());
         }
-        frame = new JFrame("Poker GUI");
+        frame = new JFrame("Poker Textual Interface");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         panel = new JPanel();

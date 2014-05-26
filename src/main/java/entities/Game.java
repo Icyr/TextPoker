@@ -1,7 +1,7 @@
 package entities;
 
 import entities.players.Player;
-import gui.SimpleInterface;
+import gui.TextualInterface;
 import logic.GameManager;
 
 import java.util.ArrayList;
@@ -19,9 +19,9 @@ public class Game
     private int maxBet;
     private int blindSize;
 
-    private SimpleInterface gui;
+    private TextualInterface gui;
 
-    public Game(int blindSize, SimpleInterface gameGUI)
+    public Game(int blindSize, TextualInterface gameGUI)
     {
         this.gui = gameGUI;
         players = new ArrayList<Player>();

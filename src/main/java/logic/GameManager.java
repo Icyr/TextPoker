@@ -7,7 +7,9 @@ import entities.Table;
 import util.Utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GameManager
 {
@@ -18,30 +20,20 @@ public class GameManager
         {
             if (!player.isFolded()) notFoldedPlayers.add(player);
         }
-        List<List<Card>> playersCards = Utils.unitePlayersAndTableCards(notFoldedPlayers, table.getCardsOnTable());
-        List<Combination> playersCombinations = CombinationAnalyzer.analyzePlayersCombinations(playersCards);
-        int maxPower = 0;
-        for (Combination combination : playersCombinations)
+        Map<List<Card>, Combination> playersCardsAndCombinations = new HashMap<List<Card>, Combination>();
+        for (Player player : notFoldedPlayers)
         {
-            if (combination.getPower() > maxPower) maxPower = combination.getPower();
+            List<Card> playersCards = Utils.getPlayersCards(player, table);
+            playersCardsAndCombinations.put(playersCards, CombinationAnalyzer.analyzeCombination(playersCards));
         }
+        Combination highestCombination = CombinationAnalyzer.getHighestCombination(playersCardsAndCombinations.values());
         List<Player> challengers = new ArrayList<Player>();
-        for (int i = 0; i < notFoldedPlayers.size(); i++)
+        for (List<Card> cards : playersCardsAndCombinations.keySet())
         {
-            if (maxPower == playersCombinations.get(i).getPower())
-            {
-                challengers.add(notFoldedPlayers.get(i));
-            }
+            if (playersCardsAndCombinations.get(cards).equals(highestCombination))
+                challengers.add(Utils.getPlayerByCards(players, table, cards));
         }
-        List<Player> winners = new ArrayList<Player>();
-        if (challengers.size() > 1)
-        {
-            winners = resolveConflict(challengers, table.getCardsOnTable());
-        } else if (challengers.size() == 1)
-        {
-            winners = challengers;
-        }
-        return winners;
+        return resolveConflict(challengers, table.getCardsOnTable());
     }
 
     public static List<Player> resolveConflict(List<Player> challengers, List<Card> cardsOnTable)
