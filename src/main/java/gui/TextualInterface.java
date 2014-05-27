@@ -154,7 +154,7 @@ public class TextualInterface implements Interface
         textPane.setCaretPosition(doc.getLength());
     }
 
-    public void enableDecisionButtons()
+    private void enableDecisionButtons()
     {
         foldButton.setEnabled(true);
         callButton.setEnabled(true);
@@ -162,28 +162,19 @@ public class TextualInterface implements Interface
         raiseTField.setEnabled(true);
     }
 
-    public void prepareForPlayersTurn()
+    private void prepareForPlayersTurn()
     {
         enableDecisionButtons();
         printlnText("Your turn...");
         raiseTField.setText("");
     }
 
-    public void disableDecisionButtons()
+    private void disableDecisionButtons()
     {
         foldButton.setEnabled(false);
         callButton.setEnabled(false);
         raiseButton.setEnabled(false);
         raiseTField.setEnabled(false);
-    }
-
-    public String getDecision()
-    {
-        prepareForPlayersTurn();
-        String curDecision = readDecision();
-        disableDecisionButtons();
-        decision = "";
-        return curDecision;
     }
 
     private String readDecision()
@@ -201,22 +192,31 @@ public class TextualInterface implements Interface
         return decision;
     }
 
-    public void setHandLabel(Hand hand)
+    public String getDecision()
+    {
+        prepareForPlayersTurn();
+        String curDecision = readDecision();
+        disableDecisionButtons();
+        decision = "";
+        return curDecision;
+    }
+
+    public void setHand(Hand hand)
     {
         handLabel.setText(hand.toString());
     }
 
-    public void setTableLabel(Table table)
+    public void setTable(Table table)
     {
         tableLabel.setText(table.tableCardsToString());
     }
 
-    public void setBetLabel(int value)
+    public void setBetAmount(int value)
     {
         betLabel.setText(value + "");
     }
 
-    public void setBankLabel(int value)
+    public void setBank(int value)
     {
         bankLabel.setText(value + "");
     }
@@ -226,12 +226,12 @@ public class TextualInterface implements Interface
         callButton.setText("Call (" + value + ")");
     }
 
-    public void setCashLabel(int value)
+    public void setCash(int value)
     {
         cashLabel.setText(value + "");
     }
 
-    public void setCombinationLabel(String combination)
+    public void setCombination(String combination)
     {
         combinationLabel.setText(combination);
     }

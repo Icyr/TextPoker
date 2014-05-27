@@ -32,4 +32,15 @@ public class FullHouse implements Combination
     {
         return pairNominal;
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other.getClass().equals(FullHouse.class))
+        {
+            FullHouse otherFullHouse = (FullHouse) other;
+            return this.setNominal == otherFullHouse.setNominal && this.pairNominal == otherFullHouse.pairNominal;
+        }
+        return false;
+    }
 }

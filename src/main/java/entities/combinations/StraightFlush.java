@@ -20,4 +20,15 @@ public class StraightFlush implements Combination
     {
         return 105 + nominal;
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other.getClass().equals(StraightFlush.class))
+        {
+            StraightFlush otherStraightFlush = (StraightFlush) other;
+            return this.nominal == otherStraightFlush.nominal;
+        }
+        return false;
+    }
 }

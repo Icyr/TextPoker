@@ -25,4 +25,15 @@ public class Quads implements Combination
     {
         return this.nominal;
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other.getClass().equals(Quads.class))
+        {
+            Quads otherQuads = (Quads) other;
+            return this.nominal == otherQuads.nominal;
+        }
+        return false;
+    }
 }

@@ -1,6 +1,7 @@
 package entities;
 
 import entities.players.Player;
+import gui.Interface;
 import gui.TextualInterface;
 import logic.GameManager;
 
@@ -19,7 +20,7 @@ public class Game
     private int maxBet;
     private int blindSize;
 
-    private TextualInterface gui;
+    private Interface gui;
 
     public Game(int blindSize, TextualInterface gameGUI)
     {
@@ -28,8 +29,8 @@ public class Game
         dealer = new Dealer();
         this.blindSize = blindSize;
         button = 0;
-        gui.setBankLabel(0);
-        gui.setBetLabel(0);
+        gui.setBank(0);
+        gui.setBetAmount(0);
     }
 
     public void addPlayer(Player player)
@@ -117,13 +118,13 @@ public class Game
                     winner.addToCash(wonAmount);
                     gui.printlnText("Player " + players.indexOf(winner) + " won " + wonAmount);
                     bank -= wonAmount;
-                    gui.setBankLabel(bank);
+                    gui.setBank(bank);
                 } else
                 {
                     winner.addToCash(bank);
                     gui.printlnText("Player " + players.indexOf(winner) + " won " + bank);
                     bank = 0;
-                    gui.setBankLabel(0);
+                    gui.setBank(0);
                 }
                 if (bank > 0)
                 {
@@ -221,7 +222,7 @@ public class Game
     {
         maxBet = blindSize * 2;
         bank = blindSize * 3;
-        gui.setBankLabel(blindSize * 3);
+        gui.setBank(blindSize * 3);
         int playerCount = players.size();
         if (button < playerCount - 2)
         {
@@ -274,7 +275,7 @@ public class Game
     {
         maxBet = 0;
         bank = 0;
-        gui.setBankLabel(0);
+        gui.setBank(0);
         for (Player player : players)
         {
             player.setCurrentBet(0);
@@ -294,7 +295,7 @@ public class Game
     public void setBank(int amount)
     {
         this.bank = amount;
-        gui.setBankLabel(amount);
+        gui.setBank(amount);
     }
 
 
@@ -435,12 +436,12 @@ public class Game
                 {
                     player.unsafeAddToCurrentBet(callValue);
                     bank += callValue;
-                    gui.setBankLabel(bank);
+                    gui.setBank(bank);
                     gui.printlnText(players.indexOf(player) + " player called " + callValue);
                 } else
                 {
                     bank = bank + player.getCash();
-                    gui.setBankLabel(bank);
+                    gui.setBank(bank);
                     gui.printlnText(players.indexOf(player) + " player called " + player.getCash() + ". ALL IN!");
                     player.unsafeAddToCurrentBet(player.getCash());
                     player.setAllIn(true);
@@ -459,13 +460,13 @@ public class Game
                 player.unsafeAddToCurrentBet(raiseAmount);
                 maxBet = player.getCurrentBet();
                 bank = bank + raiseAmount + callValue;
-                gui.setBankLabel(bank);
+                gui.setBank(bank);
                 gui.printlnText(players.indexOf(player) + " player raised for " + raiseAmount);
                 wasRaised = true;
             } else
             {
                 bank = bank + player.getCash();
-                gui.setBankLabel(bank);
+                gui.setBank(bank);
                 gui.printlnText(players.indexOf(player) + " player raised for " + player.getCash() + ". ALL IN!");
                 player.unsafeAddToCurrentBet(player.getCash());
                 maxBet = player.getCurrentBet();

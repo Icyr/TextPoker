@@ -19,4 +19,15 @@ public class Pair implements Combination
     {
         return 13 + nominal;
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other.getClass().equals(Pair.class))
+        {
+            Pair otherPair = (Pair) other;
+            return this.nominal == otherPair.nominal;
+        }
+        return false;
+    }
 }

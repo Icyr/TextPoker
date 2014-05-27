@@ -12,7 +12,7 @@ public class Card
     {
         this.color = color;
         this.nominal = nominal;
-        icon = new ImageIcon(getClass().getResource("\\cards\\" + nominal + color + ".png"));
+        //icon = new ImageIcon(getClass().getResource("\\cards\\" + nominal + color + ".png"));
     }
 
     public String getColor()

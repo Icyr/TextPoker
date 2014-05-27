@@ -20,4 +20,14 @@ public class Flush implements Combination
         return 66 + nominal;
     }
 
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other.getClass().equals(Flush.class))
+        {
+            Flush otherFlush = (Flush) other;
+            return this.nominal == otherFlush.nominal;
+        }
+        return false;
+    }
 }

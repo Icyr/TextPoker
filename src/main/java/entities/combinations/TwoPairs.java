@@ -21,4 +21,15 @@ public class TwoPairs implements Combination
     {
         return 26 + higherNominal;
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other.getClass().equals(TwoPairs.class))
+        {
+            TwoPairs otherTwoPairs = (TwoPairs) other;
+            return this.higherNominal == otherTwoPairs.higherNominal && this.lowerNominal == otherTwoPairs.lowerNominal;
+        }
+        return false;
+    }
 }

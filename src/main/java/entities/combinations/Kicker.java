@@ -19,4 +19,15 @@ public class Kicker implements Combination
     {
         return nominal;
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other.getClass().equals(Kicker.class))
+        {
+            Kicker otherKicker = (Kicker) other;
+            return this.nominal == otherKicker.nominal;
+        }
+        return false;
+    }
 }

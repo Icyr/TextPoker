@@ -10,23 +10,13 @@ import java.util.List;
 
 public class CombinationAnalyzer
 {
-    public static List<Combination> analyzePlayersCombinations(List<List<Card>> playersCards)
-    {
-        List<Combination> res = new ArrayList<Combination>();
-        for (List<Card> cards : playersCards)
-        {
-            res.add(analyzeCombination(cards));
-        }
-        return res;
-    }
-
     public static Combination analyzeCombination(List<Card> cards)
     {
         //todo maybe move this logic into GameManager
         cards = Utils.sortCards(cards);
         if (isRoyalFlush(cards) != -1)
         {
-            return new StraightFlush(13);
+            return new StraightFlush(10);
         }
         int result = isStraightFlush(cards);
         if (result != -1)
@@ -325,8 +315,21 @@ public class CombinationAnalyzer
         return -1;
     }
 
-    public static Combination getHighestCombination(Collection<Combination> values)
+    public static Combination getHighestCombination(List<PlayersCardsAndCombination> playersCardsAndCombinations)
     {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+        Combination highestCombination = new Combination()
+        {
+            @Override
+            public int getPower()
+            {
+                return 0;
+            }
+        };
+        for (PlayersCardsAndCombination playersCardsAndCombination : playersCardsAndCombinations)
+        {
+            if (playersCardsAndCombination.combination.getPower() > highestCombination.getPower())
+                highestCombination = playersCardsAndCombination.combination;
+        }
+        return highestCombination;
     }
 }

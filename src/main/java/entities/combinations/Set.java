@@ -20,4 +20,15 @@ public class Set implements Combination
     {
         return 39 + nominal;
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other.getClass().equals(Set.class))
+        {
+            Set otherSet = (Set) other;
+            return this.nominal == otherSet.nominal;
+        }
+        return false;
+    }
 }

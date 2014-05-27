@@ -19,4 +19,15 @@ public class Straight implements Combination
     {
         return 53 + nominal;
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other.getClass().equals(Straight.class))
+        {
+            Straight otherStraight = (Straight) other;
+            return this.nominal == otherStraight.nominal;
+        }
+        return false;
+    }
 }

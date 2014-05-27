@@ -7,9 +7,7 @@ import entities.Table;
 import util.Utils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GameManager
 {
@@ -20,20 +18,23 @@ public class GameManager
         {
             if (!player.isFolded()) notFoldedPlayers.add(player);
         }
-        Map<List<Card>, Combination> playersCardsAndCombinations = new HashMap<List<Card>, Combination>();
+        List<PlayersCardsAndCombination> playersCardsAndCombinations = new ArrayList<PlayersCardsAndCombination>();
         for (Player player : notFoldedPlayers)
         {
             List<Card> playersCards = Utils.getPlayersCards(player, table);
-            playersCardsAndCombinations.put(playersCards, CombinationAnalyzer.analyzeCombination(playersCards));
+            playersCardsAndCombinations.add(new PlayersCardsAndCombination(player, playersCards, CombinationAnalyzer.analyzeCombination(playersCards)));
         }
-        Combination highestCombination = CombinationAnalyzer.getHighestCombination(playersCardsAndCombinations.values());
-        List<Player> challengers = new ArrayList<Player>();
-        for (List<Card> cards : playersCardsAndCombinations.keySet())
+        Combination highestCombination = CombinationAnalyzer.getHighestCombination(playersCardsAndCombinations);
+        List<Player> winners = new ArrayList<Player>();
+        for (PlayersCardsAndCombination playersCardsAndCombination : playersCardsAndCombinations)
         {
-            if (playersCardsAndCombinations.get(cards).equals(highestCombination))
-                challengers.add(Utils.getPlayerByCards(players, table, cards));
+            if (playersCardsAndCombination.combination.equals(highestCombination))
+                winners.add(playersCardsAndCombination.player);
         }
-        return resolveConflict(challengers, table.getCardsOnTable());
+        if (winners.size()>1){
+            winners = resolveConflict(winners, table.getCardsOnTable());
+        }
+        return winners;
     }
 
     public static List<Player> resolveConflict(List<Player> challengers, List<Card> cardsOnTable)
@@ -131,7 +132,7 @@ public class GameManager
         for (int i = 0; i < withoutMaxPair.size(); i++)
         {
             List<Card> curCards = withoutMaxPair.get(i);
-            secondPairs[i] = CombinationAnalyzer.getAllPairs(curCards)[0];
+            secondPairs[i] = CombinationAnalyzer.getAllPairs(curCards)[0];//REFACTOR THIS IS PRIVATE
             if (secondPairs[i] > maxPairNominal)
                 maxPairNominal = secondPairs[i];
         }
@@ -230,7 +231,7 @@ public class GameManager
         for (List<Card> cards : challengersCards)
         {
             withoutSet = Utils.removeCardsWithPreferredNominal(((FullHouse) conflictCombination).getSetNominal(), cards);
-            pairNominals[challengersCards.indexOf(cards)] = CombinationAnalyzer.getAllPairs(withoutSet)[0];
+            pairNominals[challengersCards.indexOf(cards)] = CombinationAnalyzer.getAllPairs(withoutSet)[0];//REFACTOR THIS IS PRIVATE
         }
         int maxPair = 0;
         for (int pair : pairNominals)
