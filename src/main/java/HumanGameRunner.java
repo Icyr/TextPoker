@@ -1,16 +1,14 @@
-import entities.ComputerPlayer;
+import entities.players.ComputerPlayer;
 import entities.Game;
-import entities.HumanPlayer;
-import entities.Player;
-import gui.SimpleInterface;
-
-import java.util.Scanner;
+import entities.players.HumanPlayer;
+import entities.players.Player;
+import gui.TextualInterface;
 
 public class HumanGameRunner
 {
     public static void main(String[] args)
     {
-        SimpleInterface gui = new SimpleInterface();
+        TextualInterface gui = new TextualInterface();
         Player player1 = new HumanPlayer(1000, gui);
         Player player2 = new ComputerPlayer(1000, 0.05, 0.04);
         Player player3 = new ComputerPlayer(1000, 0.1, 0.03);

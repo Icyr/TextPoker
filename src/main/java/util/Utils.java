@@ -1,6 +1,7 @@
 package util;
 
-import entities.Player;
+import entities.Table;
+import entities.players.Player;
 import entities.Card;
 
 import java.util.ArrayList;
@@ -21,6 +22,27 @@ public class Utils
             playersCards.add(temp);
         }
         return playersCards;
+    }
+
+    public static List<Card> getPlayersCards(Player player, Table table)
+    {
+        List<Card> playersCards = new ArrayList<Card>();
+        playersCards.addAll(player.getHand().getCards());
+        playersCards.addAll(table.getCardsOnTable());
+        return playersCards;
+    }
+
+    public static Player getPlayerByCards(List<Player> players, Table table, List<Card> cards)
+    {
+        cards.removeAll(table.getCardsOnTable());
+        for (Player player : players)
+        {
+            if (player.getHand().getCards().get(0).equals(cards.get(0)) && player.getHand().getCards().get(1).equals(cards.get(1))) //can be wrong
+            {
+                return player;
+            }
+        }
+        return null;
     }
 
     public static List<Card> sortCards(List<Card> cards)
@@ -100,5 +122,17 @@ public class Utils
         //these cards were on table, so we return all players
         if (res.size() == 0) return players;
         return res;
+    }
+
+    public static Player getPlayerByCard(Card card, List<Player> players)
+    {
+        for (Player player : players)
+        {
+            if (player.getHand().getCards().contains(card))
+            {
+                return player;
+            }
+        }
+        return null;
     }
 }

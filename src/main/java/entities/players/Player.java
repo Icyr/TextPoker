@@ -1,4 +1,9 @@
-package entities;
+package entities.players;
+
+import entities.BankruptException;
+import entities.Hand;
+import entities.Table;
+import entities.combinations.Combination;
 
 public interface Player
 {

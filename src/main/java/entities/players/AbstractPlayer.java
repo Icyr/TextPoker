@@ -1,5 +1,10 @@
-package entities;
+package entities.players;
 
+import entities.BankruptException;
+import entities.Card;
+import entities.Hand;
+import entities.Table;
+import entities.combinations.Combination;
 import logic.CombinationAnalyzer;
 
 import java.util.ArrayList;
@@ -102,7 +107,7 @@ public abstract class AbstractPlayer implements Player
         List<Card> playersCards = new ArrayList<Card>();
         playersCards.addAll(hand.getCards());
         playersCards.addAll(table.getCardsOnTable());
-        return Combination.getCombinationByPower(CombinationAnalyzer.analyzePower(playersCards));
+        return CombinationAnalyzer.analyzeCombination(playersCards);
     }
 
     public boolean equals(Object other)

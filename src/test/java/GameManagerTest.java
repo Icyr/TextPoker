@@ -1,6 +1,6 @@
-import entities.Player;
+import entities.players.Player;
 import entities.Card;
-import entities.ComputerPlayer;
+import entities.players.ComputerPlayer;
 import entities.Hand;
 import logic.GameManager;
 import org.junit.Assert;
@@ -145,7 +145,33 @@ public class GameManagerTest
     }
 
     @Test
-    public void testQuadsConflict()
+    public void testQuadsConflictTableQuads()
+    {
+        List<Card> tableCards = new ArrayList<Card>();
+        tableCards.add(new Card("H", 14));
+        tableCards.add(new Card("S", 14));
+        tableCards.add(new Card("D", 14));
+        tableCards.add(new Card("C", 14));
+        tableCards.add(new Card("H", 10));
+        List<Card> cardsOne = new ArrayList<Card>();
+        cardsOne.add(new Card("H", 9));
+        cardsOne.add(new Card("S", 2));
+        Player playerOne = new ComputerPlayer();
+        playerOne.setHand(new Hand(cardsOne));
+        List<Card> cardsTwo = new ArrayList<Card>();
+        cardsTwo.add(new Card("H", 8));
+        cardsTwo.add(new Card("S", 3));
+        Player playerTwo = new ComputerPlayer();
+        playerTwo.setHand(new Hand(cardsTwo));
+        List<Player> test = new ArrayList<Player>();
+        test.add(playerOne);
+        test.add(playerTwo);
+        List<Player> winners = GameManager.resolveConflict(test, tableCards);
+        Assert.assertEquals(2, winners.size());
+    }
+
+    @Test
+    public void testQuadsConflictTableQuadsWithKicker()
     {
         List<Card> tableCards = new ArrayList<Card>();
         tableCards.add(new Card("H", 14));
@@ -167,7 +193,7 @@ public class GameManagerTest
         test.add(playerOne);
         test.add(playerTwo);
         List<Player> winners = GameManager.resolveConflict(test, tableCards);
-        Assert.assertEquals(winners.size(), 1);
+        Assert.assertEquals(1, winners.size());
         Assert.assertEquals(winners.get(0), playerOne);
     }
 

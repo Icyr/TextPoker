@@ -1,5 +1,5 @@
-import entities.ComputerPlayer;
-import entities.Player;
+import entities.players.ComputerPlayer;
+import entities.players.Player;
 import entities.Card;
 import entities.Hand;
 import org.junit.Assert;

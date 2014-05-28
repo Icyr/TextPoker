@@ -1,44 +1,58 @@
-package entities;
+package entities.players;
 
-import gui.SimpleInterface;
+import entities.*;
+import gui.Interface;
+import gui.TextualInterface;
+import logic.CombinationAnalyzer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HumanPlayer extends AbstractPlayer
 {
-    private SimpleInterface gui;
+    private Interface gui;
 
     public HumanPlayer(int cash)
     {
         this.cash = cash;
     }
 
-    public HumanPlayer(int cash, SimpleInterface gui)
+    public HumanPlayer(int cash, Interface gui)
     {
         this.cash = cash;
         this.gui = gui;
+        gui.setCash(cash);
     }
 
     public void setCurrentBet(int currentBet)
     {
         super.setCurrentBet(currentBet);
-        gui.setBetLabel(currentBet);
+        gui.setBetAmount(currentBet);
+        gui.setCash(cash);
     }
 
     public void addToCurrentBet(int value) throws BankruptException
     {
         super.addToCurrentBet(value);
-        gui.setBetLabel(currentBet);
+        gui.setBetAmount(currentBet);
+        gui.setCash(cash);
     }
 
     public void unsafeAddToCurrentBet(int value)
     {
         super.unsafeAddToCurrentBet(value);
-        gui.setBetLabel(currentBet);
+        gui.setBetAmount(currentBet);
+        gui.setCash(cash);
     }
 
     public String makeDecision(Hand hand, Table table, int bank, int currentRaise, int blindSize, int playersCount)
     {
-        gui.setHandLabel(hand);
-        gui.setTableLabel(table);
+        gui.setHand(hand);
+        gui.setTable(table);
+        List<Card> playersCards = new ArrayList<Card>();
+        playersCards.addAll(hand.getCards());
+        playersCards.addAll(table.getCardsOnTable());
+        gui.setCombination(CombinationAnalyzer.analyzeCombination(playersCards).toString());
         return gui.getDecision();
     }
 
