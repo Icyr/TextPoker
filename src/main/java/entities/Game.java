@@ -26,7 +26,15 @@ public class Game
     {
         this.gui = gameGUI;
         players = new ArrayList<Player>();
-        dealer = new Dealer();
+        this.blindSize = blindSize;
+        button = 0;
+
+    }
+
+    public Game(int blindSize, TextualInterface gameGUI, List<Player> players)
+    {
+        this.gui = gameGUI;
+        this.players = players;
         this.blindSize = blindSize;
         button = 0;
         gui.setBank(0);
@@ -45,6 +53,8 @@ public class Game
 
     public void play()
     {
+        gui.setBank(0);
+        gui.setBetAmount(0);
         while (players.size() > 1)
         {
             prepareForRound();
@@ -102,7 +112,7 @@ public class Game
         deal();
     }
 
-    public void distributeWonMoney(List<Player> winners)
+    private void distributeWonMoney(List<Player> winners)
     {
         for (Player winner : winners)
         {
@@ -150,7 +160,7 @@ public class Game
         zeroBets();
     }
 
-    public void removeBankruptPlayers()
+    private void removeBankruptPlayers()
     {
         List<Player> playersInGame = new ArrayList<Player>();
         for (int i = 0; i < players.size(); i++)
@@ -169,7 +179,7 @@ public class Game
         players = playersInGame;
     }
 
-    public int calculateAllInWinAmount(Player winner, List<Player> players)
+    private int calculateAllInWinAmount(Player winner, List<Player> players)
     {
         int wonMoney = 0;
         for (Player player : players)
@@ -186,7 +196,7 @@ public class Game
         return wonMoney;
     }
 
-    public void deal()
+    private void deal()
     {
         gui.printlnText("Dealing cards..");
         for (Player player : players)
@@ -196,7 +206,7 @@ public class Game
         }
     }
 
-    public void moveButton()
+    private void moveButton()
     {
         button++;
         if (button == players.size())
@@ -218,7 +228,7 @@ public class Game
         }
     }
 
-    public void betBlinds()
+    private void betBlinds()
     {
         maxBet = blindSize * 2;
         bank = blindSize * 3;
@@ -271,7 +281,7 @@ public class Game
 
     }
 
-    public void zeroBets()
+    private void zeroBets()
     {
         maxBet = 0;
         bank = 0;
@@ -282,7 +292,7 @@ public class Game
         }
     }
 
-    public void discardHands()
+    private void discardHands()
     {
         for (Player player : players)
         {
@@ -292,14 +302,7 @@ public class Game
         }
     }
 
-    public void setBank(int amount)
-    {
-        this.bank = amount;
-        gui.setBank(amount);
-    }
-
-
-    public boolean circleEnded()
+    private boolean circleEnded()
     {
         for (Player player : players)
         {
@@ -308,7 +311,7 @@ public class Game
         return true;
     }
 
-    public void doTurns(List<Player> players, Table table, int underTheGun)
+    private void doTurns(List<Player> players, Table table, int underTheGun)
     {
         doOneCircle(players, table, underTheGun, false);
         while (!circleEnded())
@@ -355,7 +358,7 @@ public class Game
 
     }
 
-    public int calculateUnderTheGun(int playersCount, int button)
+    private int calculateUnderTheGun(int playersCount, int button)
     {
         int underTheGun = 0;
         if (playersCount > 2)
@@ -377,7 +380,7 @@ public class Game
         return underTheGun;
     }
 
-    public boolean didOtherPlayersFold(Player curPlayer)
+    private boolean didOtherPlayersFold(Player curPlayer)
     {
         int foldedCount = 0;
         for (Player player : players)
@@ -390,18 +393,7 @@ public class Game
         return foldedCount == players.size() - 1;
     }
 
-    //it works wrong but when it works right everything else is working wrong lol
-    public int getActivePlayersCount()
-    {
-        int activeCount = 0;
-        for (Player player : players)
-        {
-            if (!player.isFolded() && !player.isAllIn()) activeCount++;
-        }
-        return activeCount;
-    }
-
-    public int getNotFoldedPlayersCount()
+    private int getNotFoldedPlayersCount()
     {
         int activeCount = 0;
         for (Player player : players)
@@ -411,7 +403,7 @@ public class Game
         return activeCount;
     }
 
-    public boolean playersTurn(Player player, Table table)
+    private boolean playersTurn(Player player, Table table)
     {
         boolean wasRaised = false;
         int callValue = maxBet - player.getCurrentBet();

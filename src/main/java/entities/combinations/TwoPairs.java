@@ -5,10 +5,10 @@ public class TwoPairs implements Combination
     private final int higherNominal;
     private final int lowerNominal;
 
-    public TwoPairs(int nom1, int nom2)
+    public TwoPairs(int higherNominal, int lowerNominal)
     {
-        higherNominal = nom1;
-        lowerNominal = nom2;
+        this.higherNominal = higherNominal;
+        this.lowerNominal = lowerNominal;
     }
 
     public String toString()
