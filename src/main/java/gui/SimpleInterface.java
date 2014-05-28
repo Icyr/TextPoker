@@ -30,6 +30,8 @@ public class SimpleInterface
     JLabel callLabel;
     JLabel bankText;
     JLabel bankLabel;
+    JLabel maxBetText;
+    JLabel maxBetLabel;
 
     String decision = "";
 
@@ -63,6 +65,8 @@ public class SimpleInterface
         callLabel = new JLabel();
         bankText = new JLabel("Bank:");
         bankLabel = new JLabel();
+        maxBetText = new JLabel("Max bet:");
+        maxBetLabel = new JLabel();
 
         jsp.setBounds(5, 5, 200, 290);
         foldButton.setBounds(210, 5, 100, 30);
@@ -106,6 +110,8 @@ public class SimpleInterface
         bankText.setBounds(10, 300, 100, 30);
         bankLabel.setBounds(10, 320, 100, 30);
         callLabel.setBounds(210, 85, 100, 30);
+        maxBetText.setBounds(210, 260, 100, 30);
+        maxBetLabel.setBounds(210, 280, 100, 30);
 
         panel.add(jsp);
         panel.add(foldButton);
@@ -121,6 +127,8 @@ public class SimpleInterface
         panel.add(bankText);
         panel.add(bankLabel);
         panel.add(callLabel);
+        panel.add(maxBetLabel);
+        panel.add(maxBetText);
 
         frame.getContentPane().add(panel);
         frame.pack();
@@ -140,7 +148,7 @@ public class SimpleInterface
         textPane.setCaretPosition(doc.getLength());
     }
 
-    public void enableDecisionButtons()
+    private void enableDecisionButtons()
     {
         foldButton.setEnabled(true);
         callButton.setEnabled(true);
@@ -148,7 +156,7 @@ public class SimpleInterface
         raiseTField.setEnabled(true);
     }
 
-    public void disableDecisionButtons()
+    private void disableDecisionButtons()
     {
         foldButton.setEnabled(false);
         callButton.setEnabled(false);
@@ -191,5 +199,10 @@ public class SimpleInterface
     public void setBankLabel(int value)
     {
         bankLabel.setText(value + "");
+    }
+
+    public void setMaxBetLabel(int value)
+    {
+        maxBetLabel.setText(value + "");
     }
 }

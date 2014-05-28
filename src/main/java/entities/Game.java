@@ -93,6 +93,7 @@ public class Game
     {
         dealer = new Dealer();
         table = new Table(dealer);
+        gui.setBetLabel(0);
         moveButton();
         betBlinds();
         deal();
@@ -217,6 +218,7 @@ public class Game
     public void betBlinds()
     {
         maxBet = blindSize * 2;
+        gui.setMaxBetLabel(blindSize * 2);
         bank = blindSize * 3;
         gui.setBankLabel(blindSize * 3);
         int playerCount = players.size();
@@ -270,6 +272,7 @@ public class Game
     public void zeroBets()
     {
         maxBet = 0;
+        gui.setMaxBetLabel(0);
         bank = 0;
         gui.setBankLabel(0);
         for (Player player : players)
@@ -445,6 +448,7 @@ public class Game
                 player.unsafeAddToCurrentBet(callValue);
                 player.unsafeAddToCurrentBet(raiseAmount);
                 maxBet = player.getCurrentBet();
+                gui.setMaxBetLabel(maxBet);
                 bank = bank + raiseAmount + callValue;
                 gui.setBankLabel(bank);
                 gui.printText(players.indexOf(player) + " player raised for " + (raiseAmount + callValue));
@@ -456,6 +460,7 @@ public class Game
                 gui.printText(players.indexOf(player) + " player raised for " + player.getCash() + ". ALL IN!");
                 player.unsafeAddToCurrentBet(player.getCash());
                 maxBet = player.getCurrentBet();
+                gui.setMaxBetLabel(maxBet);
                 player.setAllIn(true);
                 wasRaised = true;
             }
