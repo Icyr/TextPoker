@@ -9,6 +9,11 @@ public class Straight implements Combination
         this.nominal = nom;
     }
 
+    public int getNominal()
+    {
+        return nominal;
+    }
+
     public String toString()
     {
         return "Straight starting with " + nominal;

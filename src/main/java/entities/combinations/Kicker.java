@@ -9,6 +9,11 @@ public class Kicker implements Combination
         this.nominal = nom;
     }
 
+    public int getNominal()
+    {
+        return nominal;
+    }
+
     public String toString()
     {
         return "Kicker " + nominal;

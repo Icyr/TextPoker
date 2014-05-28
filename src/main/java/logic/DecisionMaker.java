@@ -2,12 +2,12 @@ package logic;
 
 public class DecisionMaker
 {
-    private double riskIndex;
+    private double raiseIndex;
     private double bluffIndex;
 
-    public DecisionMaker(double riskIndex, double bluffIndex)
+    public DecisionMaker(double raiseIndex, double bluffIndex)
     {
-        this.riskIndex = riskIndex;
+        this.raiseIndex = raiseIndex;
         this.bluffIndex = bluffIndex;
     }
 
@@ -17,8 +17,8 @@ public class DecisionMaker
         double bankPercent = ev / (pot + currentBet);
         if (isItTimeToBluff(bluffIndex)) bankPercent += 0.5;
         if (bankPercent < 0) return "fold";
-        if (bankPercent >= 0 && bankPercent < riskIndex) return "call";
-        if (bankPercent >= riskIndex)
+        if (bankPercent >= 0 && bankPercent < raiseIndex) return "call";
+        if (bankPercent >= raiseIndex)
         {
             int raiseAmount = calculateRaiseAmount(probability, pot, currentBet, bigBlindSize, cash);
             if (raiseAmount == 0) return "call";
@@ -32,12 +32,12 @@ public class DecisionMaker
         return Math.random() < bluffIndex;
     }
 
-    public static double getEV(double probability, int pot, int currentBet)
+    private static double getEV(double probability, int pot, int currentBet)
     {
         return (probability) * (pot) - (1 - probability) * currentBet;
     }
 
-    public double getBankPercent(double probability, int pot, int currentBet)
+    private double getBankPercent(double probability, int pot, int currentBet)
     {
         return getEV(probability, pot, currentBet) / (pot + currentBet);
     }
@@ -45,7 +45,7 @@ public class DecisionMaker
     private int calculateRaiseAmount(double probability, int pot, int currentBet, int bigBlindSize, int cash)
     {
         int raiseAmount = 0;
-        while (getBankPercent(probability, pot, currentBet) > riskIndex && currentBet <= cash)
+        while (getBankPercent(probability, pot, currentBet) > raiseIndex && currentBet <= cash)
         {
             pot += bigBlindSize;
             currentBet += bigBlindSize;

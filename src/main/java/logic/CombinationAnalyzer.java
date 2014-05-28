@@ -5,68 +5,203 @@ import entities.combinations.*;
 import util.Utils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class CombinationAnalyzer
 {
+    private static String[] colors = {"H", "S", "C", "D"};
+
     public static Combination analyzeCombination(List<Card> cards)
     {
-        //todo maybe move this logic into GameManager
         cards = Utils.sortCards(cards);
-        if (isRoyalFlush(cards) != -1)
+        Combination cardsCombination = searchForStraightFlush(cards);
+        if (cardsCombination != null)
         {
-            return new StraightFlush(10);
+            return cardsCombination;
         }
-        int result = isStraightFlush(cards);
-        if (result != -1)
+        cardsCombination = searchForQuads(cards);
+        if (cardsCombination != null)
         {
-            return new StraightFlush(result);
+            return cardsCombination;
         }
-        result = isQuads(cards);
-        if (result != -1)
+        cardsCombination = searchForFullHouse(cards);
+        if (cardsCombination != null)
         {
-            return new Quads(result);
+            return cardsCombination;
         }
-        int[] fullHouse = isFullHouse(cards);
-        if (fullHouse[0] != -1)
+        cardsCombination = searchForFlush(cards);
+        if (cardsCombination != null)
         {
-            return new FullHouse(fullHouse[0], fullHouse[1]);
+            return cardsCombination;
         }
-        result = isFlush(cards);
-        if (result != -1)
+        cardsCombination = searchForStraight(cards);
+        if (cardsCombination != null)
         {
-            return new Flush(result);
+            return cardsCombination;
         }
-        result = isStraight(cards);
-        if (result != -1)
+        cardsCombination = searchForSet(cards);
+        if (cardsCombination != null)
         {
-            return new Straight(result);
+            return cardsCombination;
         }
-        int[] sets = getAllSets(cards);
-        if (sets.length > 0)
+        cardsCombination = searchForTwoPairs(cards);
+        if (cardsCombination != null)
         {
-            result = sets[0];
-            return new Set(result);
+            return cardsCombination;
         }
-        int pairs[] = getAllPairs(cards);
+        cardsCombination = searchForOnePair(cards);
+        if (cardsCombination != null)
+        {
+            return cardsCombination;
+        }
+        cardsCombination = getKicker(cards);
+        return cardsCombination;
+    }
+
+    private static StraightFlush searchForStraightFlush(List<Card> cards)
+    {
+        String[] colors = {"H", "S", "C", "D"};
+        for (String color : colors)
+        {
+            if (Utils.getSameColorCount(color, cards) > 4)
+            {
+                List<Card> cardsWithSameColor = Utils.getCardsWithPreferredColor(color, cards);
+                Straight straight = searchForStraight(cardsWithSameColor);
+                if (straight != null)
+                    return new StraightFlush(straight.getNominal());
+            }
+        }
+        return null;
+    }
+
+    private static Quads searchForQuads(List<Card> cards)
+    {
+        for (int index = 0; index < cards.size() - 3; index++)
+        {
+            Card card = cards.get(index);
+            if (card.getNominal() == cards.get(index + 1).getNominal() &&
+                    card.getNominal() == cards.get(index + 2).getNominal() &&
+                    card.getNominal() == cards.get(index + 3).getNominal())
+            {
+                return new Quads(card.getNominal());
+            }
+        }
+        return null;
+    }
+
+    private static FullHouse searchForFullHouse(List<Card> cards)
+    {
+        Set set = searchForSet(cards);
+        if (set != null)
+        {
+            List<Card> withoutSetNominal = Utils.removeCardsWithPreferredNominal(set.getNominal(), cards);
+            Pair pair = searchForOnePair(withoutSetNominal);
+            if (pair != null)
+                return new FullHouse(set.getNominal(), pair.getNominal());
+        }
+        return null;
+    }
+
+    private static Flush searchForFlush(List<Card> cards)
+    {
+        for (String color : colors)
+        {
+            if (Utils.getSameColorCount(color, cards) > 4)
+            {
+                for (Card card : cards)
+                {
+                    if (card.getColor().equals(color)) return new Flush(card.getNominal(), color);
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Straight searchForStraight(List<Card> cards)
+    {
+        for (Card card : cards)
+        {
+            int currNom = card.getNominal();
+            if (Utils.listContainsNominal(currNom - 1, cards) &&
+                    Utils.listContainsNominal(currNom - 2, cards) &&
+                    Utils.listContainsNominal(currNom - 3, cards) &&
+                    Utils.listContainsNominal(currNom - 4, cards))
+            {
+                return new Straight(currNom - 4);
+            }
+        }
+        //looking for ace-first straight
+        if (cards.get(0).getNominal() == 14)
+        {
+            if (Utils.listContainsNominal(2, cards) &&
+                    Utils.listContainsNominal(3, cards) &&
+                    Utils.listContainsNominal(4, cards) &&
+                    Utils.listContainsNominal(5, cards))
+            {
+                return new Straight(1);
+            }
+        }
+        return null;
+    }
+
+    private static Set searchForSet(List<Card> cards)
+    {
+        for (int index = 0; index < cards.size() - 2; index++)
+        {
+            Card card = cards.get(index);
+            if (card.getNominal() == cards.get(index + 1).getNominal() &&
+                    card.getNominal() == cards.get(index + 2).getNominal())
+            {
+                return new Set(card.getNominal());
+            }
+        }
+        return null;
+    }
+
+    private static TwoPairs searchForTwoPairs(List<Card> cards)
+    {
+        int[] pairs = getAllPairs(cards);
         if (pairs.length > 1)
         {
             return new TwoPairs(pairs[0], pairs[1]);
         }
-        if (pairs.length == 1)
+        return null;
+    }
+
+    private static Pair searchForOnePair(List<Card> cards)
+    {
+        int[] pairs = getAllPairs(cards);
+        if (pairs.length > 0)
         {
             return new Pair(pairs[0]);
         }
-        return new Kicker(getKicker(cards));
+        return null;
     }
 
-    private static int getKicker(List<Card> cards)
+    private static Kicker getKicker(List<Card> cards)
     {
-        return cards.get(0).getNominal();
+        return new Kicker(cards.get(0).getNominal());
     }
 
-    public static int[] getAllPairs(List<Card> cards)
+    public static Combination getHighestCombination(List<PlayersCardsAndCombination> playersCardsAndCombinations)
+    {
+        Combination highestCombination = new Combination()
+        {
+            @Override
+            public int getPower()
+            {
+                return 0;
+            }
+        };
+        for (PlayersCardsAndCombination playersCardsAndCombination : playersCardsAndCombinations)
+        {
+            if (playersCardsAndCombination.getCombination().getPower() > highestCombination.getPower())
+                highestCombination = playersCardsAndCombination.getCombination();
+        }
+        return highestCombination;
+    }
+
+    private static int[] getAllPairs(List<Card> cards)
     {
         List<Card> pairList = new ArrayList<Card>();
         for (Card card : cards)
@@ -85,251 +220,5 @@ public class CombinationAnalyzer
             res[i] = pairList.get(i).getNominal();
         }
         return res;
-    }
-
-    private static int[] getAllSets(List<Card> cards)
-    {
-        //we get all of the sets, cause we use it in full house search
-        List<Card> setList = new ArrayList<Card>();
-        for (Card card : cards)
-        {
-            if (cards.indexOf(card) < cards.size() - 2)
-            {
-                if (card.getNominal() == cards.get(cards.indexOf(card) + 1).getNominal() &&
-                        card.getNominal() == cards.get(cards.indexOf(card) + 2).getNominal())
-                {
-                    if (!Utils.listContainsNominal(card.getNominal(), setList)) setList.add(card);
-
-                }
-            }
-        }
-        int[] res = new int[setList.size()];
-        for (int i = 0; i < setList.size(); i++)
-        {
-            res[i] = setList.get(i).getNominal();
-        }
-        return res;
-    }
-
-    private static int isStraight(List<Card> cards)
-    {
-        for (Card card : cards)
-        {
-            int currNom = card.getNominal();
-            if (Utils.listContainsNominal(currNom - 1, cards) &&
-                    Utils.listContainsNominal(currNom - 2, cards) &&
-                    Utils.listContainsNominal(currNom - 3, cards) &&
-                    Utils.listContainsNominal(currNom - 4, cards))
-            {
-                return currNom - 4;
-            }
-        }
-        //looking for ace-first straight
-        if (cards.get(0).getNominal() == 14)
-        {
-            if (Utils.listContainsNominal(2, cards) &&
-                    Utils.listContainsNominal(3, cards) &&
-                    Utils.listContainsNominal(4, cards) &&
-                    Utils.listContainsNominal(5, cards))
-            {
-                return 1;
-            }
-        }
-        return -1;
-    }
-
-    private static int isFlush(List<Card> cards)
-    {
-        if (Utils.getSameColorCount("H", cards) > 4)
-        {
-            for (Card card : cards)
-            {
-                if (card.getColor().equals("H")) return card.getNominal();
-            }
-        }
-        if (Utils.getSameColorCount("C", cards) > 4)
-        {
-            for (Card card : cards)
-            {
-                if (card.getColor().equals("C")) return card.getNominal();
-            }
-        }
-        if (Utils.getSameColorCount("S", cards) > 4)
-        {
-            for (Card card : cards)
-            {
-                if (card.getColor().equals("S")) return card.getNominal();
-            }
-        }
-        if (Utils.getSameColorCount("D", cards) > 4)
-        {
-            for (Card card : cards)
-            {
-                if (card.getColor().equals("D")) return card.getNominal();
-            }
-        }
-        return -1;
-    }
-
-    private static int[] isFullHouse(List<Card> cards)
-    {
-        int sets[] = getAllSets(cards);
-        if (sets.length > 0)
-        {
-            int pairs[] = getAllPairs(cards);
-            if (sets.length == 1)
-            {
-                if (pairs.length == 1)
-                {
-                    if (sets[0] != pairs[0]) return new int[]{sets[0], pairs[0]};
-                }
-                if (pairs.length == 2)
-                {
-                    if (sets[0] != pairs[0]) return new int[]{sets[0], pairs[0]};
-                    if (sets[0] != pairs[1]) return new int[]{sets[0], pairs[1]};
-                }
-                if (pairs.length == 3)
-                {
-                    if (sets[0] != pairs[0]) return new int[]{sets[0], pairs[0]};
-                    if (sets[0] != pairs[1]) return new int[]{sets[0], pairs[1]};
-                    if (sets[0] != pairs[2]) return new int[]{sets[0], pairs[2]};
-                }
-            }
-            if (sets.length == 2)
-            {
-                if (pairs.length == 1)
-                {
-                    if (sets[0] != pairs[0]) return new int[]{sets[0], pairs[0]};
-                    if (sets[1] != pairs[0]) return new int[]{sets[1], pairs[0]};
-                }
-                if (pairs.length == 2)
-                {
-                    if (sets[0] != pairs[0]) return new int[]{sets[0], pairs[0]};
-                    if (sets[0] != pairs[1]) return new int[]{sets[0], pairs[1]};
-                    if (sets[1] != pairs[0]) return new int[]{sets[1], pairs[0]};
-                    if (sets[1] != pairs[1]) return new int[]{sets[1], pairs[1]};
-                }
-                if (pairs.length == 3)
-                {
-                    if (sets[0] != pairs[0]) return new int[]{sets[0], pairs[0]};
-                    if (sets[0] != pairs[1]) return new int[]{sets[0], pairs[1]};
-                    if (sets[0] != pairs[2]) return new int[]{sets[0], pairs[2]};
-                    if (sets[1] != pairs[0]) return new int[]{sets[1], pairs[0]};
-                    if (sets[1] != pairs[1]) return new int[]{sets[1], pairs[1]};
-                    if (sets[1] != pairs[2]) return new int[]{sets[1], pairs[2]};
-                }
-            }
-        }
-        return new int[]{-1, -1};
-    }
-
-    private static int isQuads(List<Card> cards)
-    {
-        for (Card card : cards)
-        {
-            if (cards.indexOf(card) < cards.size() - 3)
-            {
-                if (card.getNominal() == cards.get(cards.indexOf(card) + 1).getNominal() &&
-                        card.getNominal() == cards.get(cards.indexOf(card) + 2).getNominal() &&
-                        card.getNominal() == cards.get(cards.indexOf(card) + 3).getNominal())
-                {
-                    return card.getNominal();
-                }
-            }
-        }
-        return -1;
-    }
-
-    private static int isStraightFlush(List<Card> cards)
-    {
-        if (Utils.getSameColorCount("H", cards) > 4)
-        {
-            List<Card> temp = Utils.getCardsWithPreferredColor("H", cards);
-            return isStraight(temp);
-        }
-        if (Utils.getSameColorCount("S", cards) > 4)
-        {
-            List<Card> temp = Utils.getCardsWithPreferredColor("S", cards);
-            return isStraight(temp);
-        }
-        if (Utils.getSameColorCount("C", cards) > 4)
-        {
-            List<Card> temp = Utils.getCardsWithPreferredColor("C", cards);
-            return isStraight(temp);
-        }
-        if (Utils.getSameColorCount("D", cards) > 4)
-        {
-            List<Card> temp = Utils.getCardsWithPreferredColor("D", cards);
-            return isStraight(temp);
-        }
-        return -1;
-    }
-
-    private static int isRoyalFlush(List<Card> cards)
-    {
-        if (Utils.getSameColorCount("H", cards) > 4)
-        {
-            if (cards.contains(new Card("H", 10)) &&
-                    cards.contains(new Card("H", 11)) &&
-                    cards.contains(new Card("H", 12)) &&
-                    cards.contains(new Card("H", 13)) &&
-                    cards.contains(new Card("H", 14)))
-            {
-                return 14;
-            }
-        }
-        if (Utils.getSameColorCount("S", cards) > 4)
-        {
-            if (cards.contains(new Card("S", 10)) &&
-                    cards.contains(new Card("S", 11)) &&
-                    cards.contains(new Card("S", 12)) &&
-                    cards.contains(new Card("S", 13)) &&
-                    cards.contains(new Card("S", 14)))
-            {
-                return 14;
-            }
-        }
-        if (Utils.getSameColorCount("D", cards) > 4)
-        {
-            if (cards.contains(new Card("D", 10)) &&
-                    cards.contains(new Card("D", 11)) &&
-                    cards.contains(new Card("D", 12)) &&
-                    cards.contains(new Card("D", 13)) &&
-                    cards.contains(new Card("D", 14)))
-            {
-                return 14;
-            }
-        }
-        if (Utils.getSameColorCount("C", cards) > 4)
-        {
-            if (cards.contains(new Card("C", 10)) &&
-                    cards.contains(new Card("C", 11)) &&
-                    cards.contains(new Card("C", 12)) &&
-                    cards.contains(new Card("C", 13)) &&
-                    cards.contains(new Card("C", 14)))
-            {
-                return 14;
-            }
-        }
-
-        return -1;
-    }
-
-    public static Combination getHighestCombination(List<PlayersCardsAndCombination> playersCardsAndCombinations)
-    {
-        Combination highestCombination = new Combination()
-        {
-            @Override
-            public int getPower()
-            {
-                return 0;
-            }
-        };
-        for (PlayersCardsAndCombination playersCardsAndCombination : playersCardsAndCombinations)
-        {
-            if (playersCardsAndCombination.combination.getPower() > highestCombination.getPower())
-                highestCombination = playersCardsAndCombination.combination;
-        }
-        return highestCombination;
     }
 }

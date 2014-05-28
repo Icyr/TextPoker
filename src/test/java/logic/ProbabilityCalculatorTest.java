@@ -1,3 +1,5 @@
+package logic;
+
 import entities.Card;
 import entities.Hand;
 import junit.framework.Assert;

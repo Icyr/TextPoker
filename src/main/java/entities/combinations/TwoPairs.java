@@ -11,6 +11,16 @@ public class TwoPairs implements Combination
         this.lowerNominal = lowerNominal;
     }
 
+    public int getLowerNominal()
+    {
+        return lowerNominal;
+    }
+
+    public int getHigherNominal()
+    {
+        return higherNominal;
+    }
+
     public String toString()
     {
         return "Two pairs: " + higherNominal + " and " + lowerNominal;

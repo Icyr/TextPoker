@@ -9,6 +9,11 @@ public class Set implements Combination
         this.nominal = nominal;
     }
 
+    public int getNominal()
+    {
+        return nominal;
+    }
+
     @Override
     public String toString()
     {

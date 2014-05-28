@@ -1,3 +1,5 @@
+package logic;
+
 import entities.Card;
 import entities.combinations.*;
 import logic.CombinationAnalyzer;
@@ -5,10 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -60,7 +59,7 @@ public class CombinationAnalyzerTest
                         new Card("H", 5),
                         new Card("H", 9),
                         new Card("H", 13)
-                }, new Flush(13)},
+                }, new Flush(13, "H")},
                 //Straight
                 {new Card[]{
                         new Card("H", 2),

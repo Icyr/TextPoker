@@ -1,5 +1,6 @@
 package entities;
 
+import entities.players.HumanPlayer;
 import entities.players.Player;
 import gui.Interface;
 import gui.TextualInterface;
@@ -28,27 +29,11 @@ public class Game
         players = new ArrayList<Player>();
         this.blindSize = blindSize;
         button = 0;
-
-    }
-
-    public Game(int blindSize, TextualInterface gameGUI, List<Player> players)
-    {
-        this.gui = gameGUI;
-        this.players = players;
-        this.blindSize = blindSize;
-        button = 0;
-        gui.setBank(0);
-        gui.setBetAmount(0);
     }
 
     public void addPlayer(Player player)
     {
         players.add(player);
-    }
-
-    public void addPlayers(List<Player> newPlayers)
-    {
-        players.addAll(newPlayers);
     }
 
     public void play()
@@ -86,10 +71,20 @@ public class Game
                 doTurns(players, table, underTheGun);
             }
             //get winners
-            distributeWonMoney(GameManager.getWinners(players, table));
+            distributeWonMoney(GameManager.getWinners(getUnfoldedPlayers(), table.getCardsOnTable()));
             endRound();
         }
         gui.printlnText("We have got a winner! " + players.get(0).getId() + " player won!");
+    }
+
+    private List<Player> getUnfoldedPlayers()
+    {
+        List<Player> notFoldedPlayers = new ArrayList<Player>();
+        for (Player player : players)
+        {
+            if (!player.isFolded()) notFoldedPlayers.add(player);
+        }
+        return notFoldedPlayers;
     }
 
     private void endRound()
@@ -107,7 +102,7 @@ public class Game
     {
         dealer = new Dealer();
         table = new Table(dealer);
-        gui.setBetLabel(0);
+        gui.setBetAmount(0);
         moveButton();
         betBlinds();
         deal();
@@ -148,7 +143,7 @@ public class Game
                         List<Player> playersWithoutWinner = new ArrayList<Player>();
                         playersWithoutWinner.addAll(players);
                         playersWithoutWinner.remove(winner);
-                        List<Player> nextWinners = GameManager.getWinners(playersWithoutWinner, table);
+                        List<Player> nextWinners = GameManager.getWinners(playersWithoutWinner, table.getCardsOnTable());
                         distributeWonMoney(nextWinners);
                     }
                 }
@@ -175,6 +170,7 @@ public class Game
             {
                 gui.printlnText("Player " + i + " has lost all of his money!");
                 if (button == players.size() - 1) button--;
+                if (curPlayer instanceof HumanPlayer)gui.pause();
             }
         }
         players = playersInGame;
@@ -232,7 +228,6 @@ public class Game
     private void betBlinds()
     {
         maxBet = blindSize * 2;
-        gui.setMaxBetLabel(blindSize * 2);
         bank = blindSize * 3;
         gui.setBank(blindSize * 3);
         int playerCount = players.size();
@@ -286,7 +281,6 @@ public class Game
     private void zeroBets()
     {
         maxBet = 0;
-        gui.setMaxBetLabel(0);
         bank = 0;
         gui.setBank(0);
         for (Player player : players)
@@ -454,7 +448,6 @@ public class Game
                 player.unsafeAddToCurrentBet(callValue);
                 player.unsafeAddToCurrentBet(raiseAmount);
                 maxBet = player.getCurrentBet();
-                gui.setMaxBetLabel(maxBet);
                 bank = bank + raiseAmount + callValue;
                 gui.setBank(bank);
                 gui.printlnText(players.indexOf(player) + " player raised for " + raiseAmount);
@@ -466,7 +459,6 @@ public class Game
                 gui.printlnText(players.indexOf(player) + " player raised for " + player.getCash() + ". ALL IN!");
                 player.unsafeAddToCurrentBet(player.getCash());
                 maxBet = player.getCurrentBet();
-                gui.setMaxBetLabel(maxBet);
                 player.setAllIn(true);
                 wasRaised = true;
             }

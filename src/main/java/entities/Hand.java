@@ -16,6 +16,7 @@ public class Hand
     {
         return cards;
     }
+
     public String toString(){
         String res = "";
         res += this.getCards().get(0).getNominal() + " " + this.getCards().get(0).getColor() + " ";

@@ -3,7 +3,6 @@ package logic;
 import entities.combinations.*;
 import entities.players.Player;
 import entities.Card;
-import entities.Table;
 import util.Utils;
 
 import java.util.ArrayList;
@@ -11,280 +10,245 @@ import java.util.List;
 
 public class GameManager
 {
-    public static List<Player> getWinners(List<Player> players, Table table)
+    public static List<Player> getWinners(List<Player> players, List<Card> tableCards)
     {
-        List<Player> notFoldedPlayers = new ArrayList<Player>();
+        List<PlayersCardsAndCombination> pcacs = new ArrayList<PlayersCardsAndCombination>();
         for (Player player : players)
         {
-            if (!player.isFolded()) notFoldedPlayers.add(player);
+            List<Card> playersCards = Utils.getPlayersCards(player, tableCards);
+            pcacs.add(new PlayersCardsAndCombination(player, playersCards, CombinationAnalyzer.analyzeCombination(playersCards)));
         }
-        List<PlayersCardsAndCombination> playersCardsAndCombinations = new ArrayList<PlayersCardsAndCombination>();
-        for (Player player : notFoldedPlayers)
+        Combination highestCombination = CombinationAnalyzer.getHighestCombination(pcacs);
+        List<PlayersCardsAndCombination> winnersPcacs = new ArrayList<PlayersCardsAndCombination>();
+        for (PlayersCardsAndCombination pcac : pcacs)
         {
-            List<Card> playersCards = Utils.getPlayersCards(player, table);
-            playersCardsAndCombinations.add(new PlayersCardsAndCombination(player, playersCards, CombinationAnalyzer.analyzeCombination(playersCards)));
+            if (pcac.getCombination().equals(highestCombination))
+                winnersPcacs.add(pcac);
         }
-        Combination highestCombination = CombinationAnalyzer.getHighestCombination(playersCardsAndCombinations);
+        if (winnersPcacs.size() > 1)
+        {
+            winnersPcacs = resolveConflict(winnersPcacs);
+        }
         List<Player> winners = new ArrayList<Player>();
-        for (PlayersCardsAndCombination playersCardsAndCombination : playersCardsAndCombinations)
+        for (PlayersCardsAndCombination pcac : winnersPcacs)
         {
-            if (playersCardsAndCombination.combination.equals(highestCombination))
-                winners.add(playersCardsAndCombination.player);
-        }
-        if (winners.size()>1){
-            winners = resolveConflict(winners, table.getCardsOnTable());
+            winners.add(pcac.getPlayer());
         }
         return winners;
     }
 
-    public static List<Player> resolveConflict(List<Player> challengers, List<Card> cardsOnTable)
+    private static List<PlayersCardsAndCombination> resolveConflict(List<PlayersCardsAndCombination> pcacs)
     {
-        List<Player> winners = new ArrayList<Player>();
-        List<List<Card>> challengersCards = Utils.unitePlayersAndTableCards(challengers, cardsOnTable);
-        Combination conflictCombination = CombinationAnalyzer.analyzeCombination(challengersCards.get(0));
+        List<PlayersCardsAndCombination> winnersPcacs = new ArrayList<PlayersCardsAndCombination>();
+        Combination conflictCombination = pcacs.get(0).getCombination();
+        //todo STRATEGY??
         if (conflictCombination instanceof StraightFlush)
         {
-            winners = challengers;
+            winnersPcacs = pcacs;
         } else if (conflictCombination instanceof Quads)
         {
-            winners = resolveQuadsConflict(challengers, challengersCards, conflictCombination);
+            winnersPcacs = resolveQuadsConflict(pcacs);
         } else if (conflictCombination instanceof FullHouse)
         {
-            winners = resolveFullHouseConflict(challengers, challengersCards, conflictCombination);
+            winnersPcacs = resolveFullHouseConflict(pcacs);
         } else if (conflictCombination instanceof Flush)
         {
-            winners = resolveFlushConflict(challengers, challengersCards);
+            winnersPcacs = resolveFlushConflict(pcacs);
         } else if (conflictCombination instanceof Straight)
         {
-            winners = challengers;
+            winnersPcacs = pcacs;
         } else if (conflictCombination instanceof Set)
         {
-            winners = resolveSetConflict(challengers, challengersCards, conflictCombination.getPower());
+            winnersPcacs = resolveSetConflict(pcacs);
         } else if (conflictCombination instanceof TwoPairs)
         {
-            winners = resolvePairsConflict(challengers, challengersCards, conflictCombination.getPower());
+            winnersPcacs = resolveTwoPairsConflict(pcacs);
         } else if (conflictCombination instanceof Pair)
         {
-            winners = resolvePairConflict(challengers, challengersCards, conflictCombination.getPower());
+            winnersPcacs = resolvePairConflict(pcacs);
         } else if (conflictCombination instanceof Kicker)
         {
-            winners = resolveKickerConflict(challengers, challengersCards, conflictCombination.getPower());
+            winnersPcacs = resolveKickerConflict(pcacs);
         }
-        return winners;
+        return winnersPcacs;
     }
 
-    private static List<Player> resolveKickerConflict(List<Player> challengers, List<List<Card>> winnersCards, int conflictPower)
+    private static List<PlayersCardsAndCombination> resolveQuadsConflict(List<PlayersCardsAndCombination> pcacs)
     {
-        List<Player> winners;
-        List<List<Card>> cardsWithoutKicker = new ArrayList<List<Card>>();
-        for (List<Card> cards : winnersCards)
+        List<PlayersCardsAndCombination> winnersPcacs = new ArrayList<PlayersCardsAndCombination>();
+        int maxKicker = 0;
+        for (PlayersCardsAndCombination pcac : pcacs)
         {
-            cardsWithoutKicker.add(Utils.removeCardsWithPreferredNominal(conflictPower, cards));
-        }
-        cardsWithoutKicker = analyzeCard(0, cardsWithoutKicker);
-        if (cardsWithoutKicker.size() > 1)
-        {
-            cardsWithoutKicker = analyzeCard(1, cardsWithoutKicker);
-            if (cardsWithoutKicker.size() > 1)
+            for (Card card : pcac.getCards())
             {
-                cardsWithoutKicker = analyzeCard(2, cardsWithoutKicker);
-                if (cardsWithoutKicker.size() > 1)
+                if (card.getNominal() != ((Quads) pcac.getCombination()).getNominal()
+                        && card.getNominal() > maxKicker)
+                    maxKicker = card.getNominal();
+            }
+        }
+        for (PlayersCardsAndCombination pcac : pcacs)
+        {
+            for (Card card : pcac.getCards())
+            {
+                if (card.getNominal() == maxKicker)
+                    winnersPcacs.add(pcac);
+            }
+        }
+        return winnersPcacs;
+    }
+
+    private static List<PlayersCardsAndCombination> resolveFullHouseConflict(List<PlayersCardsAndCombination> pcacs)
+    {
+        List<PlayersCardsAndCombination> winnersPcacs = new ArrayList<PlayersCardsAndCombination>();
+        int maxPair = 0;
+        for (PlayersCardsAndCombination pcac : pcacs)
+        {
+            int thisPair = ((FullHouse) pcac.getCombination()).getPairNominal();
+            if (thisPair > maxPair) maxPair = thisPair;
+        }
+        for (PlayersCardsAndCombination pcac : pcacs)
+        {
+            int thisPair = ((FullHouse) pcac.getCombination()).getPairNominal();
+            if (thisPair == maxPair)
+                winnersPcacs.add(pcac);
+        }
+        return winnersPcacs;
+    }
+
+    private static List<PlayersCardsAndCombination> resolveFlushConflict(List<PlayersCardsAndCombination> pcacs)
+    {
+        List<PlayersCardsAndCombination> winnersPcacs = new ArrayList<PlayersCardsAndCombination>();
+        for (PlayersCardsAndCombination pcac : pcacs)
+        {
+            List<Card> flushCards = Utils.getCardsWithPreferredColor(((Flush) pcac.getCombination()).getColor(), pcac.getCards());
+            flushCards.remove(0);
+            PlayersCardsAndCombination somePcac = new PlayersCardsAndCombination(pcac.getPlayer(), flushCards, pcac.getCombination());
+            winnersPcacs.add(somePcac);
+        }
+        //second card
+        winnersPcacs = analyzeCard(0, winnersPcacs);
+        //third card
+        if (winnersPcacs.size() > 1)
+        {
+            winnersPcacs = analyzeCard(1, winnersPcacs);
+            //forth card
+            if (winnersPcacs.size() > 1)
+            {
+                winnersPcacs = analyzeCard(2, winnersPcacs);
+                //fifth card
+                if (winnersPcacs.size() > 1)
+                    winnersPcacs = analyzeCard(3, winnersPcacs);
+            }
+        }
+        return winnersPcacs;
+    }
+
+    private static List<PlayersCardsAndCombination> resolveSetConflict(List<PlayersCardsAndCombination> pcacs)
+    {
+        List<PlayersCardsAndCombination> winnersPcacs = new ArrayList<PlayersCardsAndCombination>();
+        for (PlayersCardsAndCombination pcac : pcacs)
+        {
+            List<Card> cardsWithoutSet = Utils.removeCardsWithPreferredNominal(((Set) pcac.getCombination()).getNominal(), pcac.getCards());
+            PlayersCardsAndCombination somePcac = new PlayersCardsAndCombination(pcac.getPlayer(), cardsWithoutSet, pcac.getCombination());
+            winnersPcacs.add(somePcac);
+        }
+        winnersPcacs = analyzeCard(0, winnersPcacs);
+        if (winnersPcacs.size() > 0)
+        {
+            winnersPcacs = analyzeCard(1, winnersPcacs);
+        }
+        return winnersPcacs;
+    }
+
+    private static List<PlayersCardsAndCombination> resolveTwoPairsConflict(List<PlayersCardsAndCombination> pcacs)
+    {
+        List<PlayersCardsAndCombination> winnersPcacs = new ArrayList<PlayersCardsAndCombination>();
+        int maxSecondPair = 0;
+        for (PlayersCardsAndCombination pcac : pcacs)
+        {
+            int thisSecondPair = ((TwoPairs) pcac.getCombination()).getLowerNominal();
+            if (thisSecondPair > maxSecondPair) maxSecondPair = thisSecondPair;
+        }
+        for (PlayersCardsAndCombination pcac : pcacs)
+        {
+            int thisSecondPair = ((TwoPairs) pcac.getCombination()).getLowerNominal();
+            if (thisSecondPair == maxSecondPair)
+                winnersPcacs.add(pcac);
+        }
+        if (winnersPcacs.size() > 1)
+        {
+            List<PlayersCardsAndCombination> pcacsWithoutPairs = new ArrayList<PlayersCardsAndCombination>();
+            for (PlayersCardsAndCombination pcac : winnersPcacs)
+            {
+                List<Card> cardsWithoutLowerPair = Utils.removeCardsWithPreferredNominal(((TwoPairs) pcac.getCombination()).getLowerNominal(), pcac.getCards());
+                List<Card> cardsWithoutHigherPair = Utils.removeCardsWithPreferredNominal(((TwoPairs) pcac.getCombination()).getHigherNominal(), cardsWithoutLowerPair);
+                PlayersCardsAndCombination somePcac = new PlayersCardsAndCombination(pcac.getPlayer(), cardsWithoutHigherPair, pcac.getCombination());
+                pcacsWithoutPairs.add(somePcac);
+            }
+            winnersPcacs = analyzeCard(0, pcacsWithoutPairs);
+        }
+        return winnersPcacs;
+    }
+
+    private static List<PlayersCardsAndCombination> resolvePairConflict(List<PlayersCardsAndCombination> pcacs)
+    {
+        List<PlayersCardsAndCombination> winnersPcacs = new ArrayList<PlayersCardsAndCombination>();
+        for (PlayersCardsAndCombination pcac : pcacs)
+        {
+            List<Card> cardsWithoutPair = Utils.removeCardsWithPreferredNominal(((Pair) pcac.getCombination()).getNominal(), pcac.getCards());
+            PlayersCardsAndCombination somePcac = new PlayersCardsAndCombination(pcac.getPlayer(), cardsWithoutPair, pcac.getCombination());
+            winnersPcacs.add(somePcac);
+        }
+        winnersPcacs = analyzeCard(0, winnersPcacs);
+        if (winnersPcacs.size() > 1)
+        {
+            winnersPcacs = analyzeCard(1, winnersPcacs);
+            if (winnersPcacs.size() > 1)
+            {
+                winnersPcacs = analyzeCard(2, winnersPcacs);
+            }
+        }
+        return winnersPcacs;
+    }
+
+    private static List<PlayersCardsAndCombination> resolveKickerConflict(List<PlayersCardsAndCombination> pcacs)
+    {
+        List<PlayersCardsAndCombination> winnersPcacs = new ArrayList<PlayersCardsAndCombination>();
+        for (PlayersCardsAndCombination pcac : pcacs)
+        {
+            List<Card> cardsWithoutKicker = Utils.removeCardsWithPreferredNominal(((Kicker) pcac.getCombination()).getNominal(), pcac.getCards());
+            PlayersCardsAndCombination somePcac = new PlayersCardsAndCombination(pcac.getPlayer(), cardsWithoutKicker, pcac.getCombination());
+            winnersPcacs.add(somePcac);
+        }
+        winnersPcacs = analyzeCard(0, winnersPcacs);
+        if (winnersPcacs.size() > 1)
+        {
+            winnersPcacs = analyzeCard(1, winnersPcacs);
+            if (winnersPcacs.size() > 1)
+            {
+                winnersPcacs = analyzeCard(2, winnersPcacs);
+                if (winnersPcacs.size() > 1)
                 {
-                    cardsWithoutKicker = analyzeCard(3, cardsWithoutKicker);
+                    winnersPcacs = analyzeCard(3, winnersPcacs);
                 }
             }
         }
-        winners = Utils.getPlayersByCards(cardsWithoutKicker, challengers);
-        return winners;
+        return winnersPcacs;
     }
 
-    private static List<Player> resolvePairConflict(List<Player> challengers, List<List<Card>> winnersCards, int conflictPower)
-    {
-        List<Player> winners;
-        List<List<Card>> withoutPair = new ArrayList<List<Card>>();
-        for (List<Card> cards : winnersCards)
-        {
-            withoutPair.add(Utils.removeCardsWithPreferredNominal(conflictPower - 13, cards));
-        }
-        withoutPair = analyzeCard(0, withoutPair);
-        if (withoutPair.size() > 1)
-        {
-            withoutPair = analyzeCard(1, withoutPair);
-            if (withoutPair.size() > 1)
-            {
-                withoutPair = analyzeCard(2, withoutPair);
-            }
-        }
-        winners = Utils.getPlayersByCards(withoutPair, challengers);
-        return winners;
-    }
-
-    private static List<Player> resolvePairsConflict(List<Player> challengers, List<List<Card>> winnersCards, int conflictPower)
-    {
-        List<Player> winners;
-        int[] secondPairs = new int[winnersCards.size()];
-        List<List<Card>> withoutMaxPair = new ArrayList<List<Card>>();
-        for (List<Card> cards : winnersCards)
-        {
-            withoutMaxPair.add(Utils.removeCardsWithPreferredNominal(conflictPower - 26, cards));
-        }
-        int maxPairNominal = 0;
-        for (int i = 0; i < withoutMaxPair.size(); i++)
-        {
-            List<Card> curCards = withoutMaxPair.get(i);
-            secondPairs[i] = CombinationAnalyzer.getAllPairs(curCards)[0];//REFACTOR THIS IS PRIVATE
-            if (secondPairs[i] > maxPairNominal)
-                maxPairNominal = secondPairs[i];
-        }
-        List<List<Card>> cardsWithMaxSecondPair = new ArrayList<List<Card>>();
-        for (int i = 0; i < secondPairs.length; i++)
-        {
-            if (secondPairs[i] == maxPairNominal) cardsWithMaxSecondPair.add(withoutMaxPair.get(i));
-        }
-        if (cardsWithMaxSecondPair.size() > 1)
-        {
-            List<List<Card>> withoutPairs = new ArrayList<List<Card>>();
-            for (List<Card> cards : cardsWithMaxSecondPair)
-            {
-                withoutPairs.add(Utils.removeCardsWithPreferredNominal(maxPairNominal, cards));
-            }
-            winners = Utils.getPlayersByCards(analyzeCard(0, withoutPairs), challengers);
-        } else
-        {
-            winners = Utils.getPlayersByCards(cardsWithMaxSecondPair, challengers);
-        }
-        return winners;
-    }
-
-    private static List<Player> resolveSetConflict(List<Player> challengers, List<List<Card>> winnersCards, int conflictPower)
-    {
-        List<Player> winners;
-        List<List<Card>> withoutSet = new ArrayList<List<Card>>();
-        for (List<Card> cards : winnersCards)
-        {
-            withoutSet.add(Utils.removeCardsWithPreferredNominal(conflictPower - 39, cards));
-        }
-        withoutSet = analyzeCard(0, withoutSet);
-        if (withoutSet.size() > 0)
-        {
-            withoutSet = analyzeCard(1, withoutSet);
-        }
-        winners = Utils.getPlayersByCards(withoutSet, challengers);
-        return winners;
-    }
-
-    private static List<Player> resolveFlushConflict(List<Player> challengers, List<List<Card>> winnersCards)
-    {
-        List<Player> winners;
-        List<List<Card>> winnersCardsWithoutExtra = new ArrayList<List<Card>>();
-        for (List<Card> cards : winnersCards)
-        {
-            if (Utils.getSameColorCount("H", cards) > 4)
-            {
-                List<Card> temp = Utils.getCardsWithPreferredColor("H", cards);
-                temp.remove(0);
-                winnersCardsWithoutExtra.add(temp);
-            }
-            if (Utils.getSameColorCount("D", cards) > 4)
-            {
-                List<Card> temp = Utils.getCardsWithPreferredColor("D", cards);
-                temp.remove(0);
-                winnersCardsWithoutExtra.add(temp);
-            }
-            if (Utils.getSameColorCount("S", cards) > 4)
-            {
-                List<Card> temp = Utils.getCardsWithPreferredColor("S", cards);
-                temp.remove(0);
-                winnersCardsWithoutExtra.add(temp);
-            }
-            if (Utils.getSameColorCount("C", cards) > 4)
-            {
-                List<Card> temp = Utils.getCardsWithPreferredColor("C", cards);
-                temp.remove(0);
-                winnersCardsWithoutExtra.add(temp);
-            }
-        }
-        //second card
-        winnersCardsWithoutExtra = analyzeCard(0, winnersCardsWithoutExtra);
-        //third card
-        if (winnersCardsWithoutExtra.size() > 1)
-        {
-            winnersCardsWithoutExtra = analyzeCard(1, winnersCardsWithoutExtra);
-            //forth card
-            if (winnersCardsWithoutExtra.size() > 1)
-            {
-                winnersCardsWithoutExtra = analyzeCard(2, winnersCardsWithoutExtra);
-                //fifth card
-                if (winnersCardsWithoutExtra.size() > 1)
-                    winnersCardsWithoutExtra = analyzeCard(3, winnersCardsWithoutExtra);
-            }
-        }
-        winners = Utils.getPlayersByCards(winnersCardsWithoutExtra, challengers);
-        return winners;
-    }
-
-    private static List<Player> resolveFullHouseConflict(List<Player> challengers, List<List<Card>> challengersCards, Combination conflictCombination)
-    {
-        List<Player> winners = new ArrayList<Player>();
-        int[] pairNominals = new int[challengersCards.size()];
-        List<Card> withoutSet;
-        for (List<Card> cards : challengersCards)
-        {
-            withoutSet = Utils.removeCardsWithPreferredNominal(((FullHouse) conflictCombination).getSetNominal(), cards);
-            pairNominals[challengersCards.indexOf(cards)] = CombinationAnalyzer.getAllPairs(withoutSet)[0];//REFACTOR THIS IS PRIVATE
-        }
-        int maxPair = 0;
-        for (int pair : pairNominals)
-        {
-            if (pair > maxPair) maxPair = pair;
-        }
-        for (int i = 0; i < pairNominals.length; i++)
-        {
-            if (pairNominals[i] == maxPair) winners.add(challengers.get(i));
-        }
-        return winners;
-    }
-
-    private static List<Player> resolveQuadsConflict(List<Player> challengers, List<List<Card>> challengersCards, Combination conflictCombination)
-    {
-        List<Player> winners = new ArrayList<Player>();
-        List<Card> withoutQuads = new ArrayList<Card>();
-        int maxKicker = 0;
-        //removing quads
-        for (List<Card> cards : challengersCards)
-        {
-            withoutQuads.add(Utils.removeCardsWithPreferredNominal(((Quads) conflictCombination).getNominal(), cards).get(0));
-        }
-        //searching for max kicker
-        for (Card card : withoutQuads)
-        {
-            if (card.getNominal() > maxKicker) maxKicker = card.getNominal();
-        }
-        //searching for winners
-        for (Card card : withoutQuads)
-        {
-            if (card.getNominal() == maxKicker)
-            {
-                if (Utils.getPlayerByCard(card, challengers) != null)
-                    winners.add(Utils.getPlayerByCard(card, challengers));
-            }
-        }
-        if (winners.size() == 0) return challengers;
-        return winners;
-    }
-
-
-    private static List<List<Card>> analyzeCard(int index, List<List<Card>> players)
+    private static List<PlayersCardsAndCombination> analyzeCard(int index, List<PlayersCardsAndCombination> pcacs)
     {
         int maxNominal = 0;
-        for (List<Card> cards : players)
+        for (PlayersCardsAndCombination pcac : pcacs)
         {
-            if (cards.get(index).getNominal() > maxNominal) maxNominal = cards.get(index).getNominal();
+            int currentNominal = pcac.getCards().get(index).getNominal();
+            if (currentNominal > maxNominal) maxNominal = currentNominal;
         }
-        List<List<Card>> afterCardAnalyze = new ArrayList<List<Card>>();
-        for (List<Card> cards : players)
+        List<PlayersCardsAndCombination> afterCardAnalyze = new ArrayList<PlayersCardsAndCombination>();
+        for (PlayersCardsAndCombination pcac : pcacs)
         {
-            if (cards.get(index).getNominal() == maxNominal) afterCardAnalyze.add(cards);
+            int currentNominal = pcac.getCards().get(index).getNominal();
+            if (currentNominal == maxNominal) afterCardAnalyze.add(pcac);
         }
         return afterCardAnalyze;
     }

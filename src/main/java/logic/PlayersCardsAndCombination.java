@@ -8,14 +8,29 @@ import java.util.List;
 
 public class PlayersCardsAndCombination
 {
-    public Player player;
-    public List<Card> cards;
-    public Combination combination;
+    private Player player;
+    private List<Card> cards;
+    private Combination combination;
 
     public PlayersCardsAndCombination(Player player, List<Card> cards, Combination combination)
     {
         this.player = player;
         this.cards = cards;
         this.combination = combination;
+    }
+
+    public Player getPlayer()
+    {
+        return player;
+    }
+
+    public List<Card> getCards()
+    {
+        return cards;
+    }
+
+    public Combination getCombination()
+    {
+        return combination;
     }
 }

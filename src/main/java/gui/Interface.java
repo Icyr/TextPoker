@@ -23,4 +23,6 @@ public interface Interface
     void setTable(Table table);
 
     void setCash(int cash);
+
+    void pause();
 }

@@ -13,31 +13,6 @@ import javax.swing.text.Document;
 
 public class TextualInterface implements Interface
 {
-<<<<<<< HEAD:src/main/java/gui/SimpleInterface.java
-    JTextPane textPane;
-    JFrame frame;
-    JPanel panel;
-    JScrollPane jsp;
-    JButton foldButton;
-    JButton callButton;
-    JButton raiseButton;
-    JTextField raiseTField;
-    JLabel handText;
-    JLabel handLabel;
-    JLabel tableText;
-    JLabel tableLabel;
-    JLabel betText;
-    JLabel betLabel;
-    JLabel callLabel;
-    JLabel bankText;
-    JLabel bankLabel;
-    JLabel maxBetText;
-    JLabel maxBetLabel;
-
-    String decision = "";
-
-    public SimpleInterface()
-=======
     protected JTextPane textPane;
     protected JFrame frame;
     protected JPanel panel;
@@ -61,7 +36,6 @@ public class TextualInterface implements Interface
     private String decision = "";
 
     public TextualInterface()
->>>>>>> 0d9641683d1c875ecc047f9edf4f217adaf3a014:src/main/java/gui/TextualInterface.java
     {
         createGUI();
     }
@@ -96,14 +70,10 @@ public class TextualInterface implements Interface
         betLabel = new JLabel();
         bankText = new JLabel("Bank:");
         bankLabel = new JLabel();
-<<<<<<< HEAD:src/main/java/gui/SimpleInterface.java
-        maxBetText = new JLabel("Max bet:");
-        maxBetLabel = new JLabel();
-=======
+
         cashText = new JLabel("Your cash:");
         cashLabel = new JLabel();
         combinationLabel = new JLabel();
->>>>>>> 0d9641683d1c875ecc047f9edf4f217adaf3a014:src/main/java/gui/TextualInterface.java
 
         jsp.setBounds(5, 5, 200, 290);
         foldButton.setBounds(210, 5, 160, 30);
@@ -146,15 +116,10 @@ public class TextualInterface implements Interface
         betLabel.setBounds(210, 250, 100, 30);
         bankText.setBounds(10, 300, 100, 30);
         bankLabel.setBounds(10, 320, 100, 30);
-<<<<<<< HEAD:src/main/java/gui/SimpleInterface.java
-        callLabel.setBounds(210, 85, 100, 30);
-        maxBetText.setBounds(210, 260, 100, 30);
-        maxBetLabel.setBounds(210, 280, 100, 30);
-=======
+
         cashText.setBounds(280, 230, 100, 30);
         cashLabel.setBounds(280, 250, 100, 30);
         combinationLabel.setBounds(210, 270, 100, 30);
->>>>>>> 0d9641683d1c875ecc047f9edf4f217adaf3a014:src/main/java/gui/TextualInterface.java
 
         panel.add(jsp);
         panel.add(foldButton);
@@ -169,15 +134,9 @@ public class TextualInterface implements Interface
         panel.add(betLabel);
         panel.add(bankText);
         panel.add(bankLabel);
-<<<<<<< HEAD:src/main/java/gui/SimpleInterface.java
-        panel.add(callLabel);
-        panel.add(maxBetLabel);
-        panel.add(maxBetText);
-=======
         panel.add(cashText);
         panel.add(cashLabel);
         panel.add(combinationLabel);
->>>>>>> 0d9641683d1c875ecc047f9edf4f217adaf3a014:src/main/java/gui/TextualInterface.java
 
         frame.getContentPane().add(panel);
         frame.pack();
@@ -205,8 +164,6 @@ public class TextualInterface implements Interface
         raiseTField.setEnabled(true);
     }
 
-<<<<<<< HEAD:src/main/java/gui/SimpleInterface.java
-=======
     private void prepareForPlayersTurn()
     {
         enableDecisionButtons();
@@ -214,7 +171,6 @@ public class TextualInterface implements Interface
         raiseTField.setText("");
     }
 
->>>>>>> 0d9641683d1c875ecc047f9edf4f217adaf3a014:src/main/java/gui/TextualInterface.java
     private void disableDecisionButtons()
     {
         foldButton.setEnabled(false);
@@ -229,7 +185,8 @@ public class TextualInterface implements Interface
         {
             try
             {
-                Thread.sleep(500);    //wait for decision
+                //wait for decision
+                Thread.sleep(500);
             } catch (InterruptedException e)
             {
                 e.printStackTrace();
@@ -267,11 +224,6 @@ public class TextualInterface implements Interface
         bankLabel.setText(value + "");
     }
 
-<<<<<<< HEAD:src/main/java/gui/SimpleInterface.java
-    public void setMaxBetLabel(int value)
-    {
-        maxBetLabel.setText(value + "");
-=======
     public void setCallAmount(int value)
     {
         callButton.setText("Call (" + value + ")");
@@ -285,6 +237,13 @@ public class TextualInterface implements Interface
     public void setCombination(String combination)
     {
         combinationLabel.setText(combination);
->>>>>>> 0d9641683d1c875ecc047f9edf4f217adaf3a014:src/main/java/gui/TextualInterface.java
+    }
+
+    @Override
+    public void pause()
+    {
+        while (true)
+        {
+        }
     }
 }

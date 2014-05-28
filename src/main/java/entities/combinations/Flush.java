@@ -3,10 +3,17 @@ package entities.combinations;
 public class Flush implements Combination
 {
     private final int nominal;
+    private final String color;
 
-    public Flush(int nom)
+    public Flush(int nominal, String color)
     {
-        this.nominal = nom;
+        this.nominal = nominal;
+        this.color = color;
+    }
+
+    public String getColor()
+    {
+        return color;
     }
 
     public String toString()
@@ -26,7 +33,7 @@ public class Flush implements Combination
         if (other.getClass().equals(Flush.class))
         {
             Flush otherFlush = (Flush) other;
-            return this.nominal == otherFlush.nominal;
+            return this.nominal == otherFlush.nominal && this.color.equals(otherFlush.color);
         }
         return false;
     }

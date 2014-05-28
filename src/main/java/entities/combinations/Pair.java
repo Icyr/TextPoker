@@ -9,6 +9,11 @@ public class Pair implements Combination
         this.nominal = nom;
     }
 
+    public int getNominal()
+    {
+        return nominal;
+    }
+
     public String toString()
     {
         return "Pair of " + nominal;

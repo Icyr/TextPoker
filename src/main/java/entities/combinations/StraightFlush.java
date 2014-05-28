@@ -12,7 +12,7 @@ public class StraightFlush implements Combination
     @Override
     public String toString()
     {
-        return "Straigh Flush starting with " + nominal;
+        return "Straight Flush starting with " + nominal;
     }
 
     @Override
