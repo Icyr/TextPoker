@@ -2,9 +2,14 @@ package gui;
 
 import entities.Hand;
 import entities.Table;
+import entities.combinations.Combination;
+import entities.players.Player;
+
+import java.util.List;
 
 public interface Interface
 {
+    String getDecision();
 
     void setBank(int i);
 
@@ -14,9 +19,7 @@ public interface Interface
 
     void setBetAmount(int currentBet);
 
-    String getDecision();
-
-    void setCombination(String s);
+    void showCombination(Combination s);
 
     void setHand(Hand hand);
 
@@ -25,4 +28,16 @@ public interface Interface
     void setCash(int cash);
 
     void pause();
+
+    void updatePlayersCash(List<Player> players);
+
+    void deal();
+
+    void prepareForGame();
+
+    void prepareForRound();
+
+    void moveButton(int button);
+
+    void updateTable(Table table);
 }

@@ -46,7 +46,7 @@ public class HumanPlayer extends AbstractPlayer
         List<Card> playersCards = new ArrayList<Card>();
         playersCards.addAll(hand.getCards());
         playersCards.addAll(table.getCardsOnTable());
-        gui.setCombination(CombinationAnalyzer.analyzeCombination(playersCards).toString());
+        gui.showCombination(CombinationAnalyzer.analyzeCombination(playersCards));
         return gui.getDecision();
     }
 

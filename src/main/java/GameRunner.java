@@ -2,6 +2,7 @@ import entities.players.ComputerPlayer;
 import entities.Game;
 import entities.players.Player;
 import gui.TextualInterface;
+import util.Utils;
 
 public class GameRunner
 {
@@ -18,7 +19,7 @@ public class GameRunner
         player3.setId("third");
         player4.setId("forth");
         player5.setId("fifth");
-        Game game = new Game(10, gui);
+        Game game = new Game(10, gui, Utils.getRandomInt(0, 4));
         game.addPlayer(player1);
         game.addPlayer(player2);
         game.addPlayer(player3);

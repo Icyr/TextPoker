@@ -2,10 +2,15 @@ package gui;
 
 import entities.Hand;
 import entities.Table;
+import entities.combinations.Combination;
+import entities.players.Player;
+import logic.ProbabilityCalculator;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -234,9 +239,9 @@ public class TextualInterface implements Interface
         cashLabel.setText(value + "");
     }
 
-    public void setCombination(String combination)
+    public void showCombination(Combination combination)
     {
-        combinationLabel.setText(combination);
+        combinationLabel.setText(combination.toString());
     }
 
     @Override
@@ -245,5 +250,60 @@ public class TextualInterface implements Interface
         while (true)
         {
         }
+    }
+
+    @Override
+    public void updatePlayersCash(List<Player> players)
+    {
+        printlnText("Players' money:");
+        for (Player player : players)
+        {
+            printlnText(player.getCash() + " ");
+        }
+    }
+
+    @Override
+    public void deal()
+    {
+        printlnText("Dealing cards..");
+    }
+
+    @Override
+    public void prepareForGame()
+    {
+        setBank(0);
+        setBetAmount(0);
+    }
+
+    @Override
+    public void prepareForRound()
+    {
+        setBetAmount(0);
+    }
+
+    @Override
+    public void moveButton(int button)
+    {
+        printlnText("Moved button to " + button);
+    }
+
+    @Override
+    public void updateTable(Table table)
+    {
+        switch (table.getCardsOnTable().size())
+        {
+            case 0:
+                break;
+            case 3:
+                printlnText("Flop:");
+                break;
+            case 4:
+                printlnText("Turn:");
+                break;
+            case 5:
+                printlnText("River:");
+                break;
+        }
+        printlnText(table.tableCardsToString());
     }
 }

@@ -15,7 +15,7 @@ public class DealerTest
             dealer.getCard();
         } catch (Exception e)
         {
-            assertTrue(e instanceof IndexOutOfBoundsException);
+            assertTrue(e instanceof IllegalArgumentException);
         }
     }
 }

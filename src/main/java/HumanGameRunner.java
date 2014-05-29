@@ -3,6 +3,10 @@ import entities.Game;
 import entities.players.HumanPlayer;
 import entities.players.Player;
 import gui.TextualInterface;
+import util.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HumanGameRunner
 {
@@ -19,12 +23,14 @@ public class HumanGameRunner
         player3.setId("third");
         player4.setId("forth");
         player5.setId("fifth");
-        Game game = new Game(10, gui);
-        game.addPlayer(player1);
-        game.addPlayer(player2);
-        game.addPlayer(player3);
-        game.addPlayer(player4);
-        game.addPlayer(player5);
+        List<Player> gamePlayers = new ArrayList<Player>();
+        gamePlayers.add(player1);
+        gamePlayers.add(player2);
+        gamePlayers.add(player3);
+        gamePlayers.add(player4);
+        gamePlayers.add(player5);
+        Game game = new Game(10, gui, Utils.getRandomInt(0, gamePlayers.size() - 1));
+        game.addPlayers(gamePlayers);
         game.play();
     }
 }

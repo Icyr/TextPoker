@@ -1,5 +1,7 @@
 package entities;
 
+import util.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +68,7 @@ public class Dealer
     public Card getCard()
     {
         int max = pack.size();
-        int index = (int) (Math.random() * (max - 1));
+        int index = Utils.getRandomInt(0, max - 1);
         Card returnee = pack.get(index);
         pack.remove(index);
         return returnee;

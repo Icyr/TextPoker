@@ -5,24 +5,10 @@ import entities.players.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Utils
 {
-    //todo test it
-    public static List<List<Card>> unitePlayersAndTableCards(List<Player> players, List<Card> cardsOnTable)
-    {
-        List<List<Card>> playersCards = new ArrayList<List<Card>>();
-        for (Player player : players)
-        {
-            List<Card> temp = new ArrayList<Card>();
-            temp.addAll(cardsOnTable);
-            temp.addAll(player.getHand().getCards());
-            temp = Utils.sortCards(temp);
-            playersCards.add(temp);
-        }
-        return playersCards;
-    }
-
     public static List<Card> getPlayersCards(Player player, List<Card> tableCards)
     {
         List<Card> playersCards = new ArrayList<Card>();
@@ -92,33 +78,9 @@ public class Utils
         return res;
     }
 
-    public static List<Player> getPlayersByCards(List<List<Card>> playersCards, List<Player> players)
+    public static int getRandomInt(int min, int max)
     {
-        List<Player> res = new ArrayList<Player>();
-        for (Player player : players)
-        {
-            for (List<Card> cards : playersCards)
-            {
-                if (cards.contains(player.getHand().getCards().get(0)) || cards.contains(player.getHand().getCards().get(1)))
-                {
-                    res.add(player);
-                }
-            }
-        }
-        //these cards were on table, so we return all players
-        if (res.size() == 0) return players;
-        return res;
-    }
-
-    public static Player getPlayerByCard(Card card, List<Player> players)
-    {
-        for (Player player : players)
-        {
-            if (player.getHand().getCards().contains(card))
-            {
-                return player;
-            }
-        }
-        return null;
+        Random rand = new Random();
+        return rand.nextInt((max - min) + 1) + min;
     }
 }

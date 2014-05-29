@@ -23,12 +23,12 @@ public class Game
 
     private Interface gui;
 
-    public Game(int blindSize, TextualInterface gameGUI)
+    public Game(int blindSize, TextualInterface gameGUI, int buttonPosition)
     {
         this.gui = gameGUI;
         players = new ArrayList<Player>();
         this.blindSize = blindSize;
-        button = 0;
+        button = buttonPosition;
     }
 
     public void addPlayer(Player player)
@@ -36,10 +36,14 @@ public class Game
         players.add(player);
     }
 
+    public void addPlayers(List<Player> newPlayers)
+    {
+        players.addAll(newPlayers);
+    }
+
     public void play()
     {
-        gui.setBank(0);
-        gui.setBetAmount(0);
+        gui.prepareForGame();
         while (players.size() > 1)
         {
             prepareForRound();
@@ -49,24 +53,21 @@ public class Game
             if (getNotFoldedPlayersCount() > 1)
             {
                 table.flop();
-                gui.printlnText("Flop:");
-                gui.printlnText(table.tableCardsToString());
+                gui.updateTable(table);
                 //second circle
                 doTurns(players, table, underTheGun);
             }
             if (getNotFoldedPlayersCount() > 1)
             {
                 table.turn();
-                gui.printlnText("Turn:");
-                gui.printlnText(table.tableCardsToString());
+                gui.updateTable(table);
                 //third circle
                 doTurns(players, table, underTheGun);
             }
             if (getNotFoldedPlayersCount() > 1)
             {
                 table.river();
-                gui.printlnText("River:");
-                gui.printlnText(table.tableCardsToString());
+                gui.updateTable(table);
                 //forth circle
                 doTurns(players, table, underTheGun);
             }
@@ -91,18 +92,14 @@ public class Game
     {
         removeBankruptPlayers();
         discardHands();
-        gui.printlnText("Players' money:");
-        for (Player player : players)
-        {
-            gui.printlnText(player.getCash() + " ");
-        }
+        gui.updatePlayersCash(players);
     }
 
     private void prepareForRound()
     {
+        gui.prepareForRound();
         dealer = new Dealer();
         table = new Table(dealer);
-        gui.setBetAmount(0);
         moveButton();
         betBlinds();
         deal();
@@ -141,7 +138,7 @@ public class Game
                     if (newWinners.size() == 0)
                     {
                         List<Player> playersWithoutWinner = new ArrayList<Player>();
-                        playersWithoutWinner.addAll(players);
+                        playersWithoutWinner.addAll(getUnfoldedPlayers());
                         playersWithoutWinner.remove(winner);
                         List<Player> nextWinners = GameManager.getWinners(playersWithoutWinner, table.getCardsOnTable());
                         distributeWonMoney(nextWinners);
@@ -170,7 +167,7 @@ public class Game
             {
                 gui.printlnText("Player " + i + " has lost all of his money!");
                 if (button == players.size() - 1) button--;
-                if (curPlayer instanceof HumanPlayer)gui.pause();
+                if (curPlayer instanceof HumanPlayer) gui.pause();
             }
         }
         players = playersInGame;
@@ -195,7 +192,7 @@ public class Game
 
     private void deal()
     {
-        gui.printlnText("Dealing cards..");
+        gui.deal();
         for (Player player : players)
         {
             player.setHand(new Hand(dealer.getCards(2)));
@@ -210,7 +207,7 @@ public class Game
         {
             button = 0;
         }
-        gui.printlnText("Moved button to " + button);
+        gui.moveButton(button);
     }
 
     private void revertBlinds()
@@ -241,7 +238,6 @@ public class Game
                 gui.printlnText((button + 2) + " player bet big blind: " + blindSize * 2);
             } catch (BankruptException e)
             {
-
                 removeBankruptPlayers();
                 revertBlinds();
                 betBlinds();
@@ -275,7 +271,6 @@ public class Game
                 betBlinds();
             }
         }
-
     }
 
     private void zeroBets()
