@@ -15,7 +15,7 @@ public class GameManager
         List<PlayersCardsAndCombination> pcacs = new ArrayList<PlayersCardsAndCombination>();
         for (Player player : players)
         {
-            List<Card> playersCards = Utils.getPlayersCards(player, tableCards);
+            List<Card> playersCards = Utils.sortCards(Utils.getPlayersCards(player, tableCards));
             pcacs.add(new PlayersCardsAndCombination(player, playersCards, CombinationAnalyzer.analyzeCombination(playersCards)));
         }
         Combination highestCombination = CombinationAnalyzer.getHighestCombination(pcacs);

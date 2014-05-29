@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>poker</artifactId>
     <groupId>myGroup</groupId>
-    <version>1.01</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
     <build>
         <plugins>
