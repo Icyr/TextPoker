@@ -39,7 +39,7 @@ public class ProbabilityCalculatorTest
                         new Card("H", 2),
                         new Card("S", 13),
                         new Card("C", 13)
-                }, "Turn", 0.27},
+                }, "Turn", 0.3},
                 {new Card[]{
                         new Card("H", 3),
                         new Card("H", 4)

@@ -23,7 +23,7 @@ public class Game
 
     private Interface gui;
 
-    public Game(int blindSize, TextualInterface gameGUI, int buttonPosition)
+    public Game(int blindSize, Interface gameGUI, int buttonPosition)
     {
         this.gui = gameGUI;
         players = new ArrayList<Player>();
@@ -192,12 +192,12 @@ public class Game
 
     private void deal()
     {
-        gui.deal();
         for (Player player : players)
         {
             player.setHand(new Hand(dealer.getCards(2)));
             //gui.printlnText(player.playersCardsToString());
         }
+        gui.deal();
     }
 
     private void moveButton()
@@ -399,7 +399,7 @@ public class Game
     {
         boolean wasRaised = false;
         int callValue = maxBet - player.getCurrentBet();
-        gui.setCallAmount(callValue);
+        gui.setCallAmount(callValue);//not here
         String decision = player.makeDecision(player.getHand(), table, bank, callValue, blindSize * 2, players.size());
         if (decision.equals("fold"))
         {

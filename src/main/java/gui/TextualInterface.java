@@ -4,12 +4,10 @@ import entities.Hand;
 import entities.Table;
 import entities.combinations.Combination;
 import entities.players.Player;
-import logic.ProbabilityCalculator;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -18,9 +16,9 @@ import javax.swing.text.Document;
 
 public class TextualInterface implements Interface
 {
-    protected JTextPane textPane;
     protected JFrame frame;
     protected JPanel panel;
+    protected JTextPane textPane;
     protected JScrollPane jsp;
     protected JButton foldButton;
     protected JButton callButton;
@@ -38,14 +36,20 @@ public class TextualInterface implements Interface
     protected JLabel cashLabel;
     protected JLabel combinationLabel;
 
-    private String decision = "";
+    protected String decision = "";
 
     public TextualInterface()
     {
-        createGUI();
     }
 
-    private void createGUI()
+    public void initialize()
+    {
+        initializeComponents();
+        createTextualUI();
+        addElementsToPanel();
+    }
+
+    protected void initializeComponents()
     {
         try
         {
@@ -54,34 +58,15 @@ public class TextualInterface implements Interface
         {
             System.out.println(e.toString());
         }
-        frame = new JFrame("Poker Textual Interface");
+        frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
         panel = new JPanel();
-        panel.setPreferredSize(new Dimension(380, 360));
         panel.setLayout(null);
 
         textPane = new JTextPane();
+        textPane.setEditable(false);
         jsp = new JScrollPane(textPane);
         foldButton = new JButton("Fold/Check");
-        callButton = new JButton("Call");
-        raiseButton = new JButton("Raise");
-        raiseTField = new JTextField();
-        handText = new JLabel("Your cards:");
-        handLabel = new JLabel();
-        tableText = new JLabel("Table cards:");
-        tableLabel = new JLabel();
-        betText = new JLabel("Your bet:");
-        betLabel = new JLabel();
-        bankText = new JLabel("Bank:");
-        bankLabel = new JLabel();
-
-        cashText = new JLabel("Your cash:");
-        cashLabel = new JLabel();
-        combinationLabel = new JLabel();
-
-        jsp.setBounds(5, 5, 200, 290);
-        foldButton.setBounds(210, 5, 160, 30);
         foldButton.setEnabled(false);
         foldButton.addActionListener(new ActionListener()
         {
@@ -91,7 +76,7 @@ public class TextualInterface implements Interface
                 decision = "fold";
             }
         });
-        callButton.setBounds(210, 50, 160, 30);
+        callButton = new JButton("Call");
         callButton.setEnabled(false);
         callButton.addActionListener(new ActionListener()
         {
@@ -101,7 +86,7 @@ public class TextualInterface implements Interface
                 decision = "call";
             }
         });
-        raiseButton.setBounds(210, 100, 100, 30);
+        raiseButton = new JButton("Raise");
         raiseButton.setEnabled(false);
         raiseButton.addActionListener(new ActionListener()
         {
@@ -111,8 +96,32 @@ public class TextualInterface implements Interface
                 decision = "raise " + raiseTField.getText();
             }
         });
-        raiseTField.setBounds(320, 100, 50, 30);
+        raiseTField = new JTextField();
         raiseTField.setEnabled(false);
+        betText = new JLabel("Your bet:");
+        betLabel = new JLabel();
+        bankText = new JLabel("Bank:");
+        bankLabel = new JLabel();
+        cashText = new JLabel("Your cash:");
+        cashLabel = new JLabel();
+        combinationLabel = new JLabel();
+    }
+
+    private void createTextualUI()
+    {
+        frame.setTitle("Poker Textual Interface");
+        panel.setPreferredSize(new Dimension(380, 360));
+
+        handText = new JLabel("Your cards:");
+        handLabel = new JLabel();
+        tableText = new JLabel("Table cards:");
+        tableLabel = new JLabel();
+
+        jsp.setBounds(5, 5, 200, 290);
+        foldButton.setBounds(210, 5, 160, 30);
+        callButton.setBounds(210, 50, 160, 30);
+        raiseButton.setBounds(210, 100, 100, 30);
+        raiseTField.setBounds(320, 100, 50, 30);
         handText.setBounds(210, 150, 100, 30);
         handLabel.setBounds(210, 170, 100, 30);
         tableText.setBounds(210, 190, 100, 30);
@@ -121,20 +130,24 @@ public class TextualInterface implements Interface
         betLabel.setBounds(210, 250, 100, 30);
         bankText.setBounds(10, 300, 100, 30);
         bankLabel.setBounds(10, 320, 100, 30);
-
         cashText.setBounds(280, 230, 100, 30);
         cashLabel.setBounds(280, 250, 100, 30);
-        combinationLabel.setBounds(210, 270, 100, 30);
+        combinationLabel.setBounds(210, 270, 200, 30);
 
+        panel.add(handText);
+        panel.add(handLabel);
+        panel.add(tableText);
+        panel.add(tableLabel);
+
+    }
+
+    protected void addElementsToPanel()
+    {
         panel.add(jsp);
         panel.add(foldButton);
         panel.add(callButton);
         panel.add(raiseButton);
         panel.add(raiseTField);
-        panel.add(handText);
-        panel.add(handLabel);
-        panel.add(tableText);
-        panel.add(tableLabel);
         panel.add(betText);
         panel.add(betLabel);
         panel.add(bankText);

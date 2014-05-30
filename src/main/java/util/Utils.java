@@ -3,6 +3,8 @@ package util;
 import entities.Card;
 import entities.players.Player;
 
+import java.awt.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -82,5 +84,11 @@ public class Utils
     {
         Random rand = new Random();
         return rand.nextInt((max - min) + 1) + min;
+    }
+
+    public static Image getImage(final String pathAndFileName)
+    {
+        final URL url = Thread.currentThread().getContextClassLoader().getResource(pathAndFileName);
+        return Toolkit.getDefaultToolkit().getImage(url);
     }
 }

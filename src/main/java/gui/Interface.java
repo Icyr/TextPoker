@@ -40,4 +40,6 @@ public interface Interface
     void moveButton(int button);
 
     void updateTable(Table table);
+
+    public void initialize();
 }
