@@ -8,7 +8,6 @@ public class Card
 {
     private final String color;
     private final int nominal;
-    private ImageIcon icon;
 
     public Card(String color, int nominal)
     {
@@ -28,8 +27,7 @@ public class Card
 
     public ImageIcon getIcon()
     {
-        icon = new ImageIcon(Utils.getImage("cards/" + nominal + color + ".png"));
-        return icon;
+        return new ImageIcon(Utils.getImage("cards/" + nominal + color + ".png"));
     }
 
     public boolean equals(Object other)

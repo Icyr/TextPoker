@@ -10,12 +10,13 @@ import java.util.List;
 
 public class ComputerPlayer extends AbstractPlayer
 {
-    private final int probabilityPrecision = 10000;
+    private int probabilityPrecision;
     private DecisionMaker brain;
 
-    public ComputerPlayer(int cash, double risk, double bluff)
+    public ComputerPlayer(int cash, double risk, double bluff, int probabilityPrecision)
     {
         this.cash = cash;
+        this.probabilityPrecision = probabilityPrecision;
         brain = new DecisionMaker(risk, bluff);
         folded = false;
         allIn = false;
@@ -25,6 +26,7 @@ public class ComputerPlayer extends AbstractPlayer
     {
         this.cash = 0;
         brain = new DecisionMaker(0.0, 0.0);
+        probabilityPrecision = 10000;
         folded = false;
         allIn = false;
     }

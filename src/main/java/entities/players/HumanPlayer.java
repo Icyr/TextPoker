@@ -42,12 +42,11 @@ public class HumanPlayer extends AbstractPlayer
     public String makeDecision(Hand hand, Table table, int bank, int currentRaise, int blindSize, int playersCount)
     {
         gui.setHand(hand);
-        gui.setTable(table);
         List<Card> playersCards = new ArrayList<Card>();
         playersCards.addAll(hand.getCards());
         playersCards.addAll(table.getCardsOnTable());
-        gui.showCombination(CombinationAnalyzer.analyzeCombination(playersCards));
-        return gui.getDecision();
+        gui.showPlayersCombination(CombinationAnalyzer.analyzeCombination(playersCards));
+        return gui.getDecision(currentRaise);
     }
 
     public boolean equals(Object other)

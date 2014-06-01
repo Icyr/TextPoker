@@ -4,26 +4,20 @@ import entities.Hand;
 import entities.Table;
 import entities.combinations.Combination;
 import entities.players.Player;
+import gui.modules.DecisionModule;
+import gui.modules.TextModule;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 
 
 public class TextualInterface implements Interface
 {
     protected JFrame frame;
     protected JPanel panel;
-    protected JTextPane textPane;
-    protected JScrollPane jsp;
-    protected JButton foldButton;
-    protected JButton callButton;
-    protected JButton raiseButton;
-    protected JTextField raiseTField;
+    TextModule textModule;
+    DecisionModule decisionModule;
     protected JLabel handText;
     protected JLabel handLabel;
     protected JLabel tableText;
@@ -36,10 +30,10 @@ public class TextualInterface implements Interface
     protected JLabel cashLabel;
     protected JLabel combinationLabel;
 
-    protected String decision = "";
-
     public TextualInterface()
     {
+        textModule = new TextModule();
+        decisionModule = new DecisionModule();
     }
 
     public void initialize()
@@ -63,41 +57,6 @@ public class TextualInterface implements Interface
         panel = new JPanel();
         panel.setLayout(null);
 
-        textPane = new JTextPane();
-        textPane.setEditable(false);
-        jsp = new JScrollPane(textPane);
-        foldButton = new JButton("Fold/Check");
-        foldButton.setEnabled(false);
-        foldButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                decision = "fold";
-            }
-        });
-        callButton = new JButton("Call");
-        callButton.setEnabled(false);
-        callButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                decision = "call";
-            }
-        });
-        raiseButton = new JButton("Raise");
-        raiseButton.setEnabled(false);
-        raiseButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                decision = "raise " + raiseTField.getText();
-            }
-        });
-        raiseTField = new JTextField();
-        raiseTField.setEnabled(false);
         betText = new JLabel("Your bet:");
         betLabel = new JLabel();
         bankText = new JLabel("Bank:");
@@ -117,11 +76,11 @@ public class TextualInterface implements Interface
         tableText = new JLabel("Table cards:");
         tableLabel = new JLabel();
 
-        jsp.setBounds(5, 5, 200, 290);
-        foldButton.setBounds(210, 5, 160, 30);
-        callButton.setBounds(210, 50, 160, 30);
-        raiseButton.setBounds(210, 100, 100, 30);
-        raiseTField.setBounds(320, 100, 50, 30);
+        textModule.setBounds(5, 5, 200, 290);
+        decisionModule.setBounds(new int[]{210, 5, 160, 30},
+                new int[]{210, 50, 160, 30},
+                new int[]{210, 100, 100, 30},
+                new int[]{320, 100, 50, 30});
         handText.setBounds(210, 150, 100, 30);
         handLabel.setBounds(210, 170, 100, 30);
         tableText.setBounds(210, 190, 100, 30);
@@ -143,11 +102,8 @@ public class TextualInterface implements Interface
 
     protected void addElementsToPanel()
     {
-        panel.add(jsp);
-        panel.add(foldButton);
-        panel.add(callButton);
-        panel.add(raiseButton);
-        panel.add(raiseTField);
+        textModule.addToPanel(panel);
+        decisionModule.addToPanel(panel);
         panel.add(betText);
         panel.add(betLabel);
         panel.add(bankText);
@@ -161,75 +117,16 @@ public class TextualInterface implements Interface
         frame.setVisible(true);
     }
 
-    public void printlnText(String newText)
+    @Override
+    public String getDecision(int callValue)
     {
-        Document doc = textPane.getDocument();
-        try
-        {
-            doc.insertString(doc.getLength(), newText + "\n", null);
-        } catch (BadLocationException e)
-        {
-            e.printStackTrace();
-        }
-        textPane.setCaretPosition(doc.getLength());
-    }
-
-    private void enableDecisionButtons()
-    {
-        foldButton.setEnabled(true);
-        callButton.setEnabled(true);
-        raiseButton.setEnabled(true);
-        raiseTField.setEnabled(true);
-    }
-
-    private void prepareForPlayersTurn()
-    {
-        enableDecisionButtons();
-        printlnText("Your turn...");
-        raiseTField.setText("");
-    }
-
-    private void disableDecisionButtons()
-    {
-        foldButton.setEnabled(false);
-        callButton.setEnabled(false);
-        raiseButton.setEnabled(false);
-        raiseTField.setEnabled(false);
-    }
-
-    private String readDecision()
-    {
-        while (decision.equals(""))
-        {
-            try
-            {
-                //wait for decision
-                Thread.sleep(500);
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        return decision;
-    }
-
-    public String getDecision()
-    {
-        prepareForPlayersTurn();
-        String curDecision = readDecision();
-        disableDecisionButtons();
-        decision = "";
-        return curDecision;
+        textModule.printlnText("Your turn...");
+        return decisionModule.getDecision(callValue);
     }
 
     public void setHand(Hand hand)
     {
         handLabel.setText(hand.toString());
-    }
-
-    public void setTable(Table table)
-    {
-        tableLabel.setText(table.tableCardsToString());
     }
 
     public void setBetAmount(int value)
@@ -242,17 +139,12 @@ public class TextualInterface implements Interface
         bankLabel.setText(value + "");
     }
 
-    public void setCallAmount(int value)
-    {
-        callButton.setText("Call (" + value + ")");
-    }
-
     public void setCash(int value)
     {
         cashLabel.setText(value + "");
     }
 
-    public void showCombination(Combination combination)
+    public void showPlayersCombination(Combination combination)
     {
         combinationLabel.setText(combination.toString());
     }
@@ -260,25 +152,23 @@ public class TextualInterface implements Interface
     @Override
     public void pause()
     {
-        while (true)
-        {
-        }
+        while (true) ;
     }
 
     @Override
     public void updatePlayersCash(List<Player> players)
     {
-        printlnText("Players' money:");
+        textModule.printlnText("Players' money:");
         for (Player player : players)
         {
-            printlnText(player.getCash() + " ");
+            textModule.printlnText(player.getCash() + " ");
         }
     }
 
     @Override
     public void deal()
     {
-        printlnText("Dealing cards..");
+        textModule.printlnText("Dealing cards..");
     }
 
     @Override
@@ -292,12 +182,13 @@ public class TextualInterface implements Interface
     public void prepareForRound()
     {
         setBetAmount(0);
+        tableLabel.setText("");
     }
 
     @Override
     public void moveButton(int button)
     {
-        printlnText("Moved button to " + button);
+        textModule.printlnText("Moved button to " + button);
     }
 
     @Override
@@ -308,15 +199,69 @@ public class TextualInterface implements Interface
             case 0:
                 break;
             case 3:
-                printlnText("Flop:");
+                textModule.printlnText("Flop:");
                 break;
             case 4:
-                printlnText("Turn:");
+                textModule.printlnText("Turn:");
                 break;
             case 5:
-                printlnText("River:");
+                textModule.printlnText("River:");
                 break;
         }
-        printlnText(table.tableCardsToString());
+        textModule.printlnText(table.tableCardsToString());
+        tableLabel.setText(table.tableCardsToString());
+    }
+
+    @Override
+    public void showWinnerAndHisPrize(int playersNumber, int wonAmount)
+    {
+        textModule.printlnText("Player " + playersNumber + " won " + wonAmount);
+    }
+
+    @Override
+    public void showWinnersCombination(Combination combination)
+    {
+        textModule.printlnText("Winning combination: " + combination.toString());
+    }
+
+    @Override
+    public void removeBankruptPlayer(int index)
+    {
+        textModule.printlnText("Player " + index + " has lost all of his money!");
+    }
+
+    @Override
+    public void betBlinds(int firstPlayerNumber, int secondPlayerNumber, int blindSize)
+    {
+        textModule.printlnText(firstPlayerNumber + " player bet small blind: " + blindSize);
+        textModule.printlnText(secondPlayerNumber + " player bet big blind: " + blindSize * 2);
+    }
+
+    @Override
+    public void check(int indexOfPlayer)
+    {
+        textModule.printlnText(indexOfPlayer + " player checked");
+    }
+
+    @Override
+    public void fold(int indexOfPlayer)
+    {
+        textModule.printlnText(indexOfPlayer + " player folded");
+    }
+
+    @Override
+    public void call(int indexOfPlayer, int callValue, boolean isAllIn)
+    {
+        String message = indexOfPlayer + " player called " + callValue;
+        if (isAllIn) message += " . ALL IN!";
+        textModule.printlnText(message);
+    }
+
+    @Override
+    public void raise(int indexOfPlayer, int raiseValue, boolean isAllIn)
+    {
+        String message = indexOfPlayer + " player raised " + raiseValue;
+        if (isAllIn) message += " . ALL IN!";
+        textModule.printlnText(message);
     }
 }

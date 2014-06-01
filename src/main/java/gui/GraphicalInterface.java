@@ -34,11 +34,11 @@ public class GraphicalInterface extends TextualInterface implements Interface
         frame.setTitle("Poker Graphical Interface");
         panel.setPreferredSize(new Dimension(640, 480));
 
-        jsp.setBounds(430, 10, 200, 350);
-        foldButton.setBounds(10, 370, 150, 30);
-        callButton.setBounds(165, 370, 150, 30);
-        raiseButton.setBounds(320, 370, 150, 30);
-        raiseTField.setBounds(475, 370, 150, 30);
+        textModule.setBounds(430, 10, 200, 350);
+        decisionModule.setBounds(new int[]{10, 370, 150, 30},
+                new int[]{165, 370, 150, 30},
+                new int[]{320, 370, 150, 30},
+                new int[]{475, 370, 150, 30});
         combinationText.setBounds(10, 450, 100, 30);
         combinationLabel.setBounds(120, 450, 200, 30);
         cashText.setBounds(500, 450, 100, 30);
@@ -89,7 +89,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
     }
 
     @Override
-    public void setTable(Table table)
+    public void updateTable(Table table)
     {
         switch (table.getCardsOnTable().size())
         {

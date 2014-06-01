@@ -3,7 +3,6 @@ package entities;
 import entities.players.HumanPlayer;
 import entities.players.Player;
 import gui.Interface;
-import gui.TextualInterface;
 import logic.GameManager;
 
 import java.util.ArrayList;
@@ -75,7 +74,7 @@ public class Game
             distributeWonMoney(GameManager.getWinners(getUnfoldedPlayers(), table.getCardsOnTable()));
             endRound();
         }
-        gui.printlnText("We have got a winner! " + players.get(0).getId() + " player won!");
+        //gui.printlnText("We have got a winner! " + players.get(0).getId() + " player won!");
     }
 
     private List<Player> getUnfoldedPlayers()
@@ -112,20 +111,20 @@ public class Game
             if (!winner.isAllIn())
             {
                 winner.addToCash(bank / winners.size());
-                gui.printlnText("Player " + players.indexOf(winner) + " won " + bank / winners.size());
+                gui.showWinnerAndHisPrize(players.indexOf(winner), bank / winners.size());
             } else
             {
                 int wonAmount = calculateAllInWinAmount(winner, players) / winners.size();
                 if (bank > wonAmount)
                 {
                     winner.addToCash(wonAmount);
-                    gui.printlnText("Player " + players.indexOf(winner) + " won " + wonAmount);
+                    gui.showWinnerAndHisPrize(players.indexOf(winner), wonAmount);
                     bank -= wonAmount;
                     gui.setBank(bank);
                 } else
                 {
                     winner.addToCash(bank);
-                    gui.printlnText("Player " + players.indexOf(winner) + " won " + bank);
+                    gui.showWinnerAndHisPrize(players.indexOf(winner), bank);
                     bank = 0;
                     gui.setBank(0);
                 }
@@ -147,7 +146,7 @@ public class Game
             }
             if (!didOtherPlayersFold(winner))
             {
-                gui.printlnText("Combination: " + winner.getCurrentCombination(table).toString());
+                gui.showWinnersCombination(winner.getCurrentCombination(table));
             }
         }
         zeroBets();
@@ -165,7 +164,7 @@ public class Game
 
             } else
             {
-                gui.printlnText("Player " + i + " has lost all of his money!");
+                gui.removeBankruptPlayer(i);
                 if (button == players.size() - 1) button--;
                 if (curPlayer instanceof HumanPlayer) gui.pause();
             }
@@ -234,8 +233,7 @@ public class Game
             {
                 players.get(button + 1).addToCurrentBet(blindSize);
                 players.get(button + 2).addToCurrentBet(blindSize * 2);
-                gui.printlnText((button + 1) + " player bet small blind: " + blindSize);
-                gui.printlnText((button + 2) + " player bet big blind: " + blindSize * 2);
+                gui.betBlinds((button + 1), (button + 2), blindSize);
             } catch (BankruptException e)
             {
                 removeBankruptPlayers();
@@ -249,8 +247,7 @@ public class Game
             {
                 players.get(button + 1).addToCurrentBet(blindSize);
                 players.get(0).addToCurrentBet(blindSize * 2);
-                gui.printlnText((button + 1) + " player bet small blind: " + blindSize);
-                gui.printlnText("0 player bet big blind: " + blindSize * 2);
+                gui.betBlinds((button + 1), 0, blindSize);
             } catch (BankruptException e)
             {
                 removeBankruptPlayers();
@@ -263,8 +260,7 @@ public class Game
             {
                 players.get(0).addToCurrentBet(blindSize);
                 players.get(1).addToCurrentBet(blindSize * 2);
-                gui.printlnText("0 player bet small blind: " + blindSize);
-                gui.printlnText("1 player bet big blind: " + blindSize * 2);
+                gui.betBlinds(0, 1, blindSize);
             } catch (BankruptException e)
             {
                 removeBankruptPlayers();
@@ -399,17 +395,16 @@ public class Game
     {
         boolean wasRaised = false;
         int callValue = maxBet - player.getCurrentBet();
-        gui.setCallAmount(callValue);//not here
         String decision = player.makeDecision(player.getHand(), table, bank, callValue, blindSize * 2, players.size());
         if (decision.equals("fold"))
         {
             if (callValue == 0)
             {
-                gui.printlnText(players.indexOf(player) + " player checked");
+                gui.check(players.indexOf(player));
             } else
             {
                 player.setFolded(true);
-                gui.printlnText(players.indexOf(player) + " player folded");
+                gui.fold(players.indexOf(player));
             }
         }
         if (decision.equals("call"))
@@ -421,18 +416,18 @@ public class Game
                     player.unsafeAddToCurrentBet(callValue);
                     bank += callValue;
                     gui.setBank(bank);
-                    gui.printlnText(players.indexOf(player) + " player called " + callValue);
+                    gui.call(players.indexOf(player), callValue, false);
                 } else
                 {
                     bank = bank + player.getCash();
                     gui.setBank(bank);
-                    gui.printlnText(players.indexOf(player) + " player called " + player.getCash() + ". ALL IN!");
+                    gui.call(players.indexOf(player), player.getCash(), true);
                     player.unsafeAddToCurrentBet(player.getCash());
                     player.setAllIn(true);
                 }
             } else
             {
-                gui.printlnText(players.indexOf(player) + " player checked");
+                gui.check(players.indexOf(player));
             }
         }
         if (decision.contains("raise"))
@@ -445,13 +440,13 @@ public class Game
                 maxBet = player.getCurrentBet();
                 bank = bank + raiseAmount + callValue;
                 gui.setBank(bank);
-                gui.printlnText(players.indexOf(player) + " player raised for " + raiseAmount);
+                gui.raise(players.indexOf(player), raiseAmount, false);
                 wasRaised = true;
             } else
             {
                 bank = bank + player.getCash();
                 gui.setBank(bank);
-                gui.printlnText(players.indexOf(player) + " player raised for " + player.getCash() + ". ALL IN!");
+                gui.raise(players.indexOf(player), player.getCash(), true);
                 player.unsafeAddToCurrentBet(player.getCash());
                 maxBet = player.getCurrentBet();
                 player.setAllIn(true);
