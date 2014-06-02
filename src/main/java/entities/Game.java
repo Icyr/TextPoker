@@ -196,7 +196,7 @@ public class Game
             player.setHand(new Hand(dealer.getCards(2)));
             //gui.printlnText(player.playersCardsToString());
         }
-        gui.deal();
+        gui.deal(players);
     }
 
     private void moveButton()

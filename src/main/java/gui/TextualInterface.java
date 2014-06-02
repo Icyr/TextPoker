@@ -124,11 +124,6 @@ public class TextualInterface implements Interface
         return decisionModule.getDecision(callValue);
     }
 
-    public void setHand(Hand hand)
-    {
-        handLabel.setText(hand.toString());
-    }
-
     public void setBetAmount(int value)
     {
         betLabel.setText(value + "");
@@ -166,8 +161,9 @@ public class TextualInterface implements Interface
     }
 
     @Override
-    public void deal()
+    public void deal(List<Player>players)
     {
+        handLabel.setText(players.get(0).getHand().toString());
         textModule.printlnText("Dealing cards..");
     }
 

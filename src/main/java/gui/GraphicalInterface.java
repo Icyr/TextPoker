@@ -1,13 +1,17 @@
 package gui;
 
-import entities.Hand;
 import entities.Table;
+import entities.players.Player;
+import gui.modules.OpponentModule;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GraphicalInterface extends TextualInterface implements Interface
 {
+    List<OpponentModule> opponents = new ArrayList<OpponentModule>();
     JLabel firstTableCard;
     JLabel secondTableCard;
     JLabel thirdTableCard;
@@ -39,12 +43,19 @@ public class GraphicalInterface extends TextualInterface implements Interface
                 new int[]{165, 370, 150, 30},
                 new int[]{320, 370, 150, 30},
                 new int[]{475, 370, 150, 30});
+        OpponentModule firstOpponent = new OpponentModule(1);
+        firstOpponent.setBound(20, 100);
+        opponents.add(firstOpponent);
         combinationText.setBounds(10, 450, 100, 30);
         combinationLabel.setBounds(120, 450, 200, 30);
         cashText.setBounds(500, 450, 100, 30);
         cashLabel.setBounds(600, 450, 30, 30);
-        betLabel.setBounds(198, 240, 100, 30);
-        bankLabel.setBounds(198, 120, 100, 30);
+        betLabel.setBounds(170, 230, 100, 30);
+        betLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        betLabel.setFont(betLabel.getFont().deriveFont(32.0f));
+        bankLabel.setBounds(170, 120, 100, 30);
+        bankLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        bankLabel.setFont(betLabel.getFont().deriveFont(32.0f));
 
         playersFirstCard.setBounds(165, 270, 48, 65);
         playersSecondCard.setBounds(223, 270, 48, 65);
@@ -82,13 +93,6 @@ public class GraphicalInterface extends TextualInterface implements Interface
     }
 
     @Override
-    public void setHand(Hand hand)
-    {
-        playersFirstCard.setIcon(hand.getCards().get(0).getIcon());
-        playersSecondCard.setIcon(hand.getCards().get(1).getIcon());
-    }
-
-    @Override
     public void updateTable(Table table)
     {
         switch (table.getCardsOnTable().size())
@@ -119,7 +123,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void prepareForRound()
     {
-        super.prepareForRound();
+        setBetAmount(0);
         playersFirstCard.setIcon(null);
         playersSecondCard.setIcon(null);
         firstTableCard.setIcon(null);
@@ -127,5 +131,16 @@ public class GraphicalInterface extends TextualInterface implements Interface
         thirdTableCard.setIcon(null);
         forthTableCard.setIcon(null);
         fifthTableCard.setIcon(null);
+    }
+
+    @Override
+    public void deal(List<Player> players)
+    {
+        for (OpponentModule opponent : opponents)
+        {
+            opponent.showHiddenHand();
+        }
+        playersFirstCard.setIcon(players.get(0).getHand().getCards().get(0).getIcon());
+        playersSecondCard.setIcon(players.get(0).getHand().getCards().get(1).getIcon());
     }
 }

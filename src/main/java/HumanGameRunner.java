@@ -14,7 +14,7 @@ public class HumanGameRunner
 {
     public static void main(String[] args)
     {
-        Interface gui = new TextualInterface();
+        Interface gui = new GraphicalInterface();
         gui.initialize();
         Player player1 = new HumanPlayer(1000, gui);
         Player player2 = new ComputerPlayer(1000, 0.05, 0.04, 10000);

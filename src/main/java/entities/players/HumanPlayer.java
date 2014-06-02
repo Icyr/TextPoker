@@ -41,7 +41,6 @@ public class HumanPlayer extends AbstractPlayer
 
     public String makeDecision(Hand hand, Table table, int bank, int currentRaise, int blindSize, int playersCount)
     {
-        gui.setHand(hand);
         List<Card> playersCards = new ArrayList<Card>();
         playersCards.addAll(hand.getCards());
         playersCards.addAll(table.getCardsOnTable());

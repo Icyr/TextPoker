@@ -1,6 +1,5 @@
 package gui;
 
-import entities.Hand;
 import entities.Table;
 import entities.combinations.Combination;
 import entities.players.Player;
@@ -19,15 +18,13 @@ public interface Interface
 
     void showWinnersCombination(Combination s);
 
-    void setHand(Hand hand);
-
     void setCash(int cash);
 
     void pause();
 
     void updatePlayersCash(List<Player> players);
 
-    void deal();
+    void deal(List<Player> players);
 
     void prepareForGame();
 
