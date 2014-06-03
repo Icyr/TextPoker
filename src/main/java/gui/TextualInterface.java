@@ -266,4 +266,10 @@ public class TextualInterface implements Interface
     {
 
     }
+
+    @Override
+    public void zeroBets()
+    {
+
+    }
 }

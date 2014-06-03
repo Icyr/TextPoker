@@ -216,4 +216,31 @@ public class GraphicalInterface extends TextualInterface implements Interface
     {
         opponents.get(index - 1).showHand(hand);
     }
+
+    @Override
+    public void zeroBets()
+    {
+        betLabel.setText("0");
+        for (OpponentModule opponentModule : opponents)
+        {
+            opponentModule.setBet(0);
+        }
+    }
+
+    @Override
+    public void removeBankruptPlayer(int index)
+    {
+        super.removeBankruptPlayer(index);
+        opponents.get(index - 1).removeFromPanel(panel);
+        opponents.remove(index - 1);
+    }
+
+    @Override
+    public void updatePlayersCash(List<Player> players)
+    {
+        for (OpponentModule opponentModule : opponents)
+        {
+            opponentModule.setCash(players.get(opponents.indexOf(opponentModule) + 1).getCash());
+        }
+    }
 }

@@ -43,6 +43,7 @@ public class Game
     public void play()
     {
         gui.prepareForGame();
+        gui.updatePlayersCash(players);
         while (players.size() > 1)
         {
             prepareForRound();
@@ -323,6 +324,7 @@ public class Game
         {
             doOneCircle(players, table, underTheGun, false);
         }
+        gui.zeroBets();
     }
 
     private void doOneCircle(List<Player> players, Table table, int underTheGun, boolean raiseCircle)
@@ -457,7 +459,7 @@ public class Game
                 maxBet = player.getCurrentBet();
                 bank = bank + raiseAmount + callValue;
                 gui.setBank(bank);
-                gui.raise(players.indexOf(player), raiseAmount, false);
+                gui.raise(players.indexOf(player), raiseAmount + callValue, false);
                 wasRaised = true;
             } else
             {

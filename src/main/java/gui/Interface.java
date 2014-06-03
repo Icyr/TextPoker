@@ -52,4 +52,6 @@ public interface Interface
     void raise(int indexOfPlayer, int raiseValue, boolean isAllIn);
 
     void showPlayersHand(int index, Hand hand);
+
+    void zeroBets();
 }
