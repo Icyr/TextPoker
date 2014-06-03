@@ -72,6 +72,13 @@ public class Game
             }
             //get winners
             distributeWonMoney(GameManager.getWinners(getUnfoldedPlayers(), table.getCardsOnTable()));
+            try
+            {
+                Thread.sleep(3000);
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
             endRound();
         }
         //gui.printlnText("We have got a winner! " + players.get(0).getId() + " player won!");
@@ -147,6 +154,16 @@ public class Game
             if (!didOtherPlayersFold(winner))
             {
                 gui.showWinnersCombination(winner.getCurrentCombination(table));
+                for (Player player : players)
+                {
+                    if (players.indexOf(player) != 0)
+                    {
+                        if (!player.isFolded())
+                        {
+                            gui.showPlayersHand(players.indexOf(player), player.getHand());
+                        }
+                    }
+                }
             }
         }
         zeroBets();

@@ -1,5 +1,6 @@
 package gui;
 
+import entities.Hand;
 import entities.Table;
 import entities.combinations.Combination;
 import entities.players.Player;
@@ -49,4 +50,6 @@ public interface Interface
     void call(int indexOfPlayer, int callValue, boolean isAllIn);
 
     void raise(int indexOfPlayer, int raiseValue, boolean isAllIn);
+
+    void showPlayersHand(int index, Hand hand);
 }

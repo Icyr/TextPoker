@@ -260,4 +260,10 @@ public class TextualInterface implements Interface
         if (isAllIn) message += " . ALL IN!";
         textModule.printlnText(message);
     }
+
+    @Override
+    public void showPlayersHand(int index, Hand hand)
+    {
+
+    }
 }
