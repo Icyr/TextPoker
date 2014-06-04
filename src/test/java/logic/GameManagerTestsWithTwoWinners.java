@@ -4,7 +4,6 @@ import entities.Card;
 import entities.Hand;
 import entities.players.ComputerPlayer;
 import entities.players.Player;
-import logic.GameManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -408,7 +407,7 @@ public class GameManagerTestsWithTwoWinners
     @Test
     public void testGetWinners()
     {
-        int actualWinnersSize = GameManager.getWinners(players, tableCards).size();
+        int actualWinnersSize = ConflictResolver.getWinners(players, tableCards).size();
         int expectedWinnersSize = 2;
         assertThat(actualWinnersSize, equalTo(expectedWinnersSize));
     }

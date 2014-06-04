@@ -27,7 +27,7 @@ public interface Interface
 
     void deal(List<Player> players);
 
-    void prepareForGame();
+    void prepareForGame(List<Player> players);
 
     void prepareForRound();
 

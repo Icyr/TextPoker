@@ -109,6 +109,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void updateTable(Table table)
     {
+        textModule.printlnText(table.tableCardsToString());
         switch (table.getCardsOnTable().size())
         {
             case 0:
@@ -189,6 +190,9 @@ public class GraphicalInterface extends TextualInterface implements Interface
         if (indexOfPlayer != 0)
         {
             opponents.get(indexOfPlayer - 1).addToBet(raiseValue);
+        } else
+        {
+            betLabel.setText(raiseValue + "");
         }
     }
 
@@ -200,21 +204,28 @@ public class GraphicalInterface extends TextualInterface implements Interface
         {
             betLabel.setText(blindSize + "");
             opponents.get(0).setBet(blindSize * 2);
+            setBank(blindSize * 3);
         } else if (secondPlayerNumber == 0)
         {
             betLabel.setText(blindSize * 2 + "");
-            opponents.get(3).setBet(blindSize);
+            opponents.get(opponents.size() - 1).setBet(blindSize);
+            setBank(blindSize * 3);
         } else
         {
             opponents.get(firstPlayerNumber - 1).setBet(blindSize);
             opponents.get(secondPlayerNumber - 1).setBet(blindSize * 2);
+            setBank(blindSize * 3);
         }
     }
 
     @Override
     public void showPlayersHand(int index, Hand hand)
     {
-        opponents.get(index - 1).showHand(hand);
+        super.showPlayersHand(index, hand);
+        if (index != 0)
+        {
+            opponents.get(index - 1).showHand(hand);
+        }
     }
 
     @Override
@@ -231,8 +242,14 @@ public class GraphicalInterface extends TextualInterface implements Interface
     public void removeBankruptPlayer(int index)
     {
         super.removeBankruptPlayer(index);
-        opponents.get(index - 1).removeFromPanel(panel);
-        opponents.remove(index - 1);
+        if (index != 0)
+        {
+            opponents.get(index - 1).removeFromPanel(panel);
+            opponents.remove(index - 1);
+        } else
+        {
+            JOptionPane.showMessageDialog(null, "Sorry, but you lost all your money! Good luck next time!");
+        }
     }
 
     @Override
@@ -242,5 +259,25 @@ public class GraphicalInterface extends TextualInterface implements Interface
         {
             opponentModule.setCash(players.get(opponents.indexOf(opponentModule) + 1).getCash());
         }
+    }
+
+    @Override
+    public void showWinnerAndHisPrize(int playersNumber, int wonAmount)
+    {
+        super.showWinnerAndHisPrize(playersNumber, wonAmount);
+        if (playersNumber != 0)
+        {
+            opponents.get(playersNumber - 1).showWin();
+        } else
+        {
+            betLabel.setText("WIN!");
+        }
+    }
+
+    @Override
+    public void prepareForGame(List<Player> players)
+    {
+        super.prepareForGame(players);
+        updatePlayersCash(players);
     }
 }

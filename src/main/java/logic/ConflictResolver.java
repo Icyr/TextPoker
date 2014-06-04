@@ -8,7 +8,7 @@ import util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameManager
+public class ConflictResolver
 {
     public static List<Player> getWinners(List<Player> players, List<Card> tableCards)
     {

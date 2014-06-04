@@ -44,7 +44,7 @@ public class ProbabilityCalculator
             {
                 table.river();
             }
-            List<Player> winners = GameManager.getWinners(players, table.getCardsOnTable());
+            List<Player> winners = ConflictResolver.getWinners(players, table.getCardsOnTable());
             if (winners.contains(players.get(0))) winCount++;
         }
         return (double) winCount / iterations;

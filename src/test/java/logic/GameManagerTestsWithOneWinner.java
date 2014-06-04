@@ -270,7 +270,7 @@ public class GameManagerTestsWithOneWinner
     {
         int expectedWinnersSize = 1;
         Player expectedWinner = players.get(0);
-        List<Player> actualWinners = GameManager.getWinners(players, tableCards);
+        List<Player> actualWinners = ConflictResolver.getWinners(players, tableCards);
         assertThat(actualWinners.size(), equalTo(expectedWinnersSize));
         assertThat(actualWinners.get(0), equalTo(expectedWinner));
     }

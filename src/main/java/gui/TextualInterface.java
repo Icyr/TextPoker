@@ -161,17 +161,16 @@ public class TextualInterface implements Interface
     }
 
     @Override
-    public void deal(List<Player>players)
+    public void deal(List<Player> players)
     {
         handLabel.setText(players.get(0).getHand().toString());
         textModule.printlnText("Dealing cards..");
     }
 
     @Override
-    public void prepareForGame()
+    public void prepareForGame(List<Player> players)
     {
         setBank(0);
-        setBetAmount(0);
     }
 
     @Override
@@ -264,7 +263,7 @@ public class TextualInterface implements Interface
     @Override
     public void showPlayersHand(int index, Hand hand)
     {
-
+        textModule.printlnText("Player's " + index + " hand: " + hand.toString());
     }
 
     @Override

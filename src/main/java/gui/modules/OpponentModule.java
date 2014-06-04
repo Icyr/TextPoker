@@ -14,6 +14,7 @@ public class OpponentModule
     private JLabel secondCard;
     private JLabel cash;
     int betAmount;
+    int cashAmount;
 
     public OpponentModule()
     {
@@ -68,9 +69,13 @@ public class OpponentModule
     public void fold()
     {
         bet.setText("Fold");
+        hideCards();
+    }
+
+    private void hideCards()
+    {
         firstCard.setIcon(null);
         secondCard.setIcon(null);
-
     }
 
     public void showHand(Hand hand)
@@ -81,6 +86,8 @@ public class OpponentModule
 
     public void removeFromPanel(JPanel panel)
     {
+        hideCards();
+        bet.setText("Lost all money");
         panel.remove(bet);
         panel.remove(firstCard);
         panel.remove(secondCard);
@@ -90,5 +97,10 @@ public class OpponentModule
     public void setCash(int value)
     {
         cash.setText(value + "");
+    }
+
+    public void showWin()
+    {
+        bet.setText("WIN!");
     }
 }
