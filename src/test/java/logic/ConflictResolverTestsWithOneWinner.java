@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(Parameterized.class)
-public class GameManagerTestsWithOneWinner
+public class ConflictResolverTestsWithOneWinner
 {
     @Parameterized.Parameters
     public static java.util.Collection<Object[]> data()
@@ -254,7 +254,7 @@ public class GameManagerTestsWithOneWinner
     private List<Player> players = new ArrayList<Player>();
     private List<Card> tableCards;
 
-    public GameManagerTestsWithOneWinner(Card[] tableCards, Card[] firstPlayerCards, Card[] secondPlayerCards)
+    public ConflictResolverTestsWithOneWinner(Card[] tableCards, Card[] firstPlayerCards, Card[] secondPlayerCards)
     {
         this.tableCards = Arrays.asList(tableCards);
         Player winnerPlayer = new ComputerPlayer();
