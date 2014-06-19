@@ -87,11 +87,11 @@ public class OpponentModule
     public void removeFromPanel(JPanel panel)
     {
         hideCards();
-        bet.setText("Lost all money");
-        panel.remove(bet);
+        bet.setText("Bankrupt");
+        /*panel.remove(bet);
         panel.remove(firstCard);
         panel.remove(secondCard);
-        panel.remove(cash);
+        panel.remove(cash);*/
     }
 
     public void setCash(int value)
