@@ -27,9 +27,9 @@ public class OpponentModule
     public void setBound(int x, int y)
     {
         Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
-        firstCard.setBounds(x, y, 48, 65);
+        firstCard.setBounds(x, y, 47, 66);
         firstCard.setBorder(border);
-        secondCard.setBounds(x + 50, y, 48, 65);
+        secondCard.setBounds(x + 50, y, 47, 66);
         secondCard.setBorder(border);
         bet.setBounds(x, y + 70, 100, 30);
         bet.setHorizontalAlignment(SwingConstants.CENTER);

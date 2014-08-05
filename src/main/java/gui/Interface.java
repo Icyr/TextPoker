@@ -54,4 +54,6 @@ public interface Interface
     void showPlayersHand(int index, Hand hand);
 
     void zeroBets();
+
+    void displayRaiseError();
 }

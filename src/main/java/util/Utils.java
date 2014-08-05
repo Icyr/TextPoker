@@ -91,4 +91,17 @@ public class Utils
         final URL url = Thread.currentThread().getContextClassLoader().getResource(pathAndFileName);
         return Toolkit.getDefaultToolkit().getImage(url);
     }
+
+    public static int safeParseInt(String string)
+    {
+        int res;
+        try
+        {
+            res = Integer.parseInt(string);
+        } catch (NumberFormatException e)
+        {
+            return 0;
+        }
+        return res;
+    }
 }

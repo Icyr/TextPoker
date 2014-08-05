@@ -3,6 +3,7 @@ package entities.players;
 import entities.*;
 import gui.Interface;
 import logic.CombinationAnalyzer;
+import util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,17 @@ public class HumanPlayer extends AbstractPlayer
         playersCards.addAll(hand.getCards());
         playersCards.addAll(table.getCardsOnTable());
         gui.showPlayersCombination(CombinationAnalyzer.analyzeCombination(playersCards));
-        return gui.getDecision(currentRaise);
+        String decision = gui.getDecision(currentRaise);
+        if (decision.contains("raise"))
+        {
+            int raiseAmount = Utils.safeParseInt(decision.substring(decision.indexOf(" ") + 1, decision.length()));
+            if (raiseAmount < 2 * currentRaise)
+            {
+                gui.displayRaiseError();
+                decision = gui.getDecision(currentRaise);
+            }
+        }
+        return  decision;
     }
 
     public boolean equals(Object other)

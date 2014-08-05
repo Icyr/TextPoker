@@ -21,10 +21,10 @@ public class GraphicalInterface extends TextualInterface implements Interface
     JLabel playersFirstCard;
     JLabel playersSecondCard;
     JLabel combinationText;
+    JLabel raiseErrorLabel;
 
     public GraphicalInterface()
     {
-
     }
 
     public void initialize()
@@ -66,9 +66,13 @@ public class GraphicalInterface extends TextualInterface implements Interface
         bankLabel.setBounds(170, 150, 100, 30);
         bankLabel.setHorizontalAlignment(SwingConstants.CENTER);
         bankLabel.setFont(betLabel.getFont().deriveFont(32.0f));
+        raiseErrorLabel.setBounds(475, 425, 150, 30);
+        raiseErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        raiseErrorLabel.setForeground(Color.RED);
+        raiseErrorLabel.setVisible(false);
 
-        playersFirstCard.setBounds(165, 300, 48, 65);
-        playersSecondCard.setBounds(223, 300, 48, 65);
+        playersFirstCard.setBounds(165, 300, 47, 66);
+        playersSecondCard.setBounds(223, 300, 47, 66);
         firstTableCard.setBounds(88, 190, 48, 65);
         secondTableCard.setBounds(141, 190, 48, 65);
         thirdTableCard.setBounds(194, 190, 48, 65);
@@ -87,6 +91,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
         thirdTableCard = new JLabel();
         forthTableCard = new JLabel();
         fifthTableCard = new JLabel();
+        raiseErrorLabel = new JLabel();
     }
 
     protected void addElementsToPanel()
@@ -104,6 +109,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
         panel.add(thirdTableCard);
         panel.add(forthTableCard);
         panel.add(fifthTableCard);
+        panel.add(raiseErrorLabel);
     }
 
     @Override
@@ -166,6 +172,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void fold(int indexOfPlayer)
     {
+        raiseErrorLabel.setVisible(false);
         super.fold(indexOfPlayer);
         if (indexOfPlayer != 0)
         {
@@ -176,6 +183,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void call(int indexOfPlayer, int callValue, boolean isAllIn)
     {
+        raiseErrorLabel.setVisible(false);
         super.call(indexOfPlayer, callValue, isAllIn);
         if (indexOfPlayer != 0)
         {
@@ -186,6 +194,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void raise(int indexOfPlayer, int raiseValue, boolean isAllIn)
     {
+        raiseErrorLabel.setVisible(false);
         super.raise(indexOfPlayer, raiseValue, isAllIn);
         if (indexOfPlayer != 0)
         {
@@ -236,6 +245,14 @@ public class GraphicalInterface extends TextualInterface implements Interface
         {
             opponentModule.setBet(0);
         }
+    }
+
+    @Override
+    public void displayRaiseError()
+    {
+        super.displayRaiseError();
+        raiseErrorLabel.setText("Invalid raise");
+        raiseErrorLabel.setVisible(true);
     }
 
     @Override

@@ -4,6 +4,7 @@ import entities.players.HumanPlayer;
 import entities.players.Player;
 import gui.Interface;
 import logic.ConflictResolver;
+import util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,21 +55,30 @@ public class Game
                 table.flop();
                 gui.updateTable(table);
                 //second circle
-                makeBets(players, table, underTheGun);
+                if (getActivePlayerCount() > 1)
+                {
+                    makeBets(players, table, underTheGun);
+                }
             }
             if (getNotFoldedPlayersCount() > 1)
             {
                 table.turn();
                 gui.updateTable(table);
                 //third circle
-                makeBets(players, table, underTheGun);
+                if (getActivePlayerCount() > 1)
+                {
+                    makeBets(players, table, underTheGun);
+                }
             }
             if (getNotFoldedPlayersCount() > 1)
             {
                 table.river();
                 gui.updateTable(table);
                 //forth circle
-                makeBets(players, table, underTheGun);
+                if (getActivePlayerCount() > 1)
+                {
+                    makeBets(players, table, underTheGun);
+                }
             }
             //get winners
             List<Player> winners = ConflictResolver.getWinners(getNotFoldedPlayers(), table.getCardsOnTable());
@@ -342,16 +352,16 @@ public class Game
 
     private void makeBets(List<Player> players, Table table, int underTheGun)
     {
-        doOneCircle(players, table, underTheGun, false);
+        playOneCircle(players, table, underTheGun, false);
         while (!circleEnded())
         {
-            doOneCircle(players, table, underTheGun, false);
+            playOneCircle(players, table, underTheGun, false);
         }
         gui.zeroBets();
         gui.setBank(bank);
     }
 
-    private void doOneCircle(List<Player> players, Table table, int underTheGun, boolean raiseCircle)
+    private void playOneCircle(List<Player> players, Table table, int underTheGun, boolean raiseCircle)
     {
         int turnsCount = players.size();
         if (raiseCircle)
@@ -384,9 +394,19 @@ public class Game
         }
         if (raiseBoolean)
         {
-            doOneCircle(players, table, nextPlayerPosition, true);
+            playOneCircle(players, table, nextPlayerPosition, true);
         }
 
+    }
+
+    private int getActivePlayerCount()
+    {
+        int activeCount = 0;
+        for (Player player : players)
+        {
+            if (!player.isFolded() && !player.isAllIn()) activeCount++;
+        }
+        return activeCount;
     }
 
     private boolean didOtherPlayersFold(Player curPlayer)
@@ -430,35 +450,21 @@ public class Game
         }
         if (decision.equals("call"))
         {
-            if (callValue > 0)
-            {
-                if (callValue < player.getCash())
-                {
-                    player.unsafeAddToCurrentBet(callValue);
-                    bank += callValue;
-                    gui.call(players.indexOf(player), callValue, false);
-                } else
-                {
-                    bank = bank + player.getCash();
-                    gui.call(players.indexOf(player), player.getCash(), true);
-                    player.unsafeAddToCurrentBet(player.getCash());
-                    player.setAllIn(true);
-                }
-            } else
-            {
-                gui.check(players.indexOf(player));
-            }
+            makeCall(player, callValue);
         }
         if (decision.contains("raise"))
         {
-            int raiseAmount = Integer.parseInt(decision.substring(decision.indexOf(" ") + 1, decision.length()));
-            if (raiseAmount + callValue < player.getCash())
+            int raiseAmount = Utils.safeParseInt(decision.substring(decision.indexOf(" ") + 1, decision.length()));
+            if (raiseAmount < 2 * callValue)
             {
-                player.unsafeAddToCurrentBet(callValue);
+                makeCall(player, callValue);
+            } else if (raiseAmount < player.getCash())
+            {
+                //player.unsafeAddToCurrentBet(callValue);
                 player.unsafeAddToCurrentBet(raiseAmount);
                 maxBet = player.getCurrentBet();
-                bank = bank + raiseAmount + callValue;
-                gui.raise(players.indexOf(player), raiseAmount + callValue, false);
+                bank = bank + raiseAmount;
+                gui.raise(players.indexOf(player), raiseAmount, false);
                 wasRaised = true;
             } else
             {
@@ -472,5 +478,27 @@ public class Game
         }
         gui.updatePlayersCash(players);
         return wasRaised;
+    }
+
+    private void makeCall(Player player, int callValue)
+    {
+        if (callValue > 0)
+        {
+            if (callValue < player.getCash())
+            {
+                player.unsafeAddToCurrentBet(callValue);
+                bank += callValue;
+                gui.call(players.indexOf(player), callValue, false);
+            } else
+            {
+                bank = bank + player.getCash();
+                gui.call(players.indexOf(player), player.getCash(), true);
+                player.unsafeAddToCurrentBet(player.getCash());
+                player.setAllIn(true);
+            }
+        } else
+        {
+            gui.check(players.indexOf(player));
+        }
     }
 }

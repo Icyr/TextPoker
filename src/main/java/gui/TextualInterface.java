@@ -271,4 +271,10 @@ public class TextualInterface implements Interface
     {
 
     }
+
+    @Override
+    public void displayRaiseError()
+    {
+        textModule.printlnText("Invalid raise");
+    }
 }
