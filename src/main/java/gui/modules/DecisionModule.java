@@ -1,6 +1,9 @@
 package gui.modules;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -8,10 +11,14 @@ public class DecisionModule
 {
     private String decision = "";
 
+    private JPanel decisionPanel;
+    private JPanel raisePanel;
+
     private JButton foldButton;
     private JButton callButton;
     private JButton raiseButton;
     private JTextField raiseTField;
+    private JSlider raiseSlider;
 
     public DecisionModule()
     {
@@ -22,6 +29,10 @@ public class DecisionModule
         {
             System.out.println(e.toString());
         }
+        decisionPanel = new JPanel();
+        decisionPanel.setLayout(new GridLayout(2, 2, 10, 10));
+        raisePanel = new JPanel();
+        raisePanel.setLayout(new BoxLayout(raisePanel, BoxLayout.PAGE_AXIS));
         foldButton = new JButton("Fold/Check");
         foldButton.setEnabled(false);
         foldButton.addActionListener(new ActionListener()
@@ -54,28 +65,42 @@ public class DecisionModule
         });
         raiseTField = new JTextField();
         raiseTField.setEnabled(false);
+        raiseSlider = new JSlider(JSlider.HORIZONTAL);
+        raiseSlider.setEnabled(false);
+        raiseSlider.addChangeListener(new ChangeListener()
+        {
+            @Override
+            public void stateChanged(ChangeEvent e)
+            {
+                raiseTField.setText(Integer.toString(raiseSlider.getValue()));
+            }
+        });
     }
 
     public void addToPanel(JPanel panel)
     {
-        panel.add(foldButton);
-        panel.add(callButton);
-        panel.add(raiseButton);
-        panel.add(raiseTField);
+        raisePanel.add(raiseTField);
+        raisePanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        raisePanel.add(raiseSlider);
+        decisionPanel.add(foldButton);
+        decisionPanel.add(callButton);
+        decisionPanel.add(raiseButton);
+        decisionPanel.add(raisePanel);
+        panel.add(decisionPanel);
     }
 
-    public void setBounds(int[] foldCoords, int[] callCoords, int[] raiseCoords, int[] raiseTextCoords)
+    public void setBounds(int x, int y, int frameWidth, int frameHeight)
     {
-        foldButton.setBounds(foldCoords[0], foldCoords[1], foldCoords[2], foldCoords[3]);
-        callButton.setBounds(callCoords[0], callCoords[1], callCoords[2], callCoords[3]);
-        raiseButton.setBounds(raiseCoords[0], raiseCoords[1], raiseCoords[2], raiseCoords[3]);
-        raiseTField.setBounds(raiseTextCoords[0], raiseTextCoords[1], raiseTextCoords[2], raiseTextCoords[3]);
+        decisionPanel.setBounds(x, y, frameWidth / 2 - 15, frameHeight / 4);
     }
 
-    public String getDecision(int callValue)
+    public String getDecision(int callValue, int cash)
     {
         raiseTField.setText("");
         callButton.setText("Call (" + callValue + ")");
+        raiseSlider.setMinimum(callValue * 2);
+        raiseSlider.setMaximum(cash);
+        raiseSlider.setValue(callValue * 2);
         enableDecisionButtons();
         String curDecision = readDecision();
         disableDecisionButtons();
@@ -89,6 +114,7 @@ public class DecisionModule
         callButton.setEnabled(true);
         raiseButton.setEnabled(true);
         raiseTField.setEnabled(true);
+        raiseSlider.setEnabled(true);
     }
 
     private void disableDecisionButtons()
@@ -97,6 +123,7 @@ public class DecisionModule
         callButton.setEnabled(false);
         raiseButton.setEnabled(false);
         raiseTField.setEnabled(false);
+        raiseSlider.setEnabled(false);
     }
 
     private String readDecision()

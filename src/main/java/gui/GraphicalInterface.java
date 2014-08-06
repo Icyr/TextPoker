@@ -3,7 +3,14 @@ package gui;
 import entities.Hand;
 import entities.Table;
 import entities.players.Player;
-import gui.modules.OpponentModule;
+import gui.presenter.OpponentPresenter;
+import gui.presenter.PlayerPresenter;
+import gui.presenter.TablePresenter;
+import gui.view.OpponentView;
+import gui.view.OpponentViewFactory;
+import gui.view.PlayerView;
+import gui.view.TableView;
+import util.Constants;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,50 +19,63 @@ import java.util.List;
 
 public class GraphicalInterface extends TextualInterface implements Interface
 {
-    List<OpponentModule> opponents = new ArrayList<OpponentModule>();
-    JLabel firstTableCard;
-    JLabel secondTableCard;
-    JLabel thirdTableCard;
-    JLabel forthTableCard;
-    JLabel fifthTableCard;
-    JLabel playersFirstCard;
-    JLabel playersSecondCard;
+    public static final int FRAME_WIDTH = 800;
+    public static final int FRAME_HEIGHT = 600;
+
+    private List<OpponentView> opponentViews;
+    private List<OpponentPresenter> opponentPresenters;
+    private TableView tableView;
+    private TablePresenter tablePresenter;
+    private PlayerView playerView;
+    private PlayerPresenter playerPresenter;
+
+    private JPanel gameFieldPanel;
+
     JLabel combinationText;
     JLabel raiseErrorLabel;
 
     public GraphicalInterface()
     {
+        createOpponents(4);
+    }
+
+    public GraphicalInterface(int numberOfOpponents)
+    {
+        createOpponents(numberOfOpponents);
+    }
+
+    private void createOpponents(int count)
+    {
+        opponentViews = new ArrayList<OpponentView>(count);
+        opponentPresenters = new ArrayList<OpponentPresenter>(count);
+        for (int i = 0; i < count; i++)
+        {
+            OpponentView view = OpponentViewFactory.createOpponentView();
+            opponentViews.add(view);
+            opponentPresenters.add(new OpponentPresenter(view));
+        }
     }
 
     public void initialize()
     {
         initializeComponents();
-        createGraphicalUI();
+        layout();
         addElementsToPanel();
     }
 
-    private void createGraphicalUI()
+    private void layout()
     {
         frame.setTitle("Poker Graphical Interface");
-        panel.setPreferredSize(new Dimension(640, 480));
-
-        textModule.setBounds(480, 10, 150, 350);
-        decisionModule.setBounds(new int[]{10, 400, 150, 30},
-                new int[]{165, 400, 150, 30},
-                new int[]{320, 400, 150, 30},
-                new int[]{475, 400, 150, 30});
-        OpponentModule firstOpponent = new OpponentModule();
-        firstOpponent.setBound(20, 100);
-        opponents.add(firstOpponent);
-        OpponentModule secondOpponent = new OpponentModule();
-        secondOpponent.setBound(100, 20);
-        opponents.add(secondOpponent);
-        OpponentModule thirdOpponent = new OpponentModule();
-        thirdOpponent.setBound(250, 20);
-        opponents.add(thirdOpponent);
-        OpponentModule forthOpponent = new OpponentModule();
-        forthOpponent.setBound(350, 100);
-        opponents.add(forthOpponent);
+        panel.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
+        gameFieldPanel.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT * 3 / 4 - 10);
+        gameFieldPanel.setBackground(Constants.BACKGROUND_COLOR);
+        textModule.setBounds(5, FRAME_HEIGHT * 3 / 4 - 5, FRAME_WIDTH / 2, FRAME_HEIGHT / 4);
+        decisionModule.setBounds(10 + FRAME_WIDTH / 2, FRAME_HEIGHT * 3 / 4 - 5, FRAME_WIDTH, FRAME_HEIGHT);
+        layoutOpponents();
+        /*opponentViews.get(0).setBound(20, 100);
+        opponentViews.get(1).setBound(100, 20);
+        opponentViews.get(2).setBound(270, 20);
+        opponentViews.get(3).setBound(350, 100);*/
         combinationText.setBounds(10, 450, 100, 30);
         combinationLabel.setBounds(120, 450, 200, 30);
         cashText.setBounds(500, 450, 100, 30);
@@ -71,45 +91,103 @@ public class GraphicalInterface extends TextualInterface implements Interface
         raiseErrorLabel.setForeground(Color.RED);
         raiseErrorLabel.setVisible(false);
 
-        playersFirstCard.setBounds(165, 300, 47, 66);
-        playersSecondCard.setBounds(223, 300, 47, 66);
-        firstTableCard.setBounds(88, 190, 48, 65);
-        secondTableCard.setBounds(141, 190, 48, 65);
-        thirdTableCard.setBounds(194, 190, 48, 65);
-        forthTableCard.setBounds(247, 190, 48, 65);
-        fifthTableCard.setBounds(300, 190, 48, 65);
+        playerView.setBounds(FRAME_WIDTH / 2, FRAME_HEIGHT / 4 * 3 - 50);
+        tableView.setBounds(FRAME_WIDTH / 2, FRAME_HEIGHT * 3 / 8);
+    }
+
+    private void layoutOpponents()
+    {
+        switch (opponentViews.size())
+        {
+            case 1:
+            {
+                opponentViews.get(0).setBound(FRAME_WIDTH / 2 - Constants.CARD_WIDTH, 30);
+                break;
+            }
+            case 2:
+            {
+                opponentViews.get(0).setBound(FRAME_WIDTH / 4 - Constants.CARD_WIDTH, 30);
+                opponentViews.get(1).setBound(3 * FRAME_WIDTH / 4 - Constants.CARD_WIDTH, 30);
+                break;
+            }
+            case 3:
+            {
+                opponentViews.get(0).setBound(40, 3 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                opponentViews.get(1).setBound(FRAME_WIDTH / 2 - Constants.CARD_WIDTH, 30);
+                opponentViews.get(2).setBound(FRAME_WIDTH - 40 - 2 * Constants.CARD_WIDTH, 3 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                break;
+            }
+            case 4:
+            {
+                opponentViews.get(0).setBound(40, 3 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                opponentViews.get(1).setBound(FRAME_WIDTH / 4 - Constants.CARD_WIDTH, 30);
+                opponentViews.get(2).setBound(3 * FRAME_WIDTH / 4 - Constants.CARD_WIDTH, 30);
+                opponentViews.get(3).setBound(FRAME_WIDTH - 40 - 2 * Constants.CARD_WIDTH, 3 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                break;
+            }
+            case 5:
+            {
+                opponentViews.get(0).setBound(40, 3 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                opponentViews.get(1).setBound(FRAME_WIDTH / 4 - Constants.CARD_WIDTH, 30);
+                opponentViews.get(2).setBound(FRAME_WIDTH / 2 - Constants.CARD_WIDTH, 30);
+                opponentViews.get(3).setBound(3 * FRAME_WIDTH / 4 - Constants.CARD_WIDTH, 30);
+                opponentViews.get(4).setBound(FRAME_WIDTH - 40 - 2 * Constants.CARD_WIDTH, 3 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                break;
+            }
+            case 6:
+            {
+                opponentViews.get(0).setBound(40, 4 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                opponentViews.get(1).setBound(40, 2 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                opponentViews.get(2).setBound(3 * FRAME_WIDTH / 8 - Constants.CARD_WIDTH, 30);
+                opponentViews.get(3).setBound(5 * FRAME_WIDTH / 8 - Constants.CARD_WIDTH, 30);
+                opponentViews.get(4).setBound(FRAME_WIDTH - 40 - 2 * Constants.CARD_WIDTH, 2 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                opponentViews.get(5).setBound(FRAME_WIDTH - 40 - 2 * Constants.CARD_WIDTH, 4 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                break;
+            }
+            case 7:
+            {
+                opponentViews.get(0).setBound(40, 4 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                opponentViews.get(1).setBound(40, 2 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                opponentViews.get(2).setBound(FRAME_WIDTH / 4 - Constants.CARD_WIDTH, 30);
+                opponentViews.get(3).setBound(FRAME_WIDTH / 2 - Constants.CARD_WIDTH, 30);
+                opponentViews.get(4).setBound(3 * FRAME_WIDTH / 4 - Constants.CARD_WIDTH, 30);
+                opponentViews.get(5).setBound(FRAME_WIDTH - 40 - 2 * Constants.CARD_WIDTH, 2 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                opponentViews.get(6).setBound(FRAME_WIDTH - 40 - 2 * Constants.CARD_WIDTH, 4 * FRAME_HEIGHT / 8 - Constants.CARD_HEIGHT / 2);
+                break;
+            }
+
+        }
     }
 
     protected void initializeComponents()
     {
         super.initializeComponents();
+        gameFieldPanel = new JPanel();
+        gameFieldPanel.setLayout(null);
         combinationText = new JLabel("Your combination:");
-        playersFirstCard = new JLabel();
-        playersSecondCard = new JLabel();
-        firstTableCard = new JLabel();
-        secondTableCard = new JLabel();
-        thirdTableCard = new JLabel();
-        forthTableCard = new JLabel();
-        fifthTableCard = new JLabel();
+
+        playerView = new PlayerView();
+        playerPresenter = new PlayerPresenter(playerView);
+
+        tableView = new TableView();
+        tablePresenter = new TablePresenter(tableView);
         raiseErrorLabel = new JLabel();
     }
 
     protected void addElementsToPanel()
     {
         super.addElementsToPanel();
-        for (OpponentModule opponent : opponents)
+        for (OpponentView opponent : opponentViews)
         {
-            opponent.addToPanel(panel);
+            opponent.addToPanel(gameFieldPanel);
         }
-        panel.add(combinationText);
-        panel.add(playersFirstCard);
-        panel.add(playersSecondCard);
-        panel.add(firstTableCard);
-        panel.add(secondTableCard);
-        panel.add(thirdTableCard);
-        panel.add(forthTableCard);
-        panel.add(fifthTableCard);
-        panel.add(raiseErrorLabel);
+        tableView.addToPanel(gameFieldPanel);
+        playerView.addToPanel(gameFieldPanel);
+
+        panel.add(gameFieldPanel);
+        //panel.add(combinationText);
+
+        //panel.add(raiseErrorLabel);
     }
 
     @Override
@@ -121,22 +199,13 @@ public class GraphicalInterface extends TextualInterface implements Interface
             case 0:
                 break;
             case 3:
-                firstTableCard.setIcon(table.getCardsOnTable().get(0).getIcon());
-                secondTableCard.setIcon(table.getCardsOnTable().get(1).getIcon());
-                thirdTableCard.setIcon(table.getCardsOnTable().get(2).getIcon());
+                tablePresenter.flop(table);
                 break;
             case 4:
-                firstTableCard.setIcon(table.getCardsOnTable().get(0).getIcon());
-                secondTableCard.setIcon(table.getCardsOnTable().get(1).getIcon());
-                thirdTableCard.setIcon(table.getCardsOnTable().get(2).getIcon());
-                forthTableCard.setIcon(table.getCardsOnTable().get(3).getIcon());
+                tablePresenter.turn(table);
                 break;
             case 5:
-                firstTableCard.setIcon(table.getCardsOnTable().get(0).getIcon());
-                secondTableCard.setIcon(table.getCardsOnTable().get(1).getIcon());
-                thirdTableCard.setIcon(table.getCardsOnTable().get(2).getIcon());
-                forthTableCard.setIcon(table.getCardsOnTable().get(3).getIcon());
-                fifthTableCard.setIcon(table.getCardsOnTable().get(4).getIcon());
+                tablePresenter.river(table);
                 break;
         }
     }
@@ -145,28 +214,23 @@ public class GraphicalInterface extends TextualInterface implements Interface
     public void prepareForRound()
     {
         setBetAmount(0);
-        for (OpponentModule opponentModule : opponents)
+        for (OpponentPresenter opponentPresenter : opponentPresenters)
         {
-            opponentModule.setBet(0);
+            opponentPresenter.setBet(0);
         }
-        playersFirstCard.setIcon(null);
-        playersSecondCard.setIcon(null);
-        firstTableCard.setIcon(null);
-        secondTableCard.setIcon(null);
-        thirdTableCard.setIcon(null);
-        forthTableCard.setIcon(null);
-        fifthTableCard.setIcon(null);
+        playerPresenter.discardCards();
+        tablePresenter.discardTableCards();
+
     }
 
     @Override
     public void deal(List<Player> players)
     {
-        for (OpponentModule opponent : opponents)
+        for (OpponentPresenter opponentPresenter : opponentPresenters)
         {
-            opponent.showHiddenHand();
+            opponentPresenter.showCardBacks();
         }
-        playersFirstCard.setIcon(players.get(0).getHand().getCards().get(0).getIcon());
-        playersSecondCard.setIcon(players.get(0).getHand().getCards().get(1).getIcon());
+        playerPresenter.setHandCards(players.get(0).getHand());
     }
 
     @Override
@@ -176,7 +240,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
         super.fold(indexOfPlayer);
         if (indexOfPlayer != 0)
         {
-            opponents.get(indexOfPlayer - 1).fold();
+            opponentPresenters.get(indexOfPlayer - 1).fold();
         }
     }
 
@@ -187,7 +251,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
         super.call(indexOfPlayer, callValue, isAllIn);
         if (indexOfPlayer != 0)
         {
-            opponents.get(indexOfPlayer - 1).addToBet(callValue);
+            opponentPresenters.get(indexOfPlayer - 1).addToBet(callValue);
         }
     }
 
@@ -198,7 +262,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
         super.raise(indexOfPlayer, raiseValue, isAllIn);
         if (indexOfPlayer != 0)
         {
-            opponents.get(indexOfPlayer - 1).addToBet(raiseValue);
+            opponentPresenters.get(indexOfPlayer - 1).addToBet(raiseValue);
         } else
         {
             betLabel.setText(raiseValue + "");
@@ -212,17 +276,17 @@ public class GraphicalInterface extends TextualInterface implements Interface
         if (firstPlayerNumber == 0)
         {
             betLabel.setText(blindSize + "");
-            opponents.get(0).setBet(blindSize * 2);
+            opponentPresenters.get(0).setBet(blindSize * 2);
             setBank(blindSize * 3);
         } else if (secondPlayerNumber == 0)
         {
             betLabel.setText(blindSize * 2 + "");
-            opponents.get(opponents.size() - 1).setBet(blindSize);
+            opponentPresenters.get(opponentPresenters.size() - 1).setBet(blindSize);
             setBank(blindSize * 3);
         } else
         {
-            opponents.get(firstPlayerNumber - 1).setBet(blindSize);
-            opponents.get(secondPlayerNumber - 1).setBet(blindSize * 2);
+            opponentPresenters.get(firstPlayerNumber - 1).setBet(blindSize);
+            opponentPresenters.get(secondPlayerNumber - 1).setBet(blindSize * 2);
             setBank(blindSize * 3);
         }
     }
@@ -233,7 +297,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
         super.showPlayersHand(index, hand);
         if (index != 0)
         {
-            opponents.get(index - 1).showHand(hand);
+            opponentPresenters.get(index - 1).showCards(hand);
         }
     }
 
@@ -241,9 +305,9 @@ public class GraphicalInterface extends TextualInterface implements Interface
     public void zeroBets()
     {
         betLabel.setText("0");
-        for (OpponentModule opponentModule : opponents)
+        for (OpponentPresenter opponentPresenter : opponentPresenters)
         {
-            opponentModule.setBet(0);
+            opponentPresenter.setBet(0);
         }
     }
 
@@ -261,8 +325,8 @@ public class GraphicalInterface extends TextualInterface implements Interface
         super.removeBankruptPlayer(index);
         if (index != 0)
         {
-            opponents.get(index - 1).removeFromPanel(panel);
-            opponents.remove(index - 1);
+            opponentPresenters.get(index - 1).bankrupt();
+            opponentPresenters.remove(index - 1);
         } else
         {
             JOptionPane.showMessageDialog(null, "Sorry, but you lost all your money! Good luck next time!");
@@ -272,9 +336,9 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void updatePlayersCash(List<Player> players)
     {
-        for (OpponentModule opponentModule : opponents)
+        for (OpponentPresenter opponentPresenter : opponentPresenters)
         {
-            opponentModule.setCash(players.get(opponents.indexOf(opponentModule) + 1).getCash());
+            opponentPresenter.setCash(players.get(opponentPresenters.indexOf(opponentPresenter) + 1).getCash());
         }
     }
 
@@ -284,7 +348,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
         super.showWinnerAndHisPrize(playersNumber, wonAmount);
         if (playersNumber != 0)
         {
-            opponents.get(playersNumber - 1).showWin();
+            opponentPresenters.get(playersNumber - 1).showWin();
         } else
         {
             betLabel.setText("WIN!");
@@ -296,5 +360,11 @@ public class GraphicalInterface extends TextualInterface implements Interface
     {
         super.prepareForGame(players);
         updatePlayersCash(players);
+    }
+
+    @Override
+    public void setCash(int value)
+    {
+        playerPresenter.setCash(value);
     }
 }

@@ -1,4 +1,4 @@
-package service;
+package entities.players;
 
 import entities.players.ComputerPlayer;
 import util.Utils;

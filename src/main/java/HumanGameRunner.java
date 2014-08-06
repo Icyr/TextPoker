@@ -4,7 +4,7 @@ import entities.players.Player;
 import gui.GraphicalInterface;
 import gui.Interface;
 import gui.IntroWindow;
-import service.ComputerPlayerFactory;
+import entities.players.ComputerPlayerFactory;
 import util.Utils;
 
 import java.util.ArrayList;
@@ -25,13 +25,13 @@ public class HumanGameRunner
                 e.printStackTrace();
             }
         }
-        Interface gui = new GraphicalInterface();
+        Interface gui = new GraphicalInterface(introWindow.opponentsNumber);
         gui.initialize();
         Player humanPlayer = new HumanPlayer(introWindow.moneyAmount, gui);
         humanPlayer.setId("you");
         java.util.List<Player> gamePlayers = new ArrayList<Player>();
         gamePlayers.add(humanPlayer);
-        int numberOfOpponents = 4;//(Integer) opponentsSpinner.getValue();
+        int numberOfOpponents = introWindow.opponentsNumber;
         for (int i = 0; i < numberOfOpponents; i++)
         {
             gamePlayers.add(ComputerPlayerFactory.createComputerPlayer(introWindow.moneyAmount));

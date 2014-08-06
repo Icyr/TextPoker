@@ -25,6 +25,7 @@ public class IntroWindow
     private JButton okButton;
 
     public int moneyAmount;
+    public int opponentsNumber;
     public boolean ready = false;
 
     public IntroWindow()
@@ -54,7 +55,7 @@ public class IntroWindow
         moneyLabel = new JLabel("Enter players' cash:");
         abilityToBuyInLabel = new JLabel("I wish to buy in if I lose all my money");
 
-        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(4, 1, 8, 1);
+        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(4, 1, 7, 1);
         opponentsSpinner = new JSpinner(spinnerNumberModel);
         moneyInput = new JTextField("1000");
         abilityToBuyInCheckBox = new JCheckBox();
@@ -65,6 +66,7 @@ public class IntroWindow
             public void actionPerformed(ActionEvent e)
             {
                 moneyAmount = Utils.safeParseInt(moneyInput.getText());
+                opponentsNumber = (Integer) opponentsSpinner.getValue();
                 ready = true;
                 frame.dispose();
             }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface Interface
 {
-    String getDecision(int callValue);
+    String getDecision(int callValue, int cash);
 
     void setBank(int i);
 

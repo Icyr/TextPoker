@@ -11,7 +11,7 @@ import java.awt.*;
 import java.util.List;
 import javax.swing.*;
 
-
+//todo: Move all logic to textModule and delete this class
 public class TextualInterface implements Interface
 {
     protected JFrame frame;
@@ -77,10 +77,10 @@ public class TextualInterface implements Interface
         tableLabel = new JLabel();
 
         textModule.setBounds(5, 5, 200, 290);
-        decisionModule.setBounds(new int[]{210, 5, 160, 30},
+        /*decisionModule.setBounds(new int[]{210, 5, 160, 30},
                 new int[]{210, 50, 160, 30},
                 new int[]{210, 100, 100, 30},
-                new int[]{320, 100, 50, 30});
+                new int[]{320, 100, 50, 30});*/
         handText.setBounds(210, 150, 100, 30);
         handLabel.setBounds(210, 170, 100, 30);
         tableText.setBounds(210, 190, 100, 30);
@@ -104,13 +104,13 @@ public class TextualInterface implements Interface
     {
         textModule.addToPanel(panel);
         decisionModule.addToPanel(panel);
-        panel.add(betText);
+        /*panel.add(betText);
         panel.add(betLabel);
         panel.add(bankText);
         panel.add(bankLabel);
         panel.add(cashText);
         panel.add(cashLabel);
-        panel.add(combinationLabel);
+        panel.add(combinationLabel);*/
 
         frame.getContentPane().add(panel);
         frame.pack();
@@ -118,10 +118,10 @@ public class TextualInterface implements Interface
     }
 
     @Override
-    public String getDecision(int callValue)
+    public String getDecision(int callValue, int cash)
     {
         textModule.printlnText("Your turn...");
-        return decisionModule.getDecision(callValue);
+        return decisionModule.getDecision(callValue, cash);
     }
 
     public void setBetAmount(int value)

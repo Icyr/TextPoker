@@ -1,6 +1,7 @@
 package service;
 
 import entities.players.ComputerPlayer;
+import entities.players.ComputerPlayerFactory;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
