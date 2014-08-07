@@ -4,36 +4,27 @@ import entities.Hand;
 import entities.Table;
 import entities.combinations.Combination;
 import entities.players.Player;
-import gui.modules.DecisionModule;
-import gui.modules.TextModule;
+import gui.model.PlayerModel;
+import gui.view.LogView;
+import gui.view.DecisionModuleView;
 
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
 
 //todo: Move all logic to textModule and delete this class
-public class TextualInterface implements Interface
+public abstract class TextualInterface implements Interface
 {
     protected JFrame frame;
     protected JPanel panel;
-    TextModule textModule;
-    DecisionModule decisionModule;
-    protected JLabel handText;
-    protected JLabel handLabel;
-    protected JLabel tableText;
-    protected JLabel tableLabel;
-    protected JLabel betText;
-    protected JLabel betLabel;
-    protected JLabel bankText;
-    protected JLabel bankLabel;
-    protected JLabel cashText;
-    protected JLabel cashLabel;
+    protected LogView logView;
+    protected DecisionModuleView decisionModuleView;
     protected JLabel combinationLabel;
 
     public TextualInterface()
     {
-        textModule = new TextModule();
-        decisionModule = new DecisionModule();
+        logView = new LogView();
+        decisionModuleView = new DecisionModuleView();
     }
 
     public void initialize()
@@ -57,12 +48,6 @@ public class TextualInterface implements Interface
         panel = new JPanel();
         panel.setLayout(null);
 
-        betText = new JLabel("Your bet:");
-        betLabel = new JLabel();
-        bankText = new JLabel("Bank:");
-        bankLabel = new JLabel();
-        cashText = new JLabel("Your cash:");
-        cashLabel = new JLabel();
         combinationLabel = new JLabel();
     }
 
@@ -70,73 +55,17 @@ public class TextualInterface implements Interface
     {
         frame.setTitle("Poker Textual Interface");
         panel.setPreferredSize(new Dimension(380, 360));
-
-        handText = new JLabel("Your cards:");
-        handLabel = new JLabel();
-        tableText = new JLabel("Table cards:");
-        tableLabel = new JLabel();
-
-        textModule.setBounds(5, 5, 200, 290);
-        /*decisionModule.setBounds(new int[]{210, 5, 160, 30},
-                new int[]{210, 50, 160, 30},
-                new int[]{210, 100, 100, 30},
-                new int[]{320, 100, 50, 30});*/
-        handText.setBounds(210, 150, 100, 30);
-        handLabel.setBounds(210, 170, 100, 30);
-        tableText.setBounds(210, 190, 100, 30);
-        tableLabel.setBounds(210, 210, 160, 30);
-        betText.setBounds(210, 230, 100, 30);
-        betLabel.setBounds(210, 250, 100, 30);
-        bankText.setBounds(10, 300, 100, 30);
-        bankLabel.setBounds(10, 320, 100, 30);
-        cashText.setBounds(280, 230, 100, 30);
-        cashLabel.setBounds(280, 250, 100, 30);
+        logView.setBounds(5, 5, 200, 290);
         combinationLabel.setBounds(210, 270, 200, 30);
-
-        panel.add(handText);
-        panel.add(handLabel);
-        panel.add(tableText);
-        panel.add(tableLabel);
-
     }
 
     protected void addElementsToPanel()
     {
-        textModule.addToPanel(panel);
-        decisionModule.addToPanel(panel);
-        /*panel.add(betText);
-        panel.add(betLabel);
-        panel.add(bankText);
-        panel.add(bankLabel);
-        panel.add(cashText);
-        panel.add(cashLabel);
-        panel.add(combinationLabel);*/
-
+        logView.addToPanel(panel);
+        decisionModuleView.addToPanel(panel);
         frame.getContentPane().add(panel);
         frame.pack();
         frame.setVisible(true);
-    }
-
-    @Override
-    public String getDecision(int callValue, int cash)
-    {
-        textModule.printlnText("Your turn...");
-        return decisionModule.getDecision(callValue, cash);
-    }
-
-    public void setBetAmount(int value)
-    {
-        betLabel.setText(value + "");
-    }
-
-    public void setBank(int value)
-    {
-        bankLabel.setText(value + "");
-    }
-
-    public void setCash(int value)
-    {
-        cashLabel.setText(value + "");
     }
 
     public void showPlayersCombination(Combination combination)
@@ -153,38 +82,14 @@ public class TextualInterface implements Interface
     @Override
     public void updatePlayersCash(List<Player> players)
     {
-        textModule.printlnText("Players' money:");
+        logView.printlnText("Players' money:");
         for (Player player : players)
         {
-            textModule.printlnText(player.getCash() + " ");
+            logView.printlnText(player.getCash() + " ");
         }
     }
 
-    @Override
-    public void deal(List<Player> players)
-    {
-        handLabel.setText(players.get(0).getHand().toString());
-        textModule.printlnText("Dealing cards..");
-    }
 
-    @Override
-    public void prepareForGame(List<Player> players)
-    {
-        setBank(0);
-    }
-
-    @Override
-    public void prepareForRound()
-    {
-        setBetAmount(0);
-        tableLabel.setText("");
-    }
-
-    @Override
-    public void moveButton(int button)
-    {
-        textModule.printlnText("Moved button to " + button);
-    }
 
     @Override
     public void updateTable(Table table)
@@ -194,54 +99,54 @@ public class TextualInterface implements Interface
             case 0:
                 break;
             case 3:
-                textModule.printlnText("Flop:");
+                logView.printlnText("Flop:");
                 break;
             case 4:
-                textModule.printlnText("Turn:");
+                logView.printlnText("Turn:");
                 break;
             case 5:
-                textModule.printlnText("River:");
+                logView.printlnText("River:");
                 break;
         }
-        textModule.printlnText(table.tableCardsToString());
-        tableLabel.setText(table.tableCardsToString());
+        logView.printlnText(table.tableCardsToString());
     }
 
     @Override
-    public void showWinnerAndHisPrize(int playersNumber, int wonAmount)
+    public void showWinnerAndHisPrize(Player player, int playerIndex, int wonAmount)
     {
-        textModule.printlnText("Player " + playersNumber + " won " + wonAmount);
+        PlayerModel model = new PlayerModel(player, playerIndex);
+        logView.printlnText(model.getDescription() + " won " + wonAmount);
     }
 
     @Override
     public void showWinnersCombination(Combination combination)
     {
-        textModule.printlnText("Winning combination: " + combination.toString());
+        logView.printlnText("Winning combination: " + combination.toString());
     }
 
     @Override
     public void removeBankruptPlayer(int index)
     {
-        textModule.printlnText("Player " + index + " has lost all of his money!");
+        logView.printlnText("Player " + index + " has lost all of his money!");
     }
 
     @Override
     public void betBlinds(int firstPlayerNumber, int secondPlayerNumber, int blindSize)
     {
-        textModule.printlnText(firstPlayerNumber + " player bet small blind: " + blindSize);
-        textModule.printlnText(secondPlayerNumber + " player bet big blind: " + blindSize * 2);
+        logView.printlnText(firstPlayerNumber + " player bet small blind: " + blindSize);
+        logView.printlnText(secondPlayerNumber + " player bet big blind: " + blindSize * 2);
     }
 
     @Override
     public void check(int indexOfPlayer)
     {
-        textModule.printlnText(indexOfPlayer + " player checked");
+        logView.printlnText(indexOfPlayer + " player checked");
     }
 
     @Override
     public void fold(int indexOfPlayer)
     {
-        textModule.printlnText(indexOfPlayer + " player folded");
+        logView.printlnText(indexOfPlayer + " player folded");
     }
 
     @Override
@@ -249,7 +154,7 @@ public class TextualInterface implements Interface
     {
         String message = indexOfPlayer + " player called " + callValue;
         if (isAllIn) message += " . ALL IN!";
-        textModule.printlnText(message);
+        logView.printlnText(message);
     }
 
     @Override
@@ -257,24 +162,18 @@ public class TextualInterface implements Interface
     {
         String message = indexOfPlayer + " player raised " + raiseValue;
         if (isAllIn) message += " . ALL IN!";
-        textModule.printlnText(message);
+        logView.printlnText(message);
     }
 
     @Override
     public void showPlayersHand(int index, Hand hand)
     {
-        textModule.printlnText("Player's " + index + " hand: " + hand.toString());
-    }
-
-    @Override
-    public void zeroBets()
-    {
-
+        logView.printlnText("Player's " + index + " hand: " + hand.toString());
     }
 
     @Override
     public void displayRaiseError()
     {
-        textModule.printlnText("Invalid raise");
+        logView.printlnText("Invalid raise");
     }
 }

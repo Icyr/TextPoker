@@ -20,7 +20,8 @@ public class Game
 
     private int bank;
     private int maxBet;
-    private int blindSize;
+    //todo:should not be static. Need game model.
+    public static int blindSize;
 
     private Interface gui;
 
@@ -28,7 +29,7 @@ public class Game
     {
         this.gui = gameGUI;
         players = new ArrayList<Player>();
-        this.blindSize = blindSize;
+        Game.blindSize = blindSize;
         button = buttonPosition;
     }
 
@@ -235,20 +236,20 @@ public class Game
             if (!winner.isAllIn())
             {
                 winner.addToCash(bank / winners.size());
-                gui.showWinnerAndHisPrize(players.indexOf(winner), bank / winners.size());
+                gui.showWinnerAndHisPrize(winner, players.indexOf(winner), bank / winners.size());
             } else
             {
                 int wonAmount = calculateAllInWinAmount(winner, players) / winners.size();
                 if (bank > wonAmount)
                 {
                     winner.addToCash(wonAmount);
-                    gui.showWinnerAndHisPrize(players.indexOf(winner), wonAmount);
+                    gui.showWinnerAndHisPrize(winner, players.indexOf(winner), wonAmount);
                     bank -= wonAmount;
                     gui.setBank(bank);
                 } else
                 {
                     winner.addToCash(bank);
-                    gui.showWinnerAndHisPrize(players.indexOf(winner), bank);
+                    gui.showWinnerAndHisPrize(winner, players.indexOf(winner), bank);
                     bank = 0;
                     gui.setBank(0);
                 }

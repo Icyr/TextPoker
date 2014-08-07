@@ -1,15 +1,15 @@
-package gui.modules;
+package gui.view;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
-public class TextModule
+public class LogView
 {
     private JTextPane textPane;
     private JScrollPane jsp;
 
-    public TextModule()
+    public LogView()
     {
         textPane = new JTextPane();
         textPane.setEditable(false);

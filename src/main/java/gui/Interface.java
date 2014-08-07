@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface Interface
 {
-    String getDecision(int callValue, int cash);
+    String getDecision(int callValue, int cash, int tableCardCount);
 
     void setBank(int i);
 
@@ -37,7 +37,7 @@ public interface Interface
 
     public void initialize();
 
-    void showWinnerAndHisPrize(int playersNumber, int wonAmount);
+    void showWinnerAndHisPrize(Player player, int playerIndex, int wonAmount);
 
     void removeBankruptPlayer(int index);
 

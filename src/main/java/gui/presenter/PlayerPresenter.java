@@ -29,4 +29,14 @@ public class PlayerPresenter
     {
         view.setCash(Integer.toString(value));
     }
+
+    public void setBet(int value)
+    {
+        view.setBet(Integer.toString(value));
+    }
+
+    public void showWin()
+    {
+        view.setBet("WIN!");
+    }
 }

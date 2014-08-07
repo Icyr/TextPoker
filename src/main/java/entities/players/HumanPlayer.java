@@ -46,14 +46,14 @@ public class HumanPlayer extends AbstractPlayer
         playersCards.addAll(hand.getCards());
         playersCards.addAll(table.getCardsOnTable());
         gui.showPlayersCombination(CombinationAnalyzer.analyzeCombination(playersCards));
-        String decision = gui.getDecision(currentRaise, cash);
+        String decision = gui.getDecision(currentRaise, cash, table.getCardsOnTable().size());
         if (decision.contains("raise"))
         {
             int raiseAmount = Utils.safeParseInt(decision.substring(decision.indexOf(" ") + 1, decision.length()));
             if (raiseAmount < 2 * currentRaise)
             {
                 gui.displayRaiseError();
-                decision = gui.getDecision(currentRaise, cash);
+                decision = gui.getDecision(currentRaise, cash, table.getCardsOnTable().size());
             }
         }
         return  decision;

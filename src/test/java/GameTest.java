@@ -1,9 +1,11 @@
-import entities.*;
-import entities.players.ComputerPlayer;
+import entities.Card;
+import entities.Dealer;
+import entities.Hand;
+import entities.Table;
 import entities.players.HumanPlayer;
 import entities.players.Player;
 import gui.GraphicalInterface;
-import junit.framework.Assert;
+import gui.IntroWindow;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -12,8 +14,8 @@ import java.util.List;
 public class GameTest
 {
     //todo need more tests
-    @Test
-    public void someTest()
+    //@Test
+    public void mainWindow()
     {
         GraphicalInterface graphicalInterface = new GraphicalInterface(7);
         graphicalInterface.initialize();
@@ -35,6 +37,13 @@ public class GameTest
         graphicalInterface.deal(players);
         graphicalInterface.updateTable(table1);
         graphicalInterface.zeroBets();
-        while (true) ;
+        //while (true) ;
+    }
+
+    //@Test
+    public void introWindow()
+    {
+        IntroWindow introWindow = new IntroWindow();
+        //while (true);
     }
 }

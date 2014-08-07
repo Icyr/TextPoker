@@ -36,7 +36,7 @@ public class HumanGameRunner
         {
             gamePlayers.add(ComputerPlayerFactory.createComputerPlayer(introWindow.moneyAmount));
         }
-        Game game = new Game(10, gui, Utils.getRandomInt(0, gamePlayers.size() - 1));
+        Game game = new Game(introWindow.blindSize, gui, Utils.getRandomInt(0, gamePlayers.size() - 1));
         game.addPlayers(gamePlayers);
         game.play();
     }

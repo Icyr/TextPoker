@@ -3,6 +3,7 @@ package gui;
 import entities.Hand;
 import entities.Table;
 import entities.players.Player;
+import gui.presenter.LogPresenter;
 import gui.presenter.OpponentPresenter;
 import gui.presenter.PlayerPresenter;
 import gui.presenter.TablePresenter;
@@ -22,18 +23,21 @@ public class GraphicalInterface extends TextualInterface implements Interface
     public static final int FRAME_WIDTH = 800;
     public static final int FRAME_HEIGHT = 600;
 
-    private List<OpponentView> opponentViews;
-    private List<OpponentPresenter> opponentPresenters;
-    private TableView tableView;
-    private TablePresenter tablePresenter;
-    private PlayerView playerView;
-    private PlayerPresenter playerPresenter;
-
     private JPanel gameFieldPanel;
 
-    JLabel combinationText;
-    JLabel raiseErrorLabel;
+    private List<OpponentView> opponentViews;
+    private TableView tableView;
+    private PlayerView playerView;
 
+    private TablePresenter tablePresenter;
+    private List<OpponentPresenter> opponentPresenters;
+    private PlayerPresenter playerPresenter;
+    private LogPresenter logPresenter;
+
+    JLabel combinationText;
+    private int bankValue;
+
+    @SuppressWarnings("unused")
     public GraphicalInterface()
     {
         createOpponents(4);
@@ -66,33 +70,20 @@ public class GraphicalInterface extends TextualInterface implements Interface
     private void layout()
     {
         frame.setTitle("Poker Graphical Interface");
+        Dimension screenSize = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+        frame.setLocation(screenSize.width / 2 - FRAME_WIDTH / 2, screenSize.height / 2 - FRAME_HEIGHT / 2);
+        frame.setResizable(false);
         panel.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         gameFieldPanel.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT * 3 / 4 - 10);
         gameFieldPanel.setBackground(Constants.BACKGROUND_COLOR);
-        textModule.setBounds(5, FRAME_HEIGHT * 3 / 4 - 5, FRAME_WIDTH / 2, FRAME_HEIGHT / 4);
-        decisionModule.setBounds(10 + FRAME_WIDTH / 2, FRAME_HEIGHT * 3 / 4 - 5, FRAME_WIDTH, FRAME_HEIGHT);
+        logView.setBounds(5, FRAME_HEIGHT * 3 / 4 - 5, FRAME_WIDTH / 2, FRAME_HEIGHT / 4);
+        decisionModuleView.setBounds(10 + FRAME_WIDTH / 2, FRAME_HEIGHT * 3 / 4 - 5, FRAME_WIDTH, FRAME_HEIGHT);
         layoutOpponents();
-        /*opponentViews.get(0).setBound(20, 100);
-        opponentViews.get(1).setBound(100, 20);
-        opponentViews.get(2).setBound(270, 20);
-        opponentViews.get(3).setBound(350, 100);*/
         combinationText.setBounds(10, 450, 100, 30);
         combinationLabel.setBounds(120, 450, 200, 30);
-        cashText.setBounds(500, 450, 100, 30);
-        cashLabel.setBounds(600, 450, 30, 30);
-        betLabel.setBounds(170, 260, 100, 30);
-        betLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        betLabel.setFont(betLabel.getFont().deriveFont(32.0f));
-        bankLabel.setBounds(170, 150, 100, 30);
-        bankLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        bankLabel.setFont(betLabel.getFont().deriveFont(32.0f));
-        raiseErrorLabel.setBounds(475, 425, 150, 30);
-        raiseErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        raiseErrorLabel.setForeground(Color.RED);
-        raiseErrorLabel.setVisible(false);
 
         playerView.setBounds(FRAME_WIDTH / 2, FRAME_HEIGHT / 4 * 3 - 50);
-        tableView.setBounds(FRAME_WIDTH / 2, FRAME_HEIGHT * 3 / 8);
+        tableView.setBounds(FRAME_WIDTH / 2, FRAME_HEIGHT * 5 / 16);
     }
 
     private void layoutOpponents()
@@ -171,7 +162,8 @@ public class GraphicalInterface extends TextualInterface implements Interface
 
         tableView = new TableView();
         tablePresenter = new TablePresenter(tableView);
-        raiseErrorLabel = new JLabel();
+
+        logPresenter = new LogPresenter(logView);
     }
 
     protected void addElementsToPanel()
@@ -185,15 +177,12 @@ public class GraphicalInterface extends TextualInterface implements Interface
         playerView.addToPanel(gameFieldPanel);
 
         panel.add(gameFieldPanel);
-        //panel.add(combinationText);
-
-        //panel.add(raiseErrorLabel);
     }
 
     @Override
     public void updateTable(Table table)
     {
-        textModule.printlnText(table.tableCardsToString());
+        logView.printlnText(table.tableCardsToString());
         switch (table.getCardsOnTable().size())
         {
             case 0:
@@ -224,8 +213,15 @@ public class GraphicalInterface extends TextualInterface implements Interface
     }
 
     @Override
+    public void moveButton(int button)
+    {
+        logPresenter.moveButton(button);
+    }
+
+    @Override
     public void deal(List<Player> players)
     {
+        logPresenter.deal();
         for (OpponentPresenter opponentPresenter : opponentPresenters)
         {
             opponentPresenter.showCardBacks();
@@ -236,7 +232,6 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void fold(int indexOfPlayer)
     {
-        raiseErrorLabel.setVisible(false);
         super.fold(indexOfPlayer);
         if (indexOfPlayer != 0)
         {
@@ -247,7 +242,6 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void call(int indexOfPlayer, int callValue, boolean isAllIn)
     {
-        raiseErrorLabel.setVisible(false);
         super.call(indexOfPlayer, callValue, isAllIn);
         if (indexOfPlayer != 0)
         {
@@ -258,14 +252,13 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void raise(int indexOfPlayer, int raiseValue, boolean isAllIn)
     {
-        raiseErrorLabel.setVisible(false);
         super.raise(indexOfPlayer, raiseValue, isAllIn);
         if (indexOfPlayer != 0)
         {
             opponentPresenters.get(indexOfPlayer - 1).addToBet(raiseValue);
         } else
         {
-            betLabel.setText(raiseValue + "");
+            playerPresenter.setBet(raiseValue);
         }
     }
 
@@ -275,19 +268,16 @@ public class GraphicalInterface extends TextualInterface implements Interface
         super.betBlinds(firstPlayerNumber, secondPlayerNumber, blindSize);
         if (firstPlayerNumber == 0)
         {
-            betLabel.setText(blindSize + "");
+            playerPresenter.setBet(blindSize);
             opponentPresenters.get(0).setBet(blindSize * 2);
-            setBank(blindSize * 3);
         } else if (secondPlayerNumber == 0)
         {
-            betLabel.setText(blindSize * 2 + "");
+            playerPresenter.setBet(blindSize * 2);
             opponentPresenters.get(opponentPresenters.size() - 1).setBet(blindSize);
-            setBank(blindSize * 3);
         } else
         {
             opponentPresenters.get(firstPlayerNumber - 1).setBet(blindSize);
             opponentPresenters.get(secondPlayerNumber - 1).setBet(blindSize * 2);
-            setBank(blindSize * 3);
         }
     }
 
@@ -304,19 +294,11 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void zeroBets()
     {
-        betLabel.setText("0");
+        playerPresenter.setBet(0);
         for (OpponentPresenter opponentPresenter : opponentPresenters)
         {
             opponentPresenter.setBet(0);
         }
-    }
-
-    @Override
-    public void displayRaiseError()
-    {
-        super.displayRaiseError();
-        raiseErrorLabel.setText("Invalid raise");
-        raiseErrorLabel.setVisible(true);
     }
 
     @Override
@@ -342,23 +324,24 @@ public class GraphicalInterface extends TextualInterface implements Interface
         }
     }
 
+    //todo: there should be a game model with players models which should update as the game goes on. Now it is just a wrap.
     @Override
-    public void showWinnerAndHisPrize(int playersNumber, int wonAmount)
+    public void showWinnerAndHisPrize(Player player, int playerIndex, int wonAmount)
     {
-        super.showWinnerAndHisPrize(playersNumber, wonAmount);
-        if (playersNumber != 0)
+        super.showWinnerAndHisPrize(player, playerIndex, wonAmount);
+        if (playerIndex != 0)
         {
-            opponentPresenters.get(playersNumber - 1).showWin();
+            opponentPresenters.get(playerIndex - 1).showWin();
         } else
         {
-            betLabel.setText("WIN!");
+            playerPresenter.showWin();
         }
     }
 
     @Override
     public void prepareForGame(List<Player> players)
     {
-        super.prepareForGame(players);
+        setBank(0);
         updatePlayersCash(players);
     }
 
@@ -366,5 +349,27 @@ public class GraphicalInterface extends TextualInterface implements Interface
     public void setCash(int value)
     {
         playerPresenter.setCash(value);
+    }
+
+    @Override
+    public void setBank(int value)
+    {
+        bankValue = value;
+        tablePresenter.setBank(value);
+    }
+
+    //todo:this is something strange:refactor!!!
+    @Override
+    public void setBetAmount(int currentBet)
+    {
+        playerPresenter.setBet(currentBet);
+    }
+
+    //todo: bank value is temp resolution and hack. Game model will solve this problem.
+    @Override
+    public String getDecision(int callValue, int cash, int tableCardCount)
+    {
+        logView.printlnText("Your turn...");
+        return decisionModuleView.getDecision(callValue, cash, tableCardCount, bankValue);
     }
 }

@@ -1,6 +1,5 @@
 package gui.presenter;
 
-import entities.Card;
 import entities.Table;
 import gui.view.TableView;
 
@@ -44,5 +43,10 @@ public class TablePresenter
         view.setThirdTableCard(null);
         view.setForthTableCard(null);
         view.setFifthTableCard(null);
+    }
+
+    public void setBank(int value)
+    {
+        view.setBank(Integer.toString(value));
     }
 }
