@@ -4,9 +4,8 @@ import entities.Hand;
 import entities.Table;
 import entities.players.HumanPlayer;
 import entities.players.Player;
-import gui.GraphicalInterface;
 import gui.IntroWindow;
-import org.junit.Test;
+import gui.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,7 @@ public class GameTest
     //@Test
     public void mainWindow()
     {
-        GraphicalInterface graphicalInterface = new GraphicalInterface(7);
+        GameView graphicalInterface = new GameView(7);
         graphicalInterface.initialize();
         List<Player> players = new ArrayList<Player>();
         Player player = new HumanPlayer(1000, graphicalInterface);

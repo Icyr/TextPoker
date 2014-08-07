@@ -1,16 +1,16 @@
-package gui;
+package gui.view;
 
 import entities.Hand;
 import entities.Table;
+import entities.combinations.Combination;
 import entities.players.Player;
+import gui.Interface;
+import gui.model.GameModel;
+import gui.model.PlayerModel;
 import gui.presenter.LogPresenter;
 import gui.presenter.OpponentPresenter;
 import gui.presenter.PlayerPresenter;
 import gui.presenter.TablePresenter;
-import gui.view.OpponentView;
-import gui.view.OpponentViewFactory;
-import gui.view.PlayerView;
-import gui.view.TableView;
 import util.Constants;
 
 import javax.swing.*;
@@ -18,12 +18,18 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraphicalInterface extends TextualInterface implements Interface
+public class GameView implements Interface
 {
     public static final int FRAME_WIDTH = 800;
     public static final int FRAME_HEIGHT = 600;
 
+    private JFrame frame;
+    private JPanel panel;
+    private LogView logView;
+    private DecisionModuleView decisionModuleView;
     private JPanel gameFieldPanel;
+
+    private GameModel gameModel;
 
     private List<OpponentView> opponentViews;
     private TableView tableView;
@@ -34,16 +40,13 @@ public class GraphicalInterface extends TextualInterface implements Interface
     private PlayerPresenter playerPresenter;
     private LogPresenter logPresenter;
 
-    JLabel combinationText;
-    private int bankValue;
-
     @SuppressWarnings("unused")
-    public GraphicalInterface()
+    public GameView()
     {
         createOpponents(4);
     }
 
-    public GraphicalInterface(int numberOfOpponents)
+    public GameView(int numberOfOpponents)
     {
         createOpponents(numberOfOpponents);
     }
@@ -62,6 +65,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
 
     public void initialize()
     {
+        this.gameModel = new GameModel();
         initializeComponents();
         layout();
         addElementsToPanel();
@@ -79,8 +83,6 @@ public class GraphicalInterface extends TextualInterface implements Interface
         logView.setBounds(5, FRAME_HEIGHT * 3 / 4 - 5, FRAME_WIDTH / 2, FRAME_HEIGHT / 4);
         decisionModuleView.setBounds(10 + FRAME_WIDTH / 2, FRAME_HEIGHT * 3 / 4 - 5, FRAME_WIDTH, FRAME_HEIGHT);
         layoutOpponents();
-        combinationText.setBounds(10, 450, 100, 30);
-        combinationLabel.setBounds(120, 450, 200, 30);
 
         playerView.setBounds(FRAME_WIDTH / 2, FRAME_HEIGHT / 4 * 3 - 50);
         tableView.setBounds(FRAME_WIDTH / 2, FRAME_HEIGHT * 5 / 16);
@@ -152,10 +154,21 @@ public class GraphicalInterface extends TextualInterface implements Interface
 
     protected void initializeComponents()
     {
-        super.initializeComponents();
+        gameModel = new GameModel();
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e)
+        {
+            System.out.println(e.toString());
+        }
+        frame = new JFrame();
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        panel = new JPanel();
+        panel.setLayout(null);
+
         gameFieldPanel = new JPanel();
         gameFieldPanel.setLayout(null);
-        combinationText = new JLabel("Your combination:");
 
         playerView = new PlayerView();
         playerPresenter = new PlayerPresenter(playerView);
@@ -163,12 +176,14 @@ public class GraphicalInterface extends TextualInterface implements Interface
         tableView = new TableView();
         tablePresenter = new TablePresenter(tableView);
 
+        logView = new LogView();
         logPresenter = new LogPresenter(logView);
+
+        decisionModuleView = new DecisionModuleView();
     }
 
     protected void addElementsToPanel()
     {
-        super.addElementsToPanel();
         for (OpponentView opponent : opponentViews)
         {
             opponent.addToPanel(gameFieldPanel);
@@ -176,24 +191,32 @@ public class GraphicalInterface extends TextualInterface implements Interface
         tableView.addToPanel(gameFieldPanel);
         playerView.addToPanel(gameFieldPanel);
 
+        logView.addToPanel(panel);
+        decisionModuleView.addToPanel(panel);
         panel.add(gameFieldPanel);
+
+        frame.getContentPane().add(panel);
+        frame.pack();
+        frame.setVisible(true);
     }
 
     @Override
     public void updateTable(Table table)
     {
-        logView.printlnText(table.tableCardsToString());
         switch (table.getCardsOnTable().size())
         {
             case 0:
                 break;
             case 3:
+                logView.printlnText("Flop: " + table.tableCardsToString());
                 tablePresenter.flop(table);
                 break;
             case 4:
+                logView.printlnText("Turn: " + table.tableCardsToString());
                 tablePresenter.turn(table);
                 break;
             case 5:
+                logView.printlnText("River: " + table.tableCardsToString());
                 tablePresenter.river(table);
                 break;
         }
@@ -232,7 +255,7 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void fold(int indexOfPlayer)
     {
-        super.fold(indexOfPlayer);
+        logView.printlnText(indexOfPlayer + " player folded");
         if (indexOfPlayer != 0)
         {
             opponentPresenters.get(indexOfPlayer - 1).fold();
@@ -242,7 +265,9 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void call(int indexOfPlayer, int callValue, boolean isAllIn)
     {
-        super.call(indexOfPlayer, callValue, isAllIn);
+        String message = indexOfPlayer + " player called " + callValue;
+        if (isAllIn) message += " . ALL IN!";
+        logView.printlnText(message);
         if (indexOfPlayer != 0)
         {
             opponentPresenters.get(indexOfPlayer - 1).addToBet(callValue);
@@ -252,7 +277,9 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void raise(int indexOfPlayer, int raiseValue, boolean isAllIn)
     {
-        super.raise(indexOfPlayer, raiseValue, isAllIn);
+        String message = indexOfPlayer + " player raised " + raiseValue;
+        if (isAllIn) message += " . ALL IN!";
+        logView.printlnText(message);
         if (indexOfPlayer != 0)
         {
             opponentPresenters.get(indexOfPlayer - 1).addToBet(raiseValue);
@@ -265,7 +292,8 @@ public class GraphicalInterface extends TextualInterface implements Interface
     @Override
     public void betBlinds(int firstPlayerNumber, int secondPlayerNumber, int blindSize)
     {
-        super.betBlinds(firstPlayerNumber, secondPlayerNumber, blindSize);
+        logView.printlnText(firstPlayerNumber + " player bet small blind: " + blindSize);
+        logView.printlnText(secondPlayerNumber + " player bet big blind: " + blindSize * 2);
         if (firstPlayerNumber == 0)
         {
             playerPresenter.setBet(blindSize);
@@ -282,9 +310,15 @@ public class GraphicalInterface extends TextualInterface implements Interface
     }
 
     @Override
+    public void check(int indexOfPlayer)
+    {
+        logView.printlnText(indexOfPlayer + " player checked");
+    }
+
+    @Override
     public void showPlayersHand(int index, Hand hand)
     {
-        super.showPlayersHand(index, hand);
+        logView.printlnText("Player's " + index + " hand: " + hand.toString());
         if (index != 0)
         {
             opponentPresenters.get(index - 1).showCards(hand);
@@ -302,13 +336,23 @@ public class GraphicalInterface extends TextualInterface implements Interface
     }
 
     @Override
+    public void displayRaiseError()
+    {
+        logView.printlnText("Invalid raise");
+    }
+
+    @Override
     public void removeBankruptPlayer(int index)
     {
-        super.removeBankruptPlayer(index);
+        logView.printlnText("Player " + index + " has lost all of his money!");
         if (index != 0)
         {
             opponentPresenters.get(index - 1).bankrupt();
             opponentPresenters.remove(index - 1);
+            opponentViews.get(index - 1).dispose();
+            opponentViews.remove(index - 1);
+            panel.repaint();
+            layoutOpponents();
         } else
         {
             JOptionPane.showMessageDialog(null, "Sorry, but you lost all your money! Good luck next time!");
@@ -324,11 +368,12 @@ public class GraphicalInterface extends TextualInterface implements Interface
         }
     }
 
-    //todo: there should be a game model with players models which should update as the game goes on. Now it is just a wrap.
+    //todo: there should be a game model with players models which should updateModel as the game goes on. Now it is just a wrap.
     @Override
     public void showWinnerAndHisPrize(Player player, int playerIndex, int wonAmount)
     {
-        super.showWinnerAndHisPrize(player, playerIndex, wonAmount);
+        PlayerModel model = new PlayerModel(player, playerIndex);
+        logView.printlnText(model.getDescription() + " won " + wonAmount);
         if (playerIndex != 0)
         {
             opponentPresenters.get(playerIndex - 1).showWin();
@@ -352,9 +397,15 @@ public class GraphicalInterface extends TextualInterface implements Interface
     }
 
     @Override
+    public void pause()
+    {
+        while (true) ;
+    }
+
+    @Override
     public void setBank(int value)
     {
-        bankValue = value;
+        gameModel.setBankValue(value);
         tablePresenter.setBank(value);
     }
 
@@ -365,11 +416,17 @@ public class GraphicalInterface extends TextualInterface implements Interface
         playerPresenter.setBet(currentBet);
     }
 
+    @Override
+    public void showWinnersCombination(Combination combination)
+    {
+        logView.printlnText("Winning combination: " + combination.toString());
+    }
+
     //todo: bank value is temp resolution and hack. Game model will solve this problem.
     @Override
     public String getDecision(int callValue, int cash, int tableCardCount)
     {
         logView.printlnText("Your turn...");
-        return decisionModuleView.getDecision(callValue, cash, tableCardCount, bankValue);
+        return decisionModuleView.getDecision(callValue, cash, tableCardCount, gameModel.getBankValue());
     }
 }

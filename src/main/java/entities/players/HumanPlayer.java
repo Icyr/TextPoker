@@ -42,10 +42,10 @@ public class HumanPlayer extends AbstractPlayer
 
     public String makeDecision(Hand hand, Table table, int bank, int currentRaise, int blindSize, int playersCount)
     {
-        List<Card> playersCards = new ArrayList<Card>();
+        /*List<Card> playersCards = new ArrayList<Card>();
         playersCards.addAll(hand.getCards());
         playersCards.addAll(table.getCardsOnTable());
-        gui.showPlayersCombination(CombinationAnalyzer.analyzeCombination(playersCards));
+        gui.showPlayersCombination(CombinationAnalyzer.analyzeCombination(playersCards));*/
         String decision = gui.getDecision(currentRaise, cash, table.getCardsOnTable().size());
         if (decision.contains("raise"))
         {

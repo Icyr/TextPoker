@@ -61,4 +61,12 @@ public class OpponentView
     {
         cash.setText(value);
     }
+
+    public void dispose()
+    {
+        bet.setVisible(false);
+        firstCard.setVisible(false);
+        secondCard.setVisible(false);
+        cash.setVisible(false);
+    }
 }

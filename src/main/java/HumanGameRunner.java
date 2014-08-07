@@ -1,10 +1,10 @@
 import entities.Game;
 import entities.players.HumanPlayer;
 import entities.players.Player;
-import gui.GraphicalInterface;
 import gui.Interface;
 import gui.IntroWindow;
 import entities.players.ComputerPlayerFactory;
+import gui.view.GameView;
 import util.Utils;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class HumanGameRunner
                 e.printStackTrace();
             }
         }
-        Interface gui = new GraphicalInterface(introWindow.opponentsNumber);
+        Interface gui = new GameView(introWindow.opponentsNumber);
         gui.initialize();
         Player humanPlayer = new HumanPlayer(introWindow.moneyAmount, gui);
         humanPlayer.setId("you");

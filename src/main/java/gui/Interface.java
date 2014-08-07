@@ -15,7 +15,7 @@ public interface Interface
 
     void setBetAmount(int currentBet);
 
-    void showPlayersCombination(Combination s);
+    //void showPlayersCombination(Combination s);
 
     void showWinnersCombination(Combination s);
 
