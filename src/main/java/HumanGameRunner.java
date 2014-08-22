@@ -34,7 +34,7 @@ public class HumanGameRunner
         int numberOfOpponents = introWindow.opponentsNumber;
         for (int i = 0; i < numberOfOpponents; i++)
         {
-            gamePlayers.add(ComputerPlayerFactory.createComputerPlayer(introWindow.moneyAmount));
+            gamePlayers.add(ComputerPlayerFactory.createRandomComputerPlayer(introWindow.moneyAmount));
         }
         Game game = new Game(introWindow.blindSize, gui, Utils.getRandomInt(0, gamePlayers.size() - 1));
         game.addPlayers(gamePlayers);

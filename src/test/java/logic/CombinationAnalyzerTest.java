@@ -1,8 +1,8 @@
 package logic;
 
 import entities.Card;
+import entities.Color;
 import entities.combinations.*;
-import logic.CombinationAnalyzer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -21,82 +21,82 @@ public class CombinationAnalyzerTest
         Object[][] data = new Object[][]{
                 //RoyalFlush
                 {new Card[]{
-                        new Card("H", 10),
-                        new Card("H", 11),
-                        new Card("H", 12),
-                        new Card("H", 13),
-                        new Card("H", 14)
+                        new Card(Color.HEARTS, 10),
+                        new Card(Color.HEARTS, 11),
+                        new Card(Color.HEARTS, 12),
+                        new Card(Color.HEARTS, 13),
+                        new Card(Color.HEARTS, 14)
                 }, new StraightFlush(10)},
                 //StraightFlush
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("H", 4),
-                        new Card("H", 5),
-                        new Card("H", 6),
-                        new Card("H", 7)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.HEARTS, 4),
+                        new Card(Color.HEARTS, 5),
+                        new Card(Color.HEARTS, 6),
+                        new Card(Color.HEARTS, 7)
                 }, new StraightFlush(3)},
                 //Quads
                 {new Card[]{
-                        new Card("H", 2),
-                        new Card("S", 3),
-                        new Card("D", 3),
-                        new Card("C", 3),
-                        new Card("H", 3),
-                        new Card("S", 4)
+                        new Card(Color.HEARTS, 2),
+                        new Card(Color.SPADES, 3),
+                        new Card(Color.DIAMONDS, 3),
+                        new Card(Color.CLUBS, 3),
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.SPADES, 4)
                 }, new Quads(3)},
                 //Full House
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("S", 3),
-                        new Card("D", 3),
-                        new Card("C", 4),
-                        new Card("H", 4)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.SPADES, 3),
+                        new Card(Color.DIAMONDS, 3),
+                        new Card(Color.CLUBS, 4),
+                        new Card(Color.HEARTS, 4)
                 }, new FullHouse(3, 4)},
                 //Flush
                 {new Card[]{
-                        new Card("H", 2),
-                        new Card("H", 3),
-                        new Card("H", 5),
-                        new Card("H", 9),
-                        new Card("H", 13)
-                }, new Flush(13, "H")},
+                        new Card(Color.HEARTS, 2),
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.HEARTS, 5),
+                        new Card(Color.HEARTS, 9),
+                        new Card(Color.HEARTS, 13)
+                }, new Flush(13, Color.HEARTS)},
                 //Straight
                 {new Card[]{
-                        new Card("H", 2),
-                        new Card("S", 3),
-                        new Card("D", 4),
-                        new Card("C", 5),
-                        new Card("H", 6)
+                        new Card(Color.HEARTS, 2),
+                        new Card(Color.SPADES, 3),
+                        new Card(Color.DIAMONDS, 4),
+                        new Card(Color.CLUBS, 5),
+                        new Card(Color.HEARTS, 6)
                 }, new Straight(2)},
                 //Ace Straight
                 {new Card[]{
-                        new Card("H", 2),
-                        new Card("S", 3),
-                        new Card("D", 4),
-                        new Card("C", 5),
-                        new Card("H", 14)
+                        new Card(Color.HEARTS, 2),
+                        new Card(Color.SPADES, 3),
+                        new Card(Color.DIAMONDS, 4),
+                        new Card(Color.CLUBS, 5),
+                        new Card(Color.HEARTS, 14)
                 }, new Straight(1)},
                 //Set
                 {new Card[]{
-                        new Card("H", 2),
-                        new Card("S", 2),
-                        new Card("D", 2)
+                        new Card(Color.HEARTS, 2),
+                        new Card(Color.SPADES, 2),
+                        new Card(Color.DIAMONDS, 2)
                 }, new Set(2)},
                 //Two Pairs
                 {new Card[]{
-                        new Card("H", 2),
-                        new Card("S", 2),
-                        new Card("D", 3),
-                        new Card("C", 3)
+                        new Card(Color.HEARTS, 2),
+                        new Card(Color.SPADES, 2),
+                        new Card(Color.DIAMONDS, 3),
+                        new Card(Color.CLUBS, 3)
                 }, new TwoPairs(3, 2)},
                 //Pair
                 {new Card[]{
-                        new Card("H", 2),
-                        new Card("S", 2)
+                        new Card(Color.HEARTS, 2),
+                        new Card(Color.SPADES, 2)
                 }, new Pair(2)},
                 //Kicker
                 {new Card[]{
-                        new Card("H", 2)
+                        new Card(Color.HEARTS, 2)
                 }, new Kicker(2)},
         };
         return Arrays.asList(data);

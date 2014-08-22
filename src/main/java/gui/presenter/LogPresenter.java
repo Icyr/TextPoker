@@ -1,9 +1,6 @@
 package gui.presenter;
 
-import entities.players.Player;
 import gui.view.LogView;
-
-import java.util.List;
 
 public class LogPresenter
 {

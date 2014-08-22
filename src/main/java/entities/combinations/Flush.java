@@ -1,17 +1,19 @@
 package entities.combinations;
 
+import entities.Color;
+
 public class Flush implements Combination
 {
     private final int nominal;
-    private final String color;
+    private final Color color;
 
-    public Flush(int nominal, String color)
+    public Flush(int nominal, Color color)
     {
         this.nominal = nominal;
         this.color = color;
     }
 
-    public String getColor()
+    public Color getColor()
     {
         return color;
     }

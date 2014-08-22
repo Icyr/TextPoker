@@ -1,6 +1,7 @@
 package logic;
 
 import entities.Card;
+import entities.Color;
 import entities.Hand;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,35 +21,35 @@ public class ProbabilityCalculatorTest
     {
         Object[][] data = new Object[][]{
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("H", 4)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.HEARTS, 4)
                 }, new Card[]{}, "Preflop", 0.19},
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("H", 4)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.HEARTS, 4)
                 }, new Card[]{
-                        new Card("H", 5),
-                        new Card("H", 2),
-                        new Card("S", 13)
+                        new Card(Color.HEARTS, 5),
+                        new Card(Color.HEARTS, 2),
+                        new Card(Color.SPADES, 13)
                 }, "Flop", 0.46},
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("H", 4)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.HEARTS, 4)
                 }, new Card[]{
-                        new Card("H", 5),
-                        new Card("H", 2),
-                        new Card("S", 13),
-                        new Card("C", 13)
+                        new Card(Color.HEARTS, 5),
+                        new Card(Color.HEARTS, 2),
+                        new Card(Color.SPADES, 13),
+                        new Card(Color.CLUBS, 13)
                 }, "Turn", 0.3},
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("H", 4)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.HEARTS, 4)
                 }, new Card[]{
-                        new Card("H", 5),
-                        new Card("H", 2),
-                        new Card("S", 13),
-                        new Card("C", 13),
-                        new Card("C", 12)
+                        new Card(Color.HEARTS, 5),
+                        new Card(Color.HEARTS, 2),
+                        new Card(Color.SPADES, 13),
+                        new Card(Color.CLUBS, 13),
+                        new Card(Color.CLUBS, 12)
                 }, "River", 0.0},
         };
         return Arrays.asList(data);

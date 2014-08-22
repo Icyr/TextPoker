@@ -6,16 +6,16 @@ import javax.swing.*;
 
 public class Card
 {
-    private final String color;
+    private final Color color;
     private final int nominal;
 
-    public Card(String color, int nominal)
+    public Card(Color color, int nominal)
     {
         this.color = color;
         this.nominal = nominal;
     }
 
-    public String getColor()
+    public Color getColor()
     {
         return this.color;
     }
@@ -27,7 +27,7 @@ public class Card
 
     public ImageIcon getIcon()
     {
-        return new ImageIcon(Utils.getImage("cards/" + nominal + color + ".png"));
+        return new ImageIcon(Utils.getImage("cards/" + nominal + color.getShortName() + ".png"));
     }
 
     public boolean equals(Object other)

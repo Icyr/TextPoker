@@ -12,7 +12,7 @@ public class ComputerPlayerFactoryTest
     @Test
     public void createComputerPlayer()
     {
-        ComputerPlayer computerPlayer = ComputerPlayerFactory.createComputerPlayer(1000);
+        ComputerPlayer computerPlayer = ComputerPlayerFactory.createRandomComputerPlayer(1000);
         assertThat(computerPlayer.getCash(), equalTo(1000));
     }
 }

@@ -1,6 +1,7 @@
 package util;
 
 import entities.Card;
+import entities.Color;
 import entities.players.Player;
 
 import java.awt.*;
@@ -35,7 +36,7 @@ public class Utils
         return res;
     }
 
-    public static int getSameColorCount(String color, List<Card> cards)
+    public static int getSameColorCount(Color color, List<Card> cards)
     {
         int res = 0;
         for (Card card : cards)
@@ -54,7 +55,7 @@ public class Utils
         return false;
     }
 
-    public static List<Card> getCardsWithPreferredColor(String color, List<Card> cards)
+    public static List<Card> getCardsWithPreferredColor(Color color, List<Card> cards)
     {
         List<Card> res = new ArrayList<Card>();
         for (Card card : cards)

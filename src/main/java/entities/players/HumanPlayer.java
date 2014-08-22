@@ -1,12 +1,10 @@
 package entities.players;
 
-import entities.*;
+import entities.BankruptException;
+import entities.Hand;
+import entities.Table;
 import gui.Interface;
-import logic.CombinationAnalyzer;
 import util.Utils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class HumanPlayer extends AbstractPlayer
 {

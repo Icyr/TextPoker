@@ -1,6 +1,7 @@
 package logic;
 
 import entities.Card;
+import entities.Color;
 import entities.Hand;
 import entities.players.ComputerPlayer;
 import entities.players.Player;
@@ -24,227 +25,227 @@ public class ConflictResolverTestsWithOneWinner
         Object[][] data = new Object[][]{
                 //Straight Flush conflict
                 {new Card[]{
-                        new Card("H", 2),
-                        new Card("H", 13),
-                        new Card("H", 12),
-                        new Card("H", 11),
-                        new Card("H", 10)
+                        new Card(Color.HEARTS, 2),
+                        new Card(Color.HEARTS, 13),
+                        new Card(Color.HEARTS, 12),
+                        new Card(Color.HEARTS, 11),
+                        new Card(Color.HEARTS, 10)
                 }, new Card[]{
-                        new Card("H", 14),
-                        new Card("S", 3)
+                        new Card(Color.HEARTS, 14),
+                        new Card(Color.SPADES, 3)
                 }, new Card[]{
-                        new Card("H", 9),
-                        new Card("S", 5)
+                        new Card(Color.HEARTS, 9),
+                        new Card(Color.SPADES, 5)
                 }},
                 //Quads conflict
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("S", 3),
-                        new Card("D", 3),
-                        new Card("C", 3),
-                        new Card("H", 5)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.SPADES, 3),
+                        new Card(Color.DIAMONDS, 3),
+                        new Card(Color.CLUBS, 3),
+                        new Card(Color.HEARTS, 5)
                 }, new Card[]{
-                        new Card("H", 14),
-                        new Card("H", 10)
+                        new Card(Color.HEARTS, 14),
+                        new Card(Color.HEARTS, 10)
                 }, new Card[]{
-                        new Card("H", 11),
-                        new Card("S", 5)
+                        new Card(Color.HEARTS, 11),
+                        new Card(Color.SPADES, 5)
                 }},
                 //Full House conflict
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("S", 3),
-                        new Card("D", 3),
-                        new Card("C", 6),
-                        new Card("H", 5)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.SPADES, 3),
+                        new Card(Color.DIAMONDS, 3),
+                        new Card(Color.CLUBS, 6),
+                        new Card(Color.HEARTS, 5)
                 }, new Card[]{
-                        new Card("H", 6),
-                        new Card("H", 10)
+                        new Card(Color.HEARTS, 6),
+                        new Card(Color.HEARTS, 10)
                 }, new Card[]{
-                        new Card("H", 11),
-                        new Card("S", 5)
+                        new Card(Color.HEARTS, 11),
+                        new Card(Color.SPADES, 5)
                 }},
                 //Full House conflict
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("S", 3),
-                        new Card("D", 3),
-                        new Card("C", 6),
-                        new Card("H", 5)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.SPADES, 3),
+                        new Card(Color.DIAMONDS, 3),
+                        new Card(Color.CLUBS, 6),
+                        new Card(Color.HEARTS, 5)
                 }, new Card[]{
-                        new Card("H", 6),
-                        new Card("S", 6)
+                        new Card(Color.HEARTS, 6),
+                        new Card(Color.SPADES, 6)
                 }, new Card[]{
-                        new Card("H", 5),
-                        new Card("S", 5)
+                        new Card(Color.HEARTS, 5),
+                        new Card(Color.SPADES, 5)
                 }},
                 //Full House conflict
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("S", 3),
-                        new Card("D", 3),
-                        new Card("C", 9),
-                        new Card("H", 12)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.SPADES, 3),
+                        new Card(Color.DIAMONDS, 3),
+                        new Card(Color.CLUBS, 9),
+                        new Card(Color.HEARTS, 12)
                 }, new Card[]{
-                        new Card("H", 6),
-                        new Card("S", 6)
+                        new Card(Color.HEARTS, 6),
+                        new Card(Color.SPADES, 6)
                 }, new Card[]{
-                        new Card("H", 5),
-                        new Card("S", 5)
+                        new Card(Color.HEARTS, 5),
+                        new Card(Color.SPADES, 5)
                 }},
                 //Flush conflict
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("H", 5),
-                        new Card("H", 7),
-                        new Card("H", 9),
-                        new Card("H", 12)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.HEARTS, 5),
+                        new Card(Color.HEARTS, 7),
+                        new Card(Color.HEARTS, 9),
+                        new Card(Color.HEARTS, 12)
                 }, new Card[]{
-                        new Card("H", 6),
-                        new Card("S", 6)
+                        new Card(Color.HEARTS, 6),
+                        new Card(Color.SPADES, 6)
                 }, new Card[]{
-                        new Card("H", 4),
-                        new Card("S", 4)
+                        new Card(Color.HEARTS, 4),
+                        new Card(Color.SPADES, 4)
                 }},
                 //Set conflict
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("S", 3),
-                        new Card("D", 3),
-                        new Card("C", 6),
-                        new Card("H", 5)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.SPADES, 3),
+                        new Card(Color.DIAMONDS, 3),
+                        new Card(Color.CLUBS, 6),
+                        new Card(Color.HEARTS, 5)
                 }, new Card[]{
-                        new Card("H", 14),
-                        new Card("S", 6)
+                        new Card(Color.HEARTS, 14),
+                        new Card(Color.SPADES, 6)
                 }, new Card[]{
-                        new Card("H", 13),
-                        new Card("S", 5)
+                        new Card(Color.HEARTS, 13),
+                        new Card(Color.SPADES, 5)
                 }},
                 //Set conflict
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("S", 3),
-                        new Card("D", 9),
-                        new Card("C", 6),
-                        new Card("H", 5)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.SPADES, 3),
+                        new Card(Color.DIAMONDS, 9),
+                        new Card(Color.CLUBS, 6),
+                        new Card(Color.HEARTS, 5)
                 }, new Card[]{
-                        new Card("H", 14),
-                        new Card("D", 3)
+                        new Card(Color.HEARTS, 14),
+                        new Card(Color.DIAMONDS, 3)
                 }, new Card[]{
-                        new Card("H", 13),
-                        new Card("C", 3)
+                        new Card(Color.HEARTS, 13),
+                        new Card(Color.CLUBS, 3)
                 }},
                 //Set conflict
                 {new Card[]{
-                        new Card("H", 3),
-                        new Card("S", 3),
-                        new Card("D", 3),
-                        new Card("C", 14),
-                        new Card("H", 9)
+                        new Card(Color.HEARTS, 3),
+                        new Card(Color.SPADES, 3),
+                        new Card(Color.DIAMONDS, 3),
+                        new Card(Color.CLUBS, 14),
+                        new Card(Color.HEARTS, 9)
                 }, new Card[]{
-                        new Card("H", 13),
-                        new Card("S", 6)
+                        new Card(Color.HEARTS, 13),
+                        new Card(Color.SPADES, 6)
                 }, new Card[]{
-                        new Card("H", 12),
-                        new Card("S", 5)
+                        new Card(Color.HEARTS, 12),
+                        new Card(Color.SPADES, 5)
                 }},
                 //Two Pairs conflict
                 {new Card[]{
-                        new Card("H", 14),
-                        new Card("S", 9),
-                        new Card("D", 10),
-                        new Card("C", 14),
-                        new Card("H", 5)
+                        new Card(Color.HEARTS, 14),
+                        new Card(Color.SPADES, 9),
+                        new Card(Color.DIAMONDS, 10),
+                        new Card(Color.CLUBS, 14),
+                        new Card(Color.HEARTS, 5)
                 }, new Card[]{
-                        new Card("H", 9),
-                        new Card("S", 6)
+                        new Card(Color.HEARTS, 9),
+                        new Card(Color.SPADES, 6)
                 }, new Card[]{
-                        new Card("H", 10),
-                        new Card("S", 5)
+                        new Card(Color.HEARTS, 10),
+                        new Card(Color.SPADES, 5)
                 }},
                 //Two Pairs conflict
                 {new Card[]{
-                        new Card("H", 14),
-                        new Card("S", 9),
-                        new Card("D", 10),
-                        new Card("C", 14),
-                        new Card("H", 5)
+                        new Card(Color.HEARTS, 14),
+                        new Card(Color.SPADES, 9),
+                        new Card(Color.DIAMONDS, 10),
+                        new Card(Color.CLUBS, 14),
+                        new Card(Color.HEARTS, 5)
                 }, new Card[]{
-                        new Card("H", 10),
-                        new Card("S", 6)
+                        new Card(Color.HEARTS, 10),
+                        new Card(Color.SPADES, 6)
                 }, new Card[]{
-                        new Card("H", 6),
-                        new Card("C", 6)
+                        new Card(Color.HEARTS, 6),
+                        new Card(Color.CLUBS, 6)
                 }},
                 //Two Pairs conflict
                 {new Card[]{
-                        new Card("H", 14),
-                        new Card("S", 10),
-                        new Card("D", 10),
-                        new Card("C", 14),
-                        new Card("H", 5)
+                        new Card(Color.HEARTS, 14),
+                        new Card(Color.SPADES, 10),
+                        new Card(Color.DIAMONDS, 10),
+                        new Card(Color.CLUBS, 14),
+                        new Card(Color.HEARTS, 5)
                 }, new Card[]{
-                        new Card("H", 13),
-                        new Card("S", 6)
+                        new Card(Color.HEARTS, 13),
+                        new Card(Color.SPADES, 6)
                 }, new Card[]{
-                        new Card("H", 12),
-                        new Card("C", 6)
+                        new Card(Color.HEARTS, 12),
+                        new Card(Color.CLUBS, 6)
                 }},
                 //Two Pairs conflict
                 {new Card[]{
-                        new Card("H", 14),
-                        new Card("S", 9),
-                        new Card("D", 10),
-                        new Card("C", 14),
-                        new Card("H", 5)
+                        new Card(Color.HEARTS, 14),
+                        new Card(Color.SPADES, 9),
+                        new Card(Color.DIAMONDS, 10),
+                        new Card(Color.CLUBS, 14),
+                        new Card(Color.HEARTS, 5)
                 }, new Card[]{
-                        new Card("H", 10),
-                        new Card("S", 6)
+                        new Card(Color.HEARTS, 10),
+                        new Card(Color.SPADES, 6)
                 }, new Card[]{
-                        new Card("H", 6),
-                        new Card("C", 6)
+                        new Card(Color.HEARTS, 6),
+                        new Card(Color.CLUBS, 6)
                 }},
                 //Pair conflict
                 {new Card[]{
-                        new Card("H", 14),
-                        new Card("S", 9),
-                        new Card("D", 10),
-                        new Card("C", 14),
-                        new Card("H", 5)
+                        new Card(Color.HEARTS, 14),
+                        new Card(Color.SPADES, 9),
+                        new Card(Color.DIAMONDS, 10),
+                        new Card(Color.CLUBS, 14),
+                        new Card(Color.HEARTS, 5)
                 }, new Card[]{
-                        new Card("H", 13),
-                        new Card("S", 6)
+                        new Card(Color.HEARTS, 13),
+                        new Card(Color.SPADES, 6)
                 }, new Card[]{
-                        new Card("H", 12),
-                        new Card("C", 6)
+                        new Card(Color.HEARTS, 12),
+                        new Card(Color.CLUBS, 6)
                 }},
                 //Pair conflict
                 {new Card[]{
-                        new Card("H", 14),
-                        new Card("S", 9),
-                        new Card("D", 10),
-                        new Card("C", 13),
-                        new Card("H", 5)
+                        new Card(Color.HEARTS, 14),
+                        new Card(Color.SPADES, 9),
+                        new Card(Color.DIAMONDS, 10),
+                        new Card(Color.CLUBS, 13),
+                        new Card(Color.HEARTS, 5)
                 }, new Card[]{
-                        new Card("H", 12),
-                        new Card("S", 14)
+                        new Card(Color.HEARTS, 12),
+                        new Card(Color.SPADES, 14)
                 }, new Card[]{
-                        new Card("H", 6),
-                        new Card("C", 14)
+                        new Card(Color.HEARTS, 6),
+                        new Card(Color.CLUBS, 14)
                 }},
                 //Kicker conflict
                 {new Card[]{
-                        new Card("H", 14),
-                        new Card("S", 9),
-                        new Card("D", 10),
-                        new Card("C", 13),
-                        new Card("H", 5)
+                        new Card(Color.HEARTS, 14),
+                        new Card(Color.SPADES, 9),
+                        new Card(Color.DIAMONDS, 10),
+                        new Card(Color.CLUBS, 13),
+                        new Card(Color.HEARTS, 5)
                 }, new Card[]{
-                        new Card("H", 8),
-                        new Card("S", 2)
+                        new Card(Color.HEARTS, 8),
+                        new Card(Color.SPADES, 2)
                 }, new Card[]{
-                        new Card("H", 6),
-                        new Card("C", 2)
+                        new Card(Color.HEARTS, 6),
+                        new Card(Color.CLUBS, 2)
                 }},
 
         };

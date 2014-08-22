@@ -1,7 +1,5 @@
-import entities.players.ComputerPlayer;
-import entities.players.Player;
 import entities.Card;
-import entities.Hand;
+import entities.Color;
 import org.junit.Assert;
 import org.junit.Test;
 import util.Utils;
@@ -15,12 +13,12 @@ public class UtilsTest
     public void testSorter()
     {
         List<Card> cards = new ArrayList<Card>();
-        cards.add(new Card("H", 2));
-        cards.add(new Card("S", 3));
-        cards.add(new Card("D", 4));
-        cards.add(new Card("C", 5));
-        cards.add(new Card("H", 6));
-        cards.add(new Card("S", 4));
+        cards.add(new Card(Color.HEARTS, 2));
+        cards.add(new Card(Color.SPADES, 3));
+        cards.add(new Card(Color.DIAMONDS, 4));
+        cards.add(new Card(Color.CLUBS, 5));
+        cards.add(new Card(Color.HEARTS, 6));
+        cards.add(new Card(Color.SPADES, 4));
         cards = Utils.sortCards(cards);
         int[] res = new int[6];
         int i = 0;
@@ -36,29 +34,29 @@ public class UtilsTest
     public void testGetSameColor()
     {
         List<Card> cards = new ArrayList<Card>();
-        cards.add(new Card("H", 10));
-        cards.add(new Card("H", 11));
-        cards.add(new Card("H", 12));
-        cards.add(new Card("H", 13));
-        cards.add(new Card("H", 14));
-        cards.add(new Card("S", 14));
-        Assert.assertEquals(5, Utils.getSameColorCount("H", cards));
+        cards.add(new Card(Color.HEARTS, 10));
+        cards.add(new Card(Color.HEARTS, 11));
+        cards.add(new Card(Color.HEARTS, 12));
+        cards.add(new Card(Color.HEARTS, 13));
+        cards.add(new Card(Color.HEARTS, 14));
+        cards.add(new Card(Color.SPADES, 14));
+        Assert.assertEquals(5, Utils.getSameColorCount(Color.HEARTS, cards));
     }
 
     @Test
     public void testGetCardsWithPreferredColor()
     {
         List<Card> cards = new ArrayList<Card>();
-        cards.add(new Card("H", 10));
-        cards.add(new Card("H", 11));
-        cards.add(new Card("D", 12));
-        cards.add(new Card("C", 13));
-        cards.add(new Card("H", 14));
-        cards.add(new Card("S", 14));
+        cards.add(new Card(Color.HEARTS, 10));
+        cards.add(new Card(Color.HEARTS, 11));
+        cards.add(new Card(Color.DIAMONDS, 12));
+        cards.add(new Card(Color.CLUBS, 13));
+        cards.add(new Card(Color.HEARTS, 14));
+        cards.add(new Card(Color.SPADES, 14));
         List<Card> expectedCards = new ArrayList<Card>();
-        expectedCards.add(new Card("H", 10));
-        expectedCards.add(new Card("H", 11));
-        expectedCards.add(new Card("H", 14));
-        Assert.assertEquals(Utils.getCardsWithPreferredColor("H", cards), expectedCards);
+        expectedCards.add(new Card(Color.HEARTS, 10));
+        expectedCards.add(new Card(Color.HEARTS, 11));
+        expectedCards.add(new Card(Color.HEARTS, 14));
+        Assert.assertEquals(Utils.getCardsWithPreferredColor(Color.HEARTS, cards), expectedCards);
     }
 }

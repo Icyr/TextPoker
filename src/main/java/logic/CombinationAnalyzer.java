@@ -1,6 +1,7 @@
 package logic;
 
 import entities.Card;
+import entities.Color;
 import entities.combinations.*;
 import util.Utils;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 public class CombinationAnalyzer
 {
-    private static String[] colors = {"H", "S", "C", "D"};
+    private static Color[] colors = {Color.HEARTS, Color.SPADES, Color.CLUBS, Color.DIAMONDS};
 
     public static Combination analyzeCombination(List<Card> cards)
     {
@@ -60,15 +61,16 @@ public class CombinationAnalyzer
 
     private static StraightFlush searchForStraightFlush(List<Card> cards)
     {
-        String[] colors = {"H", "S", "C", "D"};
-        for (String color : colors)
+        for (Color color : colors)
         {
             if (Utils.getSameColorCount(color, cards) > 4)
             {
                 List<Card> cardsWithSameColor = Utils.getCardsWithPreferredColor(color, cards);
                 Straight straight = searchForStraight(cardsWithSameColor);
                 if (straight != null)
+                {
                     return new StraightFlush(straight.getNominal());
+                }
             }
         }
         return null;
@@ -97,14 +99,16 @@ public class CombinationAnalyzer
             List<Card> withoutSetNominal = Utils.removeCardsWithPreferredNominal(set.getNominal(), cards);
             Pair pair = searchForOnePair(withoutSetNominal);
             if (pair != null)
+            {
                 return new FullHouse(set.getNominal(), pair.getNominal());
+            }
         }
         return null;
     }
 
     private static Flush searchForFlush(List<Card> cards)
     {
-        for (String color : colors)
+        for (Color color : colors)
         {
             if (Utils.getSameColorCount(color, cards) > 4)
             {
@@ -196,7 +200,9 @@ public class CombinationAnalyzer
         for (PlayersCardsAndCombination playersCardsAndCombination : playersCardsAndCombinations)
         {
             if (playersCardsAndCombination.getCombination().getPower() > highestCombination.getPower())
+            {
                 highestCombination = playersCardsAndCombination.getCombination();
+            }
         }
         return highestCombination;
     }
