@@ -83,7 +83,6 @@ public class DecisionModuleView
         raiseSlider = new JSlider(JSlider.HORIZONTAL);
         raiseSlider.setEnabled(false);
         raiseSlider.setPaintTicks(true);
-        //raiseSlider.setPaintLabels(true);
         raiseSlider.setPaintTrack(true);
         raiseSlider.addChangeListener(new ChangeListener()
         {
@@ -130,30 +129,16 @@ public class DecisionModuleView
         decisionPanel.setBounds(x, y, frameWidth / 2 - 15, frameHeight / 4);
     }
 
-    public String getDecision(int callValue, int cash, int tableCardCount, int bankSize)
+    public void configureRaiseSlider(int callValue, int cash)
     {
-        enableDecisionButtons();
-        callButton.setText("Call (" + callValue + ")");
-        if (callValue * 2 <= cash)
-        {
-            raiseTField.setText(Integer.toString(callValue * 2));
-            raiseSlider.setMinimum(callValue * 2);
-            raiseSlider.setMaximum(cash);
-            raiseSlider.setMajorTickSpacing((cash - callValue * 2) / 2);
-            raiseSlider.setMinorTickSpacing((cash - callValue * 2) / 4);
-            raiseSlider.setValue(callValue * 2);
-            configureRaiseButtons(tableCardCount, bankSize);
-        } else
-        {
-            raiseButton.setEnabled(false);
-        }
-        String curDecision = readDecision();
-        disableDecisionButtons();
-        decision = "";
-        return curDecision;
+        raiseSlider.setMinimum(callValue * 2);
+        raiseSlider.setMaximum(cash);
+        raiseSlider.setMajorTickSpacing((cash - callValue * 2) / 2);
+        raiseSlider.setMinorTickSpacing((cash - callValue * 2) / 4);
+        raiseSlider.setValue(callValue * 2);
     }
 
-    private void configureRaiseButtons(int tableCardCount, int bankSize)
+    public void configureRaiseButtons(int tableCardCount, int bankSize)
     {
         int smallAmount;
         int mediumAmount;
@@ -186,7 +171,7 @@ public class DecisionModuleView
         highRaiseButtonActionListener.setAmount(highAmount);
     }
 
-    private void enableDecisionButtons()
+    public void enableDecisionButtons()
     {
         foldButton.setEnabled(true);
         callButton.setEnabled(true);
@@ -195,7 +180,7 @@ public class DecisionModuleView
         raiseSlider.setEnabled(true);
     }
 
-    private void disableDecisionButtons()
+    public void disableDecisionButtons()
     {
         foldButton.setEnabled(false);
         callButton.setEnabled(false);
@@ -204,7 +189,7 @@ public class DecisionModuleView
         raiseSlider.setEnabled(false);
     }
 
-    private String readDecision()
+    public String readDecision()
     {
         while (decision.equals(""))
         {
@@ -217,7 +202,24 @@ public class DecisionModuleView
                 e.printStackTrace();
             }
         }
-        return decision;
+        String result = decision;
+        decision = "";
+        return result;
+    }
+
+    public void setCallButtonValue(int callValue)
+    {
+        callButton.setText("Call (" + callValue + ")");
+    }
+
+    public void disableRaiseButton()
+    {
+        raiseButton.setEnabled(false);
+    }
+
+    public void setRaiseFieldValue(int value)
+    {
+        raiseTField.setText(Integer.toString(value));
     }
 
     class RaiseButtonActionListener implements ActionListener

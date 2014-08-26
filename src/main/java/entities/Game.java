@@ -2,7 +2,7 @@ package entities;
 
 import entities.players.HumanPlayer;
 import entities.players.Player;
-import gui.Interface;
+import gui.EndPoint;
 import logic.ConflictResolver;
 import util.Utils;
 
@@ -20,14 +20,14 @@ public class Game
 
     private int bank;
     private int maxBet;
-    //todo:should not be static. Need game model.
+    //todo:should not be static and public. Need game model.
     public static int blindSize;
 
-    private Interface gui;
+    private EndPoint endPoint;
 
-    public Game(int blindSize, Interface gameGUI, int buttonPosition)
+    public Game(int blindSize, EndPoint gameGUI, int buttonPosition)
     {
-        this.gui = gameGUI;
+        this.endPoint = gameGUI;
         players = new ArrayList<Player>();
         Game.blindSize = blindSize;
         button = buttonPosition;
@@ -45,7 +45,7 @@ public class Game
 
     public void play()
     {
-        gui.prepareForGame(players);
+        endPoint.prepareForGame(players);
         while (players.size() > 1)
         {
             prepareForRound();
@@ -54,7 +54,7 @@ public class Game
             if (getNotFoldedPlayersCount() > 1)
             {
                 table.flop();
-                gui.updateTable(table);
+                endPoint.updateTable(table);
                 //second circle
                 if (getActivePlayerCount() > 1)
                 {
@@ -64,7 +64,7 @@ public class Game
             if (getNotFoldedPlayersCount() > 1)
             {
                 table.turn();
-                gui.updateTable(table);
+                endPoint.updateTable(table);
                 //third circle
                 if (getActivePlayerCount() > 1)
                 {
@@ -74,7 +74,7 @@ public class Game
             if (getNotFoldedPlayersCount() > 1)
             {
                 table.river();
-                gui.updateTable(table);
+                endPoint.updateTable(table);
                 //forth circle
                 if (getActivePlayerCount() > 1)
                 {
@@ -91,7 +91,7 @@ public class Game
 
     private void prepareForRound()
     {
-        gui.prepareForRound();
+        endPoint.prepareForRound();
         dealer = new Dealer();
         table = new Table(dealer);
         moveButton();
@@ -107,7 +107,7 @@ public class Game
         {
             button = 0;
         }
-        gui.moveButton(button);
+        endPoint.moveButton(button);
     }
 
     private void betBlinds()
@@ -121,7 +121,7 @@ public class Game
             {
                 players.get(button + 1).addToCurrentBet(blindSize);
                 players.get(button + 2).addToCurrentBet(blindSize * 2);
-                gui.betBlinds((button + 1), (button + 2), blindSize);
+                endPoint.betBlinds((button + 1), (button + 2), blindSize);
             } catch (BankruptException e)
             {
                 removeBankruptPlayers();
@@ -135,7 +135,7 @@ public class Game
             {
                 players.get(button + 1).addToCurrentBet(blindSize);
                 players.get(0).addToCurrentBet(blindSize * 2);
-                gui.betBlinds((button + 1), 0, blindSize);
+                endPoint.betBlinds((button + 1), 0, blindSize);
             } catch (BankruptException e)
             {
                 removeBankruptPlayers();
@@ -148,14 +148,14 @@ public class Game
             {
                 players.get(0).addToCurrentBet(blindSize);
                 players.get(1).addToCurrentBet(blindSize * 2);
-                gui.betBlinds(0, 1, blindSize);
+                endPoint.betBlinds(0, 1, blindSize);
             } catch (BankruptException e)
             {
                 removeBankruptPlayers();
                 betBlinds();
             }
         }
-        gui.updatePlayersCash(players);
+        endPoint.updatePlayersCash(players);
     }
 
     private void deal()
@@ -164,7 +164,7 @@ public class Game
         {
             player.setHand(new Hand(dealer.getCards(2)));
         }
-        gui.deal(players);
+        endPoint.deal(players);
     }
 
     private int calculateUnderTheGun(int playersCount, int button)
@@ -195,10 +195,10 @@ public class Game
         {
             if (!didOtherPlayersFold(winner))
             {
-                gui.showWinnersCombination(winner.getCurrentCombination(table));
+                endPoint.showWinnersCombination(winner.getCurrentCombination(table));
                 for (Player player : getNotFoldedPlayers())
                 {
-                    gui.showPlayersHand(players.indexOf(player), player.getHand());
+                    endPoint.showPlayersHand(players.indexOf(player), player.getHand());
                 }
             }
         }
@@ -226,7 +226,7 @@ public class Game
         zeroBets();
         removeBankruptPlayers();
         discardHands();
-        gui.updatePlayersCash(players);
+        endPoint.updatePlayersCash(players);
     }
 
     private void distributeWonMoney(List<Player> winners)
@@ -236,22 +236,22 @@ public class Game
             if (!winner.isAllIn())
             {
                 winner.addToCash(bank / winners.size());
-                gui.showWinnerAndHisPrize(winner, players.indexOf(winner), bank / winners.size());
+                endPoint.showWinnerAndHisPrize(winner, players.indexOf(winner), bank / winners.size());
             } else
             {
                 int wonAmount = calculateAllInWinAmount(winner, players) / winners.size();
                 if (bank > wonAmount)
                 {
                     winner.addToCash(wonAmount);
-                    gui.showWinnerAndHisPrize(winner, players.indexOf(winner), wonAmount);
+                    endPoint.showWinnerAndHisPrize(winner, players.indexOf(winner), wonAmount);
                     bank -= wonAmount;
-                    gui.setBank(bank);
+                    endPoint.setBank(bank);
                 } else
                 {
                     winner.addToCash(bank);
-                    gui.showWinnerAndHisPrize(winner, players.indexOf(winner), bank);
+                    endPoint.showWinnerAndHisPrize(winner, players.indexOf(winner), bank);
                     bank = 0;
-                    gui.setBank(0);
+                    endPoint.setBank(0);
                 }
                 if (bank > 0)
                 {
@@ -284,9 +284,9 @@ public class Game
 
             } else
             {
-                gui.removeBankruptPlayer(i);
+                endPoint.removeBankruptPlayer(i);
                 if (button == players.size() - 1) button--;
-                if (curPlayer instanceof HumanPlayer) gui.pause();
+                if (curPlayer instanceof HumanPlayer) endPoint.pause();
             }
         }
         players = playersInGame;
@@ -325,7 +325,7 @@ public class Game
     {
         maxBet = 0;
         bank = 0;
-        gui.setBank(0);
+        endPoint.setBank(0);
         for (Player player : players)
         {
             player.setCurrentBet(0);
@@ -358,8 +358,8 @@ public class Game
         {
             playOneCircle(players, table, underTheGun, false);
         }
-        gui.zeroBets();
-        gui.setBank(bank);
+        endPoint.zeroBets();
+        endPoint.setBank(bank);
     }
 
     private void playOneCircle(List<Player> players, Table table, int underTheGun, boolean raiseCircle)
@@ -442,11 +442,11 @@ public class Game
         {
             if (callValue == 0)
             {
-                gui.check(players.indexOf(player));
+                endPoint.check(players.indexOf(player));
             } else
             {
                 player.setFolded(true);
-                gui.fold(players.indexOf(player));
+                endPoint.fold(players.indexOf(player));
             }
         }
         if (decision.equals("call"))
@@ -465,19 +465,19 @@ public class Game
                 player.unsafeAddToCurrentBet(raiseAmount);
                 maxBet = player.getCurrentBet();
                 bank = bank + raiseAmount;
-                gui.raise(players.indexOf(player), raiseAmount, false);
+                endPoint.raise(players.indexOf(player), raiseAmount, false);
                 wasRaised = true;
             } else
             {
                 bank = bank + player.getCash();
-                gui.raise(players.indexOf(player), player.getCash(), true);
+                endPoint.raise(players.indexOf(player), player.getCash(), true);
                 player.unsafeAddToCurrentBet(player.getCash());
                 maxBet = player.getCurrentBet();
                 player.setAllIn(true);
                 wasRaised = true;
             }
         }
-        gui.updatePlayersCash(players);
+        endPoint.updatePlayersCash(players);
         return wasRaised;
     }
 
@@ -489,17 +489,17 @@ public class Game
             {
                 player.unsafeAddToCurrentBet(callValue);
                 bank += callValue;
-                gui.call(players.indexOf(player), callValue, false);
+                endPoint.call(players.indexOf(player), callValue, false);
             } else
             {
                 bank = bank + player.getCash();
-                gui.call(players.indexOf(player), player.getCash(), true);
+                endPoint.call(players.indexOf(player), player.getCash(), true);
                 player.unsafeAddToCurrentBet(player.getCash());
                 player.setAllIn(true);
             }
         } else
         {
-            gui.check(players.indexOf(player));
+            endPoint.check(players.indexOf(player));
         }
     }
 }

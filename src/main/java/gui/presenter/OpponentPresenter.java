@@ -57,12 +57,6 @@ public class OpponentPresenter
         view.setSecondCardImage(hand.getCards().get(1).getIcon());
     }
 
-    public void bankrupt()
-    {
-        removeCards();
-        view.setBetText("Bankrupt");
-    }
-
     public void showWin()
     {
         view.setBetText("WIN!");
