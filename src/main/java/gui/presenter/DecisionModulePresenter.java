@@ -11,7 +11,7 @@ public class DecisionModulePresenter
         this.view = view;
     }
 
-    public String getDecision(int callValue, int cash, int tableCardCount, int bankSize)
+    public String getDecision(int callValue, int cash, int tableCardCount, int bankSize, int blindSize)
     {
         view.enableDecisionButtons();
         view.setCallButtonValue(callValue);
@@ -19,7 +19,7 @@ public class DecisionModulePresenter
         {
             view.setRaiseFieldValue(callValue * 2);
             view.configureRaiseSlider(callValue, cash);
-            view.configureRaiseButtons(tableCardCount, bankSize);
+            view.configureRaiseButtons(tableCardCount, bankSize, blindSize);
         }
         else
         {

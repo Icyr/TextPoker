@@ -138,7 +138,7 @@ public class DecisionModuleView
         raiseSlider.setValue(callValue * 2);
     }
 
-    public void configureRaiseButtons(int tableCardCount, int bankSize)
+    public void configureRaiseButtons(int tableCardCount, int bankSize, int blindSize)
     {
         int smallAmount;
         int mediumAmount;
@@ -150,9 +150,9 @@ public class DecisionModuleView
                 smallRaiseAmountButton.setText("2BB");
                 mediumRaiseAmountButton.setText("3BB");
                 highRaiseAmountButton.setText("4BB");
-                smallAmount = 4 * Game.blindSize;
-                mediumAmount = 6 * Game.blindSize;
-                highAmount = 8 * Game.blindSize;
+                smallAmount = 4 * blindSize;
+                mediumAmount = 6 * blindSize;
+                highAmount = 8 * blindSize;
                 break;
             }
             default:

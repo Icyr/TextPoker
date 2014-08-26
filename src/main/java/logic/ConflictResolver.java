@@ -41,7 +41,6 @@ public class ConflictResolver
     {
         List<PlayersCardsAndCombination> winnersPcacs = new ArrayList<PlayersCardsAndCombination>();
         Combination conflictCombination = pcacs.get(0).getCombination();
-        //todo STRATEGY??
         if (conflictCombination instanceof StraightFlush)
         {
             winnersPcacs = pcacs;

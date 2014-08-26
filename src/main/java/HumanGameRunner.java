@@ -24,7 +24,7 @@ public class HumanGameRunner
                 e.printStackTrace();
             }
         }
-        EndPoint endPoint = Initializer.initialize(introWindow.opponentsNumber);
+        EndPoint endPoint = Initializer.initialize(introWindow);
         endPoint.initialize();
         Player humanPlayer = new HumanPlayer(introWindow.moneyAmount, endPoint);
         humanPlayer.setId("you");

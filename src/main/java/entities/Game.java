@@ -20,8 +20,7 @@ public class Game
 
     private int bank;
     private int maxBet;
-    //todo:should not be static and public. Need game model.
-    public static int blindSize;
+    private int blindSize;
 
     private EndPoint endPoint;
 
@@ -29,7 +28,7 @@ public class Game
     {
         this.endPoint = gameGUI;
         players = new ArrayList<Player>();
-        Game.blindSize = blindSize;
+        this.blindSize = blindSize;
         button = buttonPosition;
     }
 

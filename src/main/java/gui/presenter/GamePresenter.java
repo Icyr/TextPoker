@@ -106,7 +106,7 @@ public class GamePresenter implements EndPoint
     public String getDecision(int callValue, int cash, int tableCardCount)
     {
         logPresenter.printPlayerTurn();
-        return decisionModulePresenter.getDecision(callValue, cash, tableCardCount, gameModel.getBankValue());
+        return decisionModulePresenter.getDecision(callValue, cash, tableCardCount, gameModel.getBankValue(), gameModel.getBlindSize());
     }
 
     //todo: all actions(check, fold, call, raise) should get Player instead of index in parameters. Need GameModel for it.
