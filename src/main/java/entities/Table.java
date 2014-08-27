@@ -1,5 +1,7 @@
 package entities;
 
+import util.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,24 +52,7 @@ public class Table
         String res = "";
         for (Card card : cards)
         {
-            String nominalString = Integer.toString(card.getNominal());
-            if (nominalString.equals("11"))
-            {
-                nominalString = "J";
-            }
-            if (nominalString.equals("12"))
-            {
-                nominalString = "Q";
-            }
-            if (nominalString.equals("13"))
-            {
-                nominalString = "K";
-            }
-            if (nominalString.equals("14"))
-            {
-                nominalString = "A";
-            }
-            res += nominalString + card.getColor().getShortName() + " ";
+            res += Utils.getCorrectNominalString(card.getNominal()) + card.getColor().getShortName() + " ";
         }
         return res;
     }

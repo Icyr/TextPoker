@@ -1,5 +1,7 @@
 package entities.combinations;
 
+import util.Utils;
+
 public class Pair implements Combination
 {
     private final int nominal;
@@ -16,7 +18,7 @@ public class Pair implements Combination
 
     public String toString()
     {
-        return "Pair of " + nominal;
+        return "Pair of " + Utils.getCorrectNominalString(nominal);
     }
 
     @Override

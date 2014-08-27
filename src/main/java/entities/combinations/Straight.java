@@ -1,5 +1,7 @@
 package entities.combinations;
 
+import util.Utils;
+
 public class Straight implements Combination
 {
     private final int nominal;
@@ -16,7 +18,7 @@ public class Straight implements Combination
 
     public String toString()
     {
-        return "Straight starting with " + nominal;
+        return "Straight starting with " + Utils.getCorrectNominalString(nominal);
     }
 
     @Override

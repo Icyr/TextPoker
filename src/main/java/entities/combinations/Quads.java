@@ -1,5 +1,7 @@
 package entities.combinations;
 
+import util.Utils;
+
 public class Quads implements Combination
 {
     private int nominal;
@@ -12,7 +14,7 @@ public class Quads implements Combination
     @Override
     public String toString()
     {
-        return "Quads of " + nominal;
+        return "Quads of " + Utils.getCorrectNominalString(nominal);
     }
 
     @Override

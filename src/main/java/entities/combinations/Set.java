@@ -1,5 +1,7 @@
 package entities.combinations;
 
+import util.Utils;
+
 public class Set implements Combination
 {
     private final int nominal;
@@ -17,7 +19,7 @@ public class Set implements Combination
     @Override
     public String toString()
     {
-        return "Set of " + nominal;
+        return "Set of " + Utils.getCorrectNominalString(nominal);
     }
 
     @Override

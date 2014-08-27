@@ -1,5 +1,7 @@
 package entities.combinations;
 
+import util.Utils;
+
 public class Kicker implements Combination
 {
     private final int nominal;
@@ -16,7 +18,7 @@ public class Kicker implements Combination
 
     public String toString()
     {
-        return "Kicker " + nominal;
+        return "Kicker " + Utils.getCorrectNominalString(nominal);
     }
 
     @Override

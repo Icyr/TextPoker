@@ -1,5 +1,7 @@
 package entities.combinations;
 
+import util.Utils;
+
 public class TwoPairs implements Combination
 {
     private final int higherNominal;
@@ -23,7 +25,7 @@ public class TwoPairs implements Combination
 
     public String toString()
     {
-        return "Two pairs: " + higherNominal + " and " + lowerNominal;
+        return "Two pairs: " + Utils.getCorrectNominalString(higherNominal) + " and " + Utils.getCorrectNominalString(lowerNominal);
     }
 
     @Override

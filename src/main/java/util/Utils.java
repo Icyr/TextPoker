@@ -99,10 +99,33 @@ public class Utils
         try
         {
             res = Integer.parseInt(string);
-        } catch (NumberFormatException e)
+        }
+        catch (NumberFormatException e)
         {
             return 0;
         }
         return res;
+    }
+
+    public static String getCorrectNominalString(int nominal)
+    {
+        String nominalString = Integer.toString(nominal);
+        if (nominalString.equals("11"))
+        {
+            nominalString = "J";
+        }
+        if (nominalString.equals("12"))
+        {
+            nominalString = "Q";
+        }
+        if (nominalString.equals("13"))
+        {
+            nominalString = "K";
+        }
+        if (nominalString.equals("14"))
+        {
+            nominalString = "A";
+        }
+        return nominalString;
     }
 }

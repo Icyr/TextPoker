@@ -5,7 +5,6 @@ import entities.players.Player;
 
 public class PlayerModel
 {
-    private Player player;
     private String id;
     private Hand hand;
     private int currentBet;
@@ -16,8 +15,13 @@ public class PlayerModel
 
     public PlayerModel(Player player, int index)
     {
-       this.player = player;
+        this.id = player.getId();
+        this.hand = player.getHand();
+        this.currentBet = player.getCurrentBet();
+        this.cash = player.getCash();
         this.number = index;
+        this.isFolded = player.isFolded();
+        this.isAllIn = player.isAllIn();
     }
 
     public PlayerModel(String id, Hand hand, int currentBet, int cash, int number, boolean folded, boolean allIn)
@@ -103,6 +107,6 @@ public class PlayerModel
 
     public String getDescription()
     {
-        return "Player #" + number + "(" + player.getId() + ")";
+        return "Player #" + number + "(" + id + ")";
     }
 }

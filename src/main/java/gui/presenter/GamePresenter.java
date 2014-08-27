@@ -43,16 +43,8 @@ public class GamePresenter implements EndPoint
         gameView.initialize();
     }
 
-    //todo I don't think this method is necessary. Delete it and move necessary logic to prepare for round.
     @Override
-    public void prepareForGame(List<Player> players)
-    {
-        setBank(0);
-        updatePlayersCash(players);
-    }
-
-    @Override
-    public void prepareForRound()
+    public void prepareForRound(int button, List<Player> players)
     {
         setBetAmount(0);
         for (OpponentPresenter opponentPresenter : opponentPresenters)
@@ -61,12 +53,14 @@ public class GamePresenter implements EndPoint
         }
         playerPresenter.discardCards();
         tablePresenter.discardTableCards();
-    }
-
-    @Override
-    public void moveButton(int button)
-    {
         logPresenter.moveButton(button);
+        logPresenter.deal();
+        for (OpponentPresenter opponentPresenter : opponentPresenters)
+        {
+            opponentPresenter.showCardBacks();
+        }
+        playerPresenter.setHandCards(players.get(0).getHand());
+        updatePlayersCash(players);
     }
 
     @Override
@@ -89,17 +83,6 @@ public class GamePresenter implements EndPoint
             opponentPresenters.get(firstPlayerNumber - 1).setBet(blindSize);
             opponentPresenters.get(secondPlayerNumber - 1).setBet(blindSize * 2);
         }
-    }
-
-    @Override
-    public void deal(List<Player> players)
-    {
-        logPresenter.deal();
-        for (OpponentPresenter opponentPresenter : opponentPresenters)
-        {
-            opponentPresenter.showCardBacks();
-        }
-        playerPresenter.setHandCards(players.get(0).getHand());
     }
 
     @Override

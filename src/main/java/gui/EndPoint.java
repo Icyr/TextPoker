@@ -11,15 +11,9 @@ public interface EndPoint
 {
     public void initialize();
 
-    public void prepareForGame(List<Player> players);
-
-    public void prepareForRound();
-
-    public void moveButton(int button);
+    public void prepareForRound(int button, List<Player> players);
 
     public void betBlinds(int firstPlayerNumber, int secondPlayerNumber, int blindSize);
-
-    public void deal(List<Player> players);
 
     public String getDecision(int callValue, int cash, int tableCardCount);
 

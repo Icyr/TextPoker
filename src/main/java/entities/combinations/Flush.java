@@ -1,6 +1,7 @@
 package entities.combinations;
 
 import entities.Color;
+import util.Utils;
 
 public class Flush implements Combination
 {
@@ -20,7 +21,7 @@ public class Flush implements Combination
 
     public String toString()
     {
-        return "Flush with highest card " + nominal;
+        return "Flush with highest card " + Utils.getCorrectNominalString(nominal);
     }
 
     @Override

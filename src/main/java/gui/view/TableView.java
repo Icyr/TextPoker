@@ -20,7 +20,7 @@ public class TableView
         thirdTableCard = new JLabel();
         forthTableCard = new JLabel();
         fifthTableCard = new JLabel();
-        bank = new JLabel();
+        bank = new JLabel("0");
         bank.setFont(bank.getFont().deriveFont(20.0f));
         bank.setHorizontalAlignment(SwingConstants.CENTER);
     }

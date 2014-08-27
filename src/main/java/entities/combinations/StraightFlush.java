@@ -1,5 +1,7 @@
 package entities.combinations;
 
+import util.Utils;
+
 public class StraightFlush implements Combination
 {
     private final int nominal;
@@ -12,7 +14,7 @@ public class StraightFlush implements Combination
     @Override
     public String toString()
     {
-        return "Straight Flush starting with " + nominal;
+        return "Straight Flush starting with " + Utils.getCorrectNominalString(nominal);
     }
 
     @Override

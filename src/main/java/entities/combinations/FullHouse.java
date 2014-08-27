@@ -1,5 +1,7 @@
 package entities.combinations;
 
+import util.Utils;
+
 public class FullHouse implements Combination
 {
     private final int setNominal;
@@ -14,7 +16,7 @@ public class FullHouse implements Combination
     @Override
     public String toString()
     {
-        return "Full House with " + setNominal + " and " + pairNominal;
+        return "Full House with " + Utils.getCorrectNominalString(setNominal) + " and " + Utils.getCorrectNominalString(pairNominal);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package entities;
 
+import util.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +21,8 @@ public class Hand
 
     public String toString(){
         String res = "";
-        res += this.getCards().get(0).getNominal() + " " + this.getCards().get(0).getColor() + " ";
-        res += this.getCards().get(1).getNominal() + " " + this.getCards().get(1).getColor() + " ";
+        res += Utils.getCorrectNominalString(this.getCards().get(0).getNominal()) + this.getCards().get(0).getColor().getShortName() + " ";
+        res += Utils.getCorrectNominalString(this.getCards().get(1).getNominal()) + this.getCards().get(1).getColor().getShortName();
         return res;
     }
 }

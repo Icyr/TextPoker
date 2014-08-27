@@ -44,7 +44,6 @@ public class Game
 
     public void play()
     {
-        endPoint.prepareForGame(players);
         while (players.size() > 1)
         {
             prepareForRound();
@@ -90,13 +89,13 @@ public class Game
 
     private void prepareForRound()
     {
-        endPoint.prepareForRound();
         dealer = new Dealer();
         table = new Table(dealer);
         moveButton();
-        betBlinds();
         deal();
         underTheGun = calculateUnderTheGun(players.size(), button);
+        endPoint.prepareForRound(button, players);
+        betBlinds();
     }
 
     private void moveButton()
@@ -106,7 +105,6 @@ public class Game
         {
             button = 0;
         }
-        endPoint.moveButton(button);
     }
 
     private void betBlinds()
@@ -154,7 +152,6 @@ public class Game
                 betBlinds();
             }
         }
-        endPoint.updatePlayersCash(players);
     }
 
     private void deal()
@@ -163,7 +160,6 @@ public class Game
         {
             player.setHand(new Hand(dealer.getCards(2)));
         }
-        endPoint.deal(players);
     }
 
     private int calculateUnderTheGun(int playersCount, int button)
