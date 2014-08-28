@@ -3,6 +3,7 @@ package gui.model;
 import entities.Card;
 import entities.Table;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameModel
@@ -17,18 +18,24 @@ public class GameModel
 
     public GameModel()
     {
-
+        this.playerModels = new ArrayList<PlayerModel>();
+        this.bankValue = 0;
+        this.tableCards = new ArrayList<Card>();
+        this.button = 0;
+        this.underTheGun = 0;
+        this.blindSize = 0;
+        this.maxBet = 0;
     }
 
-    public GameModel(List<PlayerModel> playerModels, int bankValue, List<Card> tableCards, int button, int underTheGun, int blindSize, int maxBet)
+    public GameModel(int button, int blindSize)
     {
-        this.playerModels = playerModels;
-        this.bankValue = bankValue;
-        this.tableCards = tableCards;
+        this.playerModels = new ArrayList<PlayerModel>();
+        this.bankValue = 0;
+        this.tableCards = new ArrayList<Card>();
         this.button = button;
-        this.underTheGun = underTheGun;
+        this.underTheGun = 0;
         this.blindSize = blindSize;
-        this.maxBet = maxBet;
+        this.maxBet = 0;
     }
 
     public void setPlayerModels(List<PlayerModel> playerModels)
