@@ -25,14 +25,14 @@ public class GamePresenter implements EndPoint
 
     private GameView gameView;
 
-    public GamePresenter(TablePresenter tablePresenter, List<OpponentPresenter> opponentPresenters, PlayerPresenter playerPresenter, LogPresenter logPresenter, DecisionModulePresenter decisionModulePresenter, GameModel gameModel, GameView gameView)
+    public GamePresenter(TablePresenter tablePresenter, List<OpponentPresenter> opponentPresenters, PlayerPresenter playerPresenter, LogPresenter logPresenter, DecisionModulePresenter decisionModulePresenter, GameView gameView)
     {
         this.tablePresenter = tablePresenter;
         this.opponentPresenters = opponentPresenters;
         this.playerPresenter = playerPresenter;
         this.logPresenter = logPresenter;
         this.decisionModulePresenter = decisionModulePresenter;
-        this.gameModel = gameModel;
+        this.gameModel = new GameModel();
         this.gameView = gameView;
     }
 
@@ -44,28 +44,35 @@ public class GamePresenter implements EndPoint
     }
 
     @Override
-    public void prepareForRound(int button, List<Player> players)
+    public void prepareForRound(GameModel newGameModel, List<Player> players)
     {
+        gameModel = newGameModel;
+        //setting 0 to bets
         setBetAmount(0);
         for (OpponentPresenter opponentPresenter : opponentPresenters)
         {
             opponentPresenter.setBet(0);
         }
+        //discarding cards
         playerPresenter.discardCards();
         tablePresenter.discardTableCards();
-        logPresenter.moveButton(button);
+        //moving button
+        logPresenter.moveButton(gameModel.getButton());
+        //dealing cards
         logPresenter.deal();
         for (OpponentPresenter opponentPresenter : opponentPresenters)
         {
             opponentPresenter.showCardBacks();
         }
         playerPresenter.setHandCards(players.get(0).getHand());
+        //updating cash
         updatePlayersCash(players);
     }
 
     @Override
     public void betBlinds(int firstPlayerNumber, int secondPlayerNumber, int blindSize)
     {
+
         logPresenter.printSmallBlindBet(firstPlayerNumber, blindSize);
         logPresenter.printBigBlindBet(secondPlayerNumber, blindSize);
         if (firstPlayerNumber == 0)

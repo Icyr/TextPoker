@@ -4,6 +4,7 @@ import entities.Hand;
 import entities.Table;
 import entities.combinations.Combination;
 import entities.players.Player;
+import gui.model.GameModel;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface EndPoint
 {
     public void initialize();
 
-    public void prepareForRound(int button, List<Player> players);
+    public void prepareForRound(GameModel gameModel, List<Player> players);
 
     public void betBlinds(int firstPlayerNumber, int secondPlayerNumber, int blindSize);
 

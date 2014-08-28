@@ -3,6 +3,8 @@ package entities;
 import entities.players.HumanPlayer;
 import entities.players.Player;
 import gui.EndPoint;
+import gui.model.GameModel;
+import gui.model.PlayerModel;
 import logic.ConflictResolver;
 import util.Utils;
 
@@ -13,33 +15,38 @@ public class Game
 {
     private Dealer dealer;
     private Table table;
-    private int button;
     private int underTheGun;
 
     private List<Player> players;
 
     private int bank;
     private int maxBet;
-    private int blindSize;
 
     private EndPoint endPoint;
 
+    private GameModel gameModel;
+
     public Game(int blindSize, EndPoint gameGUI, int buttonPosition)
     {
+        this.gameModel = new GameModel(buttonPosition, blindSize);
         this.endPoint = gameGUI;
         players = new ArrayList<Player>();
-        this.blindSize = blindSize;
-        button = buttonPosition;
     }
 
     public void addPlayer(Player player)
     {
         players.add(player);
+        List<PlayerModel> playerModels = gameModel.getPlayerModels();
+        PlayerModel playerModel = new PlayerModel(player, playerModels.size());
+        playerModels.add(playerModel);
     }
 
     public void addPlayers(List<Player> newPlayers)
     {
-        players.addAll(newPlayers);
+        for (Player player : newPlayers)
+        {
+            addPlayer(player);
+        }
     }
 
     public void play()
@@ -93,25 +100,29 @@ public class Game
         table = new Table(dealer);
         moveButton();
         deal();
-        underTheGun = calculateUnderTheGun(players.size(), button);
-        endPoint.prepareForRound(button, players);
+        underTheGun = calculateUnderTheGun(players.size(), gameModel.getButton());
+        endPoint.prepareForRound(gameModel, players);
         betBlinds();
     }
 
     private void moveButton()
     {
+        int button = gameModel.getButton();
         button++;
         if (button == players.size())
         {
             button = 0;
         }
+        gameModel.setButton(button);
     }
 
     private void betBlinds()
     {
+        int blindSize = gameModel.getBlindSize();
         maxBet = blindSize * 2;
         bank = blindSize * 3;
         int playerCount = players.size();
+        int button = gameModel.getButton();
         if (button < playerCount - 2)
         {
             try
@@ -133,7 +144,8 @@ public class Game
                 players.get(button + 1).addToCurrentBet(blindSize);
                 players.get(0).addToCurrentBet(blindSize * 2);
                 endPoint.betBlinds((button + 1), 0, blindSize);
-            } catch (BankruptException e)
+            }
+            catch (BankruptException e)
             {
                 removeBankruptPlayers();
                 betBlinds();
@@ -146,7 +158,8 @@ public class Game
                 players.get(0).addToCurrentBet(blindSize);
                 players.get(1).addToCurrentBet(blindSize * 2);
                 endPoint.betBlinds(0, 1, blindSize);
-            } catch (BankruptException e)
+            }
+            catch (BankruptException e)
             {
                 removeBankruptPlayers();
                 betBlinds();
@@ -173,7 +186,8 @@ public class Game
                 underTheGun = underTheGun - playersCount;
             }
 
-        } else if (playersCount == 2)
+        }
+        else if (playersCount == 2)
         {
             underTheGun = button + 1;
             if (underTheGun >= playersCount)
@@ -214,7 +228,8 @@ public class Game
         try
         {
             Thread.sleep(3000);
-        } catch (InterruptedException e)
+        }
+        catch (InterruptedException e)
         {
             e.printStackTrace();
         }
@@ -232,7 +247,8 @@ public class Game
             {
                 winner.addToCash(bank / winners.size());
                 endPoint.showWinnerAndHisPrize(winner, players.indexOf(winner), bank / winners.size());
-            } else
+            }
+            else
             {
                 int wonAmount = calculateAllInWinAmount(winner, players) / winners.size();
                 if (bank > wonAmount)
@@ -241,7 +257,8 @@ public class Game
                     endPoint.showWinnerAndHisPrize(winner, players.indexOf(winner), wonAmount);
                     bank -= wonAmount;
                     endPoint.setBank(bank);
-                } else
+                }
+                else
                 {
                     winner.addToCash(bank);
                     endPoint.showWinnerAndHisPrize(winner, players.indexOf(winner), bank);
@@ -277,10 +294,14 @@ public class Game
             {
                 playersInGame.add(curPlayer);
 
-            } else
+            }
+            else
             {
                 endPoint.removeBankruptPlayer(i);
-                if (button == players.size() - 1) button--;
+                if (gameModel.getButton() == players.size() - 1)
+                {
+                    gameModel.setButton(gameModel.getButton() - 1);
+                }
                 if (curPlayer instanceof HumanPlayer) endPoint.pause();
             }
         }
@@ -295,7 +316,8 @@ public class Game
             if (!player.equals(winner) && player.getCurrentBet() <= winner.getCurrentBet())
             {
                 wonMoney += player.getCurrentBet();
-            } else
+            }
+            else
             {
                 wonMoney += winner.getCurrentBet();
             }
@@ -369,7 +391,10 @@ public class Game
         for (int i = 0; i < turnsCount; i++)
         {
             Player curPlayer = players.get(underTheGun);
-            if (didOtherPlayersFold(curPlayer)) break;
+            if (didOtherPlayersFold(curPlayer))
+            {
+                break;
+            }
             else
             {
                 if (!curPlayer.isFolded() && !curPlayer.isAllIn())
@@ -382,7 +407,8 @@ public class Game
                 nextPlayerPosition = players.indexOf(curPlayer) + 1;
                 if (nextPlayerPosition == players.size()) nextPlayerPosition = 0;
                 break;
-            } else
+            }
+            else
             {
                 underTheGun++;
                 if (underTheGun == players.size()) underTheGun = 0;
@@ -432,13 +458,14 @@ public class Game
     {
         boolean wasRaised = false;
         int callValue = maxBet - player.getCurrentBet();
-        String decision = player.makeDecision(player.getHand(), table, bank, callValue, blindSize * 2, players.size());
+        String decision = player.makeDecision(player.getHand(), table, bank, callValue, gameModel.getBlindSize(), players.size());
         if (decision.equals("fold"))
         {
             if (callValue == 0)
             {
                 endPoint.check(players.indexOf(player));
-            } else
+            }
+            else
             {
                 player.setFolded(true);
                 endPoint.fold(players.indexOf(player));
@@ -454,7 +481,8 @@ public class Game
             if (raiseAmount < 2 * callValue)
             {
                 makeCall(player, callValue);
-            } else if (raiseAmount < player.getCash())
+            }
+            else if (raiseAmount < player.getCash())
             {
                 //player.unsafeAddToCurrentBet(callValue);
                 player.unsafeAddToCurrentBet(raiseAmount);
@@ -462,7 +490,8 @@ public class Game
                 bank = bank + raiseAmount;
                 endPoint.raise(players.indexOf(player), raiseAmount, false);
                 wasRaised = true;
-            } else
+            }
+            else
             {
                 bank = bank + player.getCash();
                 endPoint.raise(players.indexOf(player), player.getCash(), true);
@@ -485,14 +514,16 @@ public class Game
                 player.unsafeAddToCurrentBet(callValue);
                 bank += callValue;
                 endPoint.call(players.indexOf(player), callValue, false);
-            } else
+            }
+            else
             {
                 bank = bank + player.getCash();
                 endPoint.call(players.indexOf(player), player.getCash(), true);
                 player.unsafeAddToCurrentBet(player.getCash());
                 player.setAllIn(true);
             }
-        } else
+        }
+        else
         {
             endPoint.check(players.indexOf(player));
         }
